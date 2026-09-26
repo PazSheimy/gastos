@@ -163,6 +163,14 @@ section + section{border-top:1px solid var(--rule)}
 .chip.rec{background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:11px;vertical-align:middle}
 .tx .m .sub{font-weight:400;color:var(--muted)}
 .tx li.grp .m{white-space:normal}
+.applyall{grid-column:1 / -1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin-top:2px}
+.note{grid-column:1 / -1;font-size:13px;color:var(--ink-2);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.note input{flex:1;min-width:160px;border:1px solid var(--accent);border-radius:6px;padding:4px 8px;background:var(--surface);font-size:13px}
+.note .txt{font-style:italic}
+.hint-bank{font-size:12px;color:var(--muted);font-weight:400}
+.pay-note{margin-top:12px;font-size:13px;color:var(--muted)}
+.notice.unc{margin-top:16px;justify-content:space-between}
+.notice.unc b{color:var(--ink)}
 .empty{color:var(--muted);padding:14px 0}
 
 /* export */
@@ -217,6 +225,7 @@ section + section{border-top:1px solid var(--rule)}
     </div>
     <div class="split" id="hero-split"></div>
   </div>
+  <div class="notice unc" id="unc-note" hidden></div>
 </section>
 
 <section id="categories">
@@ -260,6 +269,7 @@ section + section{border-top:1px solid var(--rule)}
 </main>
 <div class="toast" id="toast" hidden><div><span id="toast-msg"></span><button type="button" id="toast-act" hidden></button></div></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -360,7 +370,7 @@ function detectBank(h){ const has=n=>h.includes(n);
   if(has('date')&&has('description')&&has('amount')&&(has('card member')||has('extended details')||h.length<=3)) return 'amex';
   return 'other'; }
 function mapCols(h){ const find=(...c)=>{ for(const n of c){ const i=h.indexOf(n); if(i>=0) return i; } for(const n of c){ const i=h.findIndex(x=>x.includes(n)); if(i>=0) return i; } return -1; };
-  return { date:find('transaction date','trans. date','date','posted date','post date'), desc:find('description','full description','merchant name','payee','merchant','memo','name'), amount:find('amount'), debit:find('debit'), credit:find('credit'), category:find('category'), type:find('type','transaction type'), bank:find('bank'), payment:find('payment'), reviewed:find('reviewed') }; }
+  return { date:find('transaction date','trans. date','date','posted date','post date'), desc:find('description','full description','merchant name','payee','merchant','memo','name'), amount:find('amount'), debit:find('debit'), credit:find('credit'), category:find('category'), type:find('type','transaction type'), bank:find('bank'), payment:find('payment'), reviewed:find('reviewed'), note:find('note') }; }
 function parseStatement(name,text){
   const rows=parseCSV(text); let hi=findHeader(rows); let bank, cols, body, headers;
   if(hi<0){ if(rows.length&&rows[0].length===5&&parseDate(rows[0][0])){ bank='wells'; cols={date:0,amount:1,desc:4,debit:-1,credit:-1,category:-1,type:-1,bank:-1,payment:-1}; body=rows; headers=[]; }
@@ -383,15 +393,15 @@ function parseStatement(name,text){
     let isPayment=PAY_RX.test(desc)||(bank==='chase'&&/^payment$/i.test(typeCol))||(bank==='gastos'&&/^yes$/i.test(r[cols.payment]||''));
     const isIncome=isBankAccount&&amount<0&&!isPayment;
     const t={id:'',date:d,month:ymd(d).slice(0,7),year:String(d.getFullYear()),desc,key:merchantKey(desc),amount,bank:bank==='gastos'&&cols.bank>=0?(r[cols.bank]||'').trim()||'CSV':bank,bankCat,isPayment,isIncome,fileCat:'',fileType:''};
-    if(bank==='gastos'){ t.fileCat=bankCat; t.fileType=/business/i.test(typeCol)?'business':'personal'; t.fileReviewed=cols.reviewed>=0&&/^yes$/i.test(r[cols.reviewed]||''); }
+    if(bank==='gastos'){ t.fileCat=bankCat; t.fileType=/business/i.test(typeCol)?'business':'personal'; t.fileReviewed=cols.reviewed>=0&&/^yes$/i.test(r[cols.reviewed]||''); t.fileNote=cols.note>=0?(r[cols.note]||'').trim():''; }
     tx.push(t); });
   return {ok:true,bank,tx}; }
 
 /* ---------- state ---------- */
-const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{}};
+const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{},notes:{},showPayments:false,lastChange:null};
 function load(key,def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; } }
-function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); }catch(e){} }
-function forget(){ try{ localStorage.removeItem('gastos.rules'); localStorage.removeItem('gastos.budgets'); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; rebuild(); toast('Forgot saved categories and budgets on this device.'); }
+function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); }catch(e){} }
+function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes and budgets on this device.'); }
 
 /* ---------- categorize ---------- */
 function categorizeAll(){
@@ -420,7 +430,7 @@ function periodName(){ const p=state.period; if(p==='all') return 'all statement
 function rebuild(){
   const seen=new Map(); state.tx=[];
   state.files.forEach((f,fi)=>{ const parsed=parseStatement(f.name,f.text); if(!parsed.ok) return; f.bank=f.sample?'sample':parsed.bank; f.count=0; const counts=new Map();
-    parsed.tx.forEach(t=>{ if(f.sample) t.bank='sample'; const base=t.bank+'|'+ymd(t.date)+'|'+t.desc+'|'+t.amount.toFixed(2); const n=(counts.get(base)||0); counts.set(base,n+1); const key=base+'|'+n; if(seen.has(key)) return; seen.set(key,1); t.id=key; state.tx.push(t); f.count++; });
+    parsed.tx.forEach(t=>{ if(f.sample) t.bank='sample'; const base=t.bank+'|'+ymd(t.date)+'|'+t.desc+'|'+t.amount.toFixed(2); const n=(counts.get(base)||0); counts.set(base,n+1); const key=base+'|'+n; if(seen.has(key)) return; seen.set(key,1); t.id=key; if(t.fileNote&&!state.notes[t.id]) state.notes[t.id]=t.fileNote; state.tx.push(t); f.count++; });
     const ds=parsed.tx.map(t=>t.date); if(ds.length){ f.from=new Date(Math.min(...ds)); f.to=new Date(Math.max(...ds)); } });
   state.tx.sort((a,b)=>b.date-a.date);
   categorizeAll(); assignColors(); computeRecurring();
@@ -429,7 +439,10 @@ function rebuild(){
   if(state.filterCat&&!state.tx.some(t=>t.category===state.filterCat)) state.filterCat=null;
   renderAll();
 }
-function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderCategories(); renderTrend(); renderTx(); renderDownloads(); }
+function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrend(); renderTx(); renderDownloads(); }
+function renderUnc(){ const el=$('#unc-note'); const rows=spendRows().filter(t=>t.category==='Uncategorized'); if(!rows.length){ el.hidden=true; return; } const total=rows.reduce((a,t)=>a+t.amount,0); const n=new Set(rows.map(t=>t.key)).size;
+  el.innerHTML=`<span><b>${rows.length}</b> transaction${rows.length>1?'s':''} (${fmt0(total)}) from ${n} merchant${n>1?'s':''} still have no category.</span><button type="button" class="btn small" id="unc-go">Sort them now</button>`; el.hidden=false; }
+$('#unc-note').addEventListener('click',e=>{ if(e.target.id!=='unc-go') return; state.view='all'; state.filterCat='Uncategorized'; state.search=''; $('#search').value=''; state.shown=60; renderCategories(); renderTx(); $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); });
 
 /* ---------- import UI ---------- */
 function renderBanks(){ $('#banks').innerHTML=Object.keys(BANK_HELP).map(k=>`<button type="button" class="chip-btn" data-bank="${k}" aria-pressed="${state.bankPick===k}">${BANK_HELP[k][0]}</button>`).join(''); $('#bank-help').textContent=BANK_HELP[state.bankPick][1]; }
@@ -500,12 +513,13 @@ function renderTrend(){ const el=$('#trend'); const rows=spendRows().filter(scop
 document.addEventListener('click',e=>{ if(!e.target.closest('#trend')){ tipPinned=false; const t=$('#tip'); if(t) t.hidden=true; } });
 
 /* ---------- transactions ---------- */
-function txRows(){ const q=state.search.trim().toLowerCase(); return state.tx.filter(t=>(state.scope==='all'||t.isPayment||t.type===state.scope)&&inPeriod(t)&&(!state.filterCat||t.category===state.filterCat)&&(!q||t.desc.toLowerCase().includes(q)||t.category.toLowerCase().includes(q))); }
+function txRows(){ return state.tx.filter(t=>(state.showPayments||!t.isPayment)&&(state.scope==='all'||t.isPayment||t.type===state.scope)&&inPeriod(t)&&(!state.filterCat||t.category===state.filterCat)&&matchesSearch(t)); }
+function hiddenPayments(){ return state.tx.filter(t=>t.isPayment&&inPeriod(t)); }
 function decided(t){ return !!(state.userRules[t.key]||state.txOverrides[t.id]||t.fileReviewed); }
 function computeRecurring(){ const by={}; spendRows().forEach(t=>{ (by[t.key]=by[t.key]||[]).push(t); }); state.recurring={};
   Object.entries(by).forEach(([k,arr])=>{ const months=new Set(arr.map(t=>t.month)); if(months.size<3) return; const amts=arr.filter(t=>t.amount>0).map(t=>t.amount).sort((a,b)=>a-b); if(amts.length<3) return; const med=amts[Math.floor(amts.length/2)]; if(med<=0||(amts[amts.length-1]-amts[0])/med>0.25) return; const total=arr.reduce((a,t)=>a+t.amount,0); state.recurring[k]={monthly:total/months.size,months:months.size,count:arr.length}; }); }
 function groupBy(rows){ const by=new Map(); rows.forEach(t=>{ let g=by.get(t.key); if(!g){ g={key:t.key,tx:[],total:0}; by.set(t.key,g); } g.tx.push(t); g.total+=t.amount; }); return [...by.values()]; }
-function matchesSearch(t){ const q=state.search.trim().toLowerCase(); return !q||t.desc.toLowerCase().includes(q)||t.category.toLowerCase().includes(q)||t.key.toLowerCase().includes(q); }
+function matchesSearch(t){ const q=state.search.trim().toLowerCase(); return !q||t.desc.toLowerCase().includes(q)||t.category.toLowerCase().includes(q)||t.key.toLowerCase().includes(q)||(state.notes[t.id]||'').toLowerCase().includes(q); }
 function reviewGroups(){ return groupBy(spendRows().filter(t=>!decided(t)&&matchesSearch(t))).sort((a,b)=>{ const ua=a.tx[0].category==='Uncategorized', ub=b.tx[0].category==='Uncategorized'; if(ua!==ub) return ua?-1:1; return b.total-a.total; }); }
 function recurringGroups(){ return groupBy(spendRows().filter(t=>state.recurring[t.key]&&matchesSearch(t))).map(g=>Object.assign(g,state.recurring[g.key])).sort((a,b)=>b.monthly-a.monthly); }
 function selectFor(attr,val,current,opts,label){ return `<select ${attr}="${esc(val)}" aria-label="Category for ${esc(label)}">${opts.replace(`value="${esc(current)}"`,`value="${esc(current)}" selected`)}</select>`; }
@@ -529,39 +543,64 @@ function renderTx(){ const cats=allCategories(); const opts=cats.map(c=>`<option
     $('#tx').innerHTML=groups.length?groups.map(g=>groupRow(g,'recurring',opts)).join(''):'<li class="empty">Nothing repeats every month yet. This needs at least three months of statements.</li>'; $('#more').innerHTML=''; return; }
   const rows=txRows(); $('#tx-count').textContent=rows.length?rows.length+(state.filterCat?' in '+state.filterCat:''):''; renderInsight(rows);
   const shown=rows.slice(0,state.shown);
-  $('#tx').innerHTML=shown.length?shown.map(t=>{ if(t.isPayment) return `<li class="pay"><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num neg">${fmt(t.amount)}</span><span class="m">${esc(t.desc)}</span><span class="muted" style="font-size:12px">Card payment, not counted</span></li>`;
-    const rec=state.recurring[t.key]?' <span class="chip rec">recurring</span>':'';
-    return `<li><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num${t.amount<0?' neg':''}">${fmt(t.amount)}</span><span class="m" title="${esc(t.desc)}">${esc(t.desc)}${rec}</span><span></span><span class="row2">${selectFor('data-id',t.id,t.category,opts,t.desc)}<label class="biz"><input type="checkbox" data-biz="${esc(t.id)}" ${t.type==='business'?'checked':''}> Business</label></span></li>`; }).join(''):'<li class="empty">No transactions match.</li>';
-  const left=rows.length-shown.length; $('#more').innerHTML=left>0?`<button type="button" class="btn ghost small" id="more-btn">Show ${Math.min(left,100)} more of ${left}</button>`:''; }
+  $('#tx').innerHTML=shown.length?shown.map(t=>{ if(t.isPayment) return `<li class="pay"><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num neg">${fmt(t.amount)}</span><span class="m">${esc(t.desc)}</span><span class="muted" style="font-size:12px">Payment to the card, not spending</span></li>`;
+    const rec=state.recurring[t.key]?' <span class="chip rec">recurring</span>':''; const hint=t.bankCat&&!/payment|credit/i.test(t.bankCat)?` <span class="hint-bank">· bank says ${esc(t.bankCat)}</span>`:'';
+    const note=state.notes[t.id]; const noteRow=note?`<span class="note"><span class="txt">${esc(note)}</span><button type="button" class="link" data-note-edit="${esc(t.id)}">Edit</button></span>`:`<span class="note"><button type="button" class="link" data-note-edit="${esc(t.id)}">Add a note</button></span>`;
+    const lc=state.lastChange; const strip=lc&&lc.id===t.id?`<span class="applyall">Changed this one.<button type="button" class="btn small" data-applyall="${esc(t.id)}">Apply to all ${lc.n} from ${esc(t.key)}</button></span>`:'';
+    return `<li><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num${t.amount<0?' neg':''}">${fmt(t.amount)}</span><span class="m" title="${esc(t.desc)}">${esc(t.desc)}${rec}${hint}</span><span></span><span class="row2">${selectFor('data-id',t.id,t.category,opts,t.desc)}<label class="biz"><input type="checkbox" data-biz="${esc(t.id)}" ${t.type==='business'?'checked':''}> Business</label></span>${noteRow}${strip}</li>`; }).join(''):'<li class="empty">No transactions match.</li>';
+  const left=rows.length-shown.length; let more=left>0?`<button type="button" class="btn ghost small" id="more-btn">Show ${Math.min(left,100)} more of ${left}</button>`:'';
+  const pays=hiddenPayments(); if(pays.length){ const sum=pays.reduce((a,t)=>a-t.amount,0); more+=`<p class="pay-note">${state.showPayments?'Showing':'Hiding'} ${pays.length} payment${pays.length>1?'s':''} you made to the card (${fmt0(sum)}). Those are you paying the bill, not spending, so they are never counted. <button type="button" class="link" data-toggle-pay="1">${state.showPayments?'Hide them':'Show them'}</button></p>`; }
+  $('#more').innerHTML=more; }
 $('#view').addEventListener('click',e=>{ const b=e.target.closest('[data-view]'); if(!b) return; state.view=b.dataset.view; state.shown=60; renderTx(); });
-$('#tx').addEventListener('click',e=>{ const b=e.target.closest('[data-ok]'); if(!b) return; const key=b.dataset.ok; const t=state.tx.find(x=>x.key===key&&!x.isPayment&&!x.isIncome); if(!t) return; state.userRules[key]=Object.assign({},state.userRules[key]||{},{category:t.category,type:t.type,ok:1}); persist(); renderTx(); const left=groupBy(spendRows().filter(x=>!decided(x))).length; toast(left?`Kept. ${left} merchant${left>1?'s':''} left to review.`:'That was the last one. Every merchant is reviewed.'); });
+$('#tx').addEventListener('click',e=>{
+  const ap=e.target.closest('[data-applyall]'); if(ap){ const lc=state.lastChange; const t=findTx(ap.dataset.applyall); if(!lc||!t) return; state.lastChange=null; applyRule(t,lc.patch,false); return; }
+  const tp=e.target.closest('[data-toggle-pay]'); if(tp){ state.showPayments=!state.showPayments; renderTx(); return; }
+  const ne=e.target.closest('[data-note-edit]'); if(ne){ const t=findTx(ne.dataset.noteEdit); if(!t) return; const holder=ne.closest('.note'); const inp=document.createElement('input'); inp.value=state.notes[t.id]||''; inp.placeholder='What was this? e.g. desk for the office'; inp.setAttribute('aria-label','Note for '+t.desc); inp.maxLength=200; holder.innerHTML=''; holder.appendChild(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) state.notes[t.id]=v; else delete state.notes[t.id]; persist(); renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape'){ finished=true; renderTx(); } }); inp.addEventListener('blur',done); return; }
+  const b=e.target.closest('[data-ok]'); if(!b) return; const key=b.dataset.ok; const t=state.tx.find(x=>x.key===key&&!x.isPayment&&!x.isIncome); if(!t) return; state.userRules[key]=Object.assign({},state.userRules[key]||{},{category:t.category,type:t.type,ok:1}); persist(); renderTx(); const left=groupBy(spendRows().filter(x=>!decided(x))).length; toast(left?`Kept. ${left} merchant${left>1?'s':''} left to review.`:'That was the last one. Every merchant is reviewed.'); });
 $('#search').addEventListener('input',e=>{ state.search=e.target.value; state.shown=60; renderTx(); });
 $('#more').addEventListener('click',e=>{ if(e.target.id==='more-btn'){ state.shown+=100; renderTx(); } });
 function findTx(id){ return state.tx.find(t=>t.id===id); }
 function applyRule(t,patch,onlyThis){ const same=state.tx.filter(x=>x.key===t.key&&!x.isPayment&&!x.isIncome);
   if(onlyThis||same.length<2){ state.txOverrides[t.id]=Object.assign({},state.txOverrides[t.id]||{},patch); }
   else { state.userRules[t.key]=Object.assign({},state.userRules[t.key]||{},patch); same.forEach(x=>{ if(state.txOverrides[x.id]){ Object.keys(patch).forEach(k=>delete state.txOverrides[x.id][k]); } }); persist(); }
-  categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrend(); renderTx(); renderDownloads();
+  if(!onlyThis) state.lastChange=null;
+  categorizeAll(); assignColors(); renderHero(); renderUnc(); renderCategories(); renderTrend(); renderTx(); renderDownloads();
   if(!onlyThis&&same.length>=2){ const label=patch.category?`Moved ${same.length} “${t.key}” transactions to ${patch.category}`:`Marked ${same.length} “${t.key}” transactions as ${patch.type}`; toast(label,'Only this one',()=>{ const r=state.userRules[t.key]; if(r){ Object.keys(patch).forEach(k=>delete r[k]); if(!Object.keys(r).length) delete state.userRules[t.key]; } persist(); applyRule(t,patch,true); }); } }
-$('#tx').addEventListener('change',e=>{ const sel=e.target.closest('select[data-id]'); if(sel){ const t=findTx(sel.dataset.id); if(!t) return; if(sel.value==='__new'){ const inp=document.createElement('input'); inp.className='newcat'; inp.placeholder='Category name'; inp.setAttribute('aria-label','New category name'); sel.replaceWith(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) applyRule(t,{category:v},false); else renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape') renderTx(); }); inp.addEventListener('blur',done); return; } applyRule(t,{category:sel.value},false); return; }
-  const cb=e.target.closest('input[data-biz]'); if(cb){ const t=findTx(cb.dataset.biz); if(t) applyRule(t,{type:cb.checked?'business':'personal'},false); return; }
+function changeOne(t,patch){ const n=state.tx.filter(x=>x.key===t.key&&!x.isPayment&&!x.isIncome).length; state.lastChange=n>1?{id:t.id,key:t.key,patch,n}:null; applyRule(t,patch,true); if(n<=1) toast(patch.category?`Moved to ${patch.category}`:`Marked as ${patch.type}`); }
+function newCategoryInput(sel,onDone){ const inp=document.createElement('input'); inp.className='newcat'; inp.placeholder='Category name'; inp.setAttribute('aria-label','New category name'); sel.replaceWith(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) onDone(v); else renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape') renderTx(); }); inp.addEventListener('blur',done); }
+$('#tx').addEventListener('change',e=>{ const sel=e.target.closest('select[data-id]'); if(sel){ const t=findTx(sel.dataset.id); if(!t) return; if(sel.value==='__new'){ newCategoryInput(sel,v=>changeOne(t,{category:v})); return; } changeOne(t,{category:sel.value}); return; }
+  const cb=e.target.closest('input[data-biz]'); if(cb){ const t=findTx(cb.dataset.biz); if(t) changeOne(t,{type:cb.checked?'business':'personal'}); return; }
   const firstOf=key=>state.tx.find(x=>x.key===key&&!x.isPayment&&!x.isIncome);
   const gs=e.target.closest('select[data-key]'); if(gs){ const t=firstOf(gs.dataset.key); if(!t) return; if(gs.value==='__new'){ const inp=document.createElement('input'); inp.className='newcat'; inp.placeholder='Category name'; inp.setAttribute('aria-label','New category name'); gs.replaceWith(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) applyRule(t,{category:v},false); else renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape') renderTx(); }); inp.addEventListener('blur',done); return; } applyRule(t,{category:gs.value},false); return; }
   const gb=e.target.closest('input[data-bizkey]'); if(gb){ const t=firstOf(gb.dataset.bizkey); if(t) applyRule(t,{type:gb.checked?'business':'personal'},false); } });
 
 /* ---------- downloads ---------- */
-function categorizedCSV(){ const rows=state.tx.slice().sort((a,b)=>a.date-b.date); const out=[csvLine(['Date','Bank','Description','Amount','Category','Type','Merchant','Payment','Reviewed'])]; rows.forEach(t=>out.push(csvLine([ymd(t.date),BANK_NAMES[t.bank]||t.bank,t.desc,t.amount.toFixed(2),t.category,t.isPayment?'':t.type,t.key,t.isPayment?'yes':'no',t.isPayment?'':(decided(t)?'yes':'no')]))); return out.join('\r\n')+'\r\n'; }
-function summaryCSV(){ const rows=spendRows().filter(scopeFilter); const months=[...new Set(rows.map(t=>t.month))].sort(); const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); const cats=Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-  const out=[csvLine(['Month',...cats,'TOTAL'])]; const colT={}; months.forEach(m=>{ const line=[monthLabel(m)]; let tot=0; cats.forEach(c=>{ const v=rows.filter(t=>t.month===m&&t.category===c).reduce((a,t)=>a+t.amount,0); colT[c]=(colT[c]||0)+v; tot+=v; line.push(v.toFixed(2)); }); line.push(tot.toFixed(2)); out.push(csvLine(line)); });
-  const grand=cats.reduce((a,c)=>a+(colT[c]||0),0); out.push(csvLine(['TOTAL',...cats.map(c=>(colT[c]||0).toFixed(2)),grand.toFixed(2)])); const n=Math.max(1,months.length); out.push(csvLine(['MONTHLY AVG',...cats.map(c=>((colT[c]||0)/n).toFixed(2)),(grand/n).toFixed(2)])); return out.join('\r\n')+'\r\n'; }
-function nativeDownload(name,data){ try{ const blob=new Blob([data],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); toast('Saved '+name); }catch(e){ toast('Could not save the file. Use Copy instead.'); } }
+const round2=x=>Math.round(x*100)/100;
+function txTable(){ const rows=state.tx.slice().sort((a,b)=>a.date-b.date); return [['Date','Month','Bank','Description','Amount','Category','Type','Merchant','Note','Payment','Reviewed'],...rows.map(t=>[ymd(t.date),monthLabel(t.month),BANK_NAMES[t.bank]||t.bank,t.desc,round2(t.amount),t.category,t.isPayment?'':t.type,t.key,state.notes[t.id]||'',t.isPayment?'yes':'no',t.isPayment?'':(decided(t)?'yes':'no')])]; }
+function matrixAoa(rows){ const months=[...new Set(rows.map(t=>t.month))].sort(); const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); const cats=Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  const aoa=[['Month',...cats,'TOTAL']]; const colT={}; months.forEach(m=>{ const line=[monthLabel(m)]; let tot=0; cats.forEach(c=>{ const v=round2(rows.filter(t=>t.month===m&&t.category===c).reduce((a,t)=>a+t.amount,0)); colT[c]=(colT[c]||0)+v; tot+=v; line.push(v); }); line.push(round2(tot)); aoa.push(line); });
+  const grand=cats.reduce((a,c)=>a+(colT[c]||0),0); aoa.push(['TOTAL',...cats.map(c=>round2(colT[c]||0)),round2(grand)]); const n=Math.max(1,months.length); aoa.push(['MONTHLY AVG',...cats.map(c=>round2((colT[c]||0)/n)),round2(grand/n)]); return aoa; }
+const aoaToCSV=aoa=>aoa.map(r=>csvLine(r.map(v=>typeof v==='number'?v.toFixed(2):v))).join('\r\n')+'\r\n';
+function categorizedCSV(){ return aoaToCSV(txTable()); }
+function summaryCSV(){ return aoaToCSV(matrixAoa(spendRows().filter(scopeFilter))); }
+function buildWorkbook(){ const X=window.XLSX; const wb=X.utils.book_new(); const add=(name,aoa,widths)=>{ const ws=X.utils.aoa_to_sheet(aoa); if(widths) ws['!cols']=widths.map(w=>({wch:w})); X.utils.book_append_sheet(wb,ws,name); };
+  add('Transactions',txTable(),[11,9,12,44,10,22,10,22,30,8,9]);
+  const per=spendRows().filter(t=>t.type==='personal'), biz=spendRows().filter(t=>t.type==='business');
+  if(per.length) add('Personal by month',matrixAoa(per),[13]); if(biz.length) add('Business by month',matrixAoa(biz),[13]);
+  const nM=Math.max(1,new Set(spendRows().map(t=>t.month)).size); const totals={}; spendRows().forEach(t=>{ const k=t.category+'|'+t.type; totals[k]=(totals[k]||0)+t.amount; });
+  add('Categories',[['Category','Type','Total','Per month'],...Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{ const i=k.lastIndexOf('|'); return [k.slice(0,i),k.slice(i+1),round2(v),round2(v/nM)]; })],[26,10,12,12]);
+  const rec=groupBy(spendRows().filter(t=>state.recurring[t.key])).map(g=>Object.assign(g,state.recurring[g.key])).sort((a,b)=>b.monthly-a.monthly);
+  if(rec.length) add('Recurring',[['Merchant','Category','Type','Per month','Months','Charges'],...rec.map(g=>[g.key,g.tx[0].category,g.tx[0].type,round2(g.monthly),g.months,g.count])],[26,20,10,12,8,8]);
+  return X.write(wb,{bookType:'xlsx',type:'array'}); }
+function nativeDownload(name,data){ try{ const blob=new Blob([data],{type:/\.xlsx$/i.test(name)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); toast('Saved '+name); }catch(e){ toast('Could not save the file. Use Copy instead.'); } }
 function renderDownloads(){ const has=state.tx.length>0; const scopeName=state.scope==='all'?'all':state.scope; const dl=$('#dl');
-  if(state.downloads||state.native){ dl.innerHTML=`<button type="button" class="btn" id="dl-tx" ${has?'':'disabled'}>Download transactions CSV</button><button type="button" class="btn ghost" id="dl-sum" ${has?'':'disabled'}>Download monthly summary (${scopeName})</button>`; $('#dl-note').textContent='The transactions file keeps your categories, so you can open it here again later or in Excel.'; }
+  const xl=!!(window.XLSX&&window.XLSX.utils);
+  if(state.downloads||state.native){ dl.innerHTML=`${xl?`<button type="button" class="btn" id="dl-xlsx" ${has?'':'disabled'}>Download Excel workbook</button>`:''}<button type="button" class="btn${xl?' ghost':''}" id="dl-tx" ${has?'':'disabled'}>Transactions CSV</button><button type="button" class="btn ghost" id="dl-sum" ${has?'':'disabled'}>Monthly summary CSV (${scopeName})</button>`; $('#dl-note').textContent=(xl?'The Excel file has separate sheets: every transaction with your notes, personal by month, business by month, categories, and recurring charges. ':'')+'The transactions CSV keeps your categories and notes, so you can open it here again next month and continue.'; }
   else if(state.downloads===null&&state.dlChecked){ dl.innerHTML=`<button type="button" class="btn" id="cp-tx" ${has?'':'disabled'}>Copy transactions CSV</button><button type="button" class="btn ghost" id="cp-sum" ${has?'':'disabled'}>Copy monthly summary (${scopeName})</button>`; $('#dl-note').textContent='Saving files is not available in this view. Copy the CSV and paste it into a new file ending in .csv.'; }
   else { dl.innerHTML=`<button type="button" class="btn" disabled>Download transactions CSV</button>`; $('#dl-note').textContent='Checking whether files can be saved here…'; } }
 async function saveFile(name,data){ try{ await state.downloads.save({filename:name,data}); toast('Saved '+name); }catch(e){ const code=e&&e.code; if(code==='declined') return; if(code==='rate_limited'){ toast('One download at a time. Try again in a moment.'); return; } toast('Could not save the file here. Use Copy instead.'); state.downloads=null; state.dlChecked=true; renderDownloads(); } }
 async function copyText(text,label){ try{ await navigator.clipboard.writeText(text); toast('Copied '+label+' to the clipboard.'); }catch(e){ const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast('Copied '+label+' to the clipboard.'); }catch(e2){ toast('Copy failed. Select the text and copy it yourself.'); ta.style.left='16px'; return; } ta.remove(); } }
-$('#dl').addEventListener('click',e=>{ const id=e.target.id; const stamp=new Date().toISOString().slice(0,10); const save=state.downloads?saveFile:nativeDownload; if(id==='dl-tx') save(`gastos-transactions-${stamp}.csv`,categorizedCSV()); else if(id==='dl-sum') save(`gastos-summary-${state.scope}-${stamp}.csv`,summaryCSV()); else if(id==='cp-tx') copyText(categorizedCSV(),'the transactions CSV'); else if(id==='cp-sum') copyText(summaryCSV(),'the summary CSV'); });
+$('#dl').addEventListener('click',e=>{ const id=e.target.id; const stamp=new Date().toISOString().slice(0,10); const save=state.downloads?saveFile:nativeDownload; if(id==='dl-xlsx'){ let data; try{ data=buildWorkbook(); }catch(err){ toast('Could not build the Excel file. Use the CSV instead.'); return; } save(`gastos-${stamp}.xlsx`,data); } else if(id==='dl-tx') save(`gastos-transactions-${stamp}.csv`,categorizedCSV()); else if(id==='dl-sum') save(`gastos-summary-${state.scope}-${stamp}.csv`,summaryCSV()); else if(id==='cp-tx') copyText(categorizedCSV(),'the transactions CSV'); else if(id==='cp-sum') copyText(summaryCSV(),'the summary CSV'); });
 
 /* ---------- misc UI ---------- */
 let toastTimer=null;
@@ -576,11 +615,12 @@ function sampleCSV(){ const L=[['09/02/2026','WHOLE FOODS MKT #10234 ANYTOWN US'
   return 'Status,Date,Description,Debit,Credit,Member Name\r\n'+L.map(([d,m,a])=>csvLine(['Cleared',d,m,a>0?a.toFixed(2):'',a<0?a.toFixed(2):'','SAMPLE'])).join('\r\n')+'\r\n'; }
 
 /* ---------- boot ---------- */
-function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick}; }
+function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments}; }
 function start(data){
   data=data||{};
   state.remember=load('gastos.remember',true)!==false; $('#remember').checked=state.remember;
-  if(state.remember){ state.userRules=load('gastos.rules',{})||{}; state.budgets=load('gastos.budgets',{})||{}; }
+  if(state.remember){ state.userRules=load('gastos.rules',{})||{}; state.budgets=load('gastos.budgets',{})||{}; state.notes=load('gastos.notes',{})||{}; }
+  if(data.notes) state.notes=Object.assign({},state.notes,data.notes); if(data.showPayments) state.showPayments=true;
   if(data.bankPick&&BANK_HELP[data.bankPick]) state.bankPick=data.bankPick;
   renderBanks();
   if(Array.isArray(data.files)&&data.files.length){ state.files=data.files.map(f=>({name:f.name,text:f.text,bank:'other',sample:!!f.sample})); state.sample=!!data.sample; state.txOverrides=data.txOverrides||{}; if(data.scope) state.scope=data.scope; if(data.period) state.period=data.period; $('#scope').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scope===state.scope)); }
