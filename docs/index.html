@@ -171,6 +171,23 @@ section + section{border-top:1px solid var(--rule)}
 .pay-note{margin-top:12px;font-size:13px;color:var(--muted)}
 .notice.unc{margin-top:16px;justify-content:space-between}
 .notice.unc b{color:var(--ink)}
+.tripform{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;padding:12px;background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius)}
+.tripform input,.tripform select{width:100%;border:1px solid var(--rule-2);border-radius:6px;padding:7px 8px;background:var(--surface);font-size:14px}
+.tripform label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.tripform .row{grid-column:1 / -1;display:flex;gap:8px;flex-wrap:wrap}
+.tripform .full{grid-column:1 / -1}
+.tripcard{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:14px;margin-top:10px}
+.tripcard .head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.tripcard .fig{font-size:28px;font-weight:600;letter-spacing:-.01em}
+.tripcard .meta{font-size:13px;color:var(--ink-2)}
+.tripcard .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.type-tag{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;background:var(--accent-soft);color:var(--accent);vertical-align:middle}
+.type-tag.biz{background:var(--good-soft);color:var(--good-text)}
+.tripcats{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:1fr;gap:6px}
+@media (min-width:560px){.tripcats{grid-template-columns:1fr 1fr}}
+.tripcats li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:13px}
+.tripcats .bar{margin:0}
+.tx select.trip{max-width:150px}
 .empty{color:var(--muted);padding:14px 0}
 
 /* export */
@@ -231,6 +248,20 @@ section + section{border-top:1px solid var(--rule)}
 <section id="categories">
   <div class="sec-head"><h2>Where it went <small id="cat-count"></small></h2><button class="link" id="clear-cat" type="button" hidden>Show all transactions</button></div>
   <ul class="cats" id="cats"></ul>
+</section>
+
+<section id="trips-sec">
+  <div class="sec-head"><h2>Trips <small id="trip-count"></small></h2><button class="link" id="trip-add" type="button">Add a trip</button></div>
+  <p class="muted" style="font-size:13px;margin-bottom:10px">Give a trip a name and its dates, and everything you spent on those days gets its own tab: flights, hotel, food, clothes. Mark a trip as business and its spending counts as business.</p>
+  <form class="tripform" id="trip-form" hidden>
+    <label class="full">Trip name<input id="trip-name" placeholder="Madrid, New Orleans conference…" required maxlength="40"></label>
+    <label>From<input type="date" id="trip-start" required></label>
+    <label>To<input type="date" id="trip-end" required></label>
+    <label class="full">Kind<select id="trip-type"><option value="personal">Personal trip</option><option value="business">Business trip</option></select></label>
+    <div class="row"><button class="btn small" type="submit" id="trip-save">Save trip</button><button class="btn ghost small" type="button" id="trip-cancel">Cancel</button></div>
+  </form>
+  <div class="periods" id="trip-tabs"></div>
+  <div id="trip-detail"></div>
 </section>
 
 <section id="trend-sec">
@@ -370,7 +401,7 @@ function detectBank(h){ const has=n=>h.includes(n);
   if(has('date')&&has('description')&&has('amount')&&(has('card member')||has('extended details')||h.length<=3)) return 'amex';
   return 'other'; }
 function mapCols(h){ const find=(...c)=>{ for(const n of c){ const i=h.indexOf(n); if(i>=0) return i; } for(const n of c){ const i=h.findIndex(x=>x.includes(n)); if(i>=0) return i; } return -1; };
-  return { date:find('transaction date','trans. date','date','posted date','post date'), desc:find('description','full description','merchant name','payee','merchant','memo','name'), amount:find('amount'), debit:find('debit'), credit:find('credit'), category:find('category'), type:find('type','transaction type'), bank:find('bank'), payment:find('payment'), reviewed:find('reviewed'), note:find('note') }; }
+  return { date:find('transaction date','trans. date','date','posted date','post date'), desc:find('description','full description','merchant name','payee','merchant','memo','name'), amount:find('amount'), debit:find('debit'), credit:find('credit'), category:find('category'), type:find('type','transaction type'), bank:find('bank'), payment:find('payment'), reviewed:find('reviewed'), note:find('note'), trip:find('trip') }; }
 function parseStatement(name,text){
   const rows=parseCSV(text); let hi=findHeader(rows); let bank, cols, body, headers;
   if(hi<0){ if(rows.length&&rows[0].length===5&&parseDate(rows[0][0])){ bank='wells'; cols={date:0,amount:1,desc:4,debit:-1,credit:-1,category:-1,type:-1,bank:-1,payment:-1}; body=rows; headers=[]; }
@@ -393,15 +424,18 @@ function parseStatement(name,text){
     let isPayment=PAY_RX.test(desc)||(bank==='chase'&&/^payment$/i.test(typeCol))||(bank==='gastos'&&/^yes$/i.test(r[cols.payment]||''));
     const isIncome=isBankAccount&&amount<0&&!isPayment;
     const t={id:'',date:d,month:ymd(d).slice(0,7),year:String(d.getFullYear()),desc,key:merchantKey(desc),amount,bank:bank==='gastos'&&cols.bank>=0?(r[cols.bank]||'').trim()||'CSV':bank,bankCat,isPayment,isIncome,fileCat:'',fileType:''};
-    if(bank==='gastos'){ t.fileCat=bankCat; t.fileType=/business/i.test(typeCol)?'business':'personal'; t.fileReviewed=cols.reviewed>=0&&/^yes$/i.test(r[cols.reviewed]||''); t.fileNote=cols.note>=0?(r[cols.note]||'').trim():''; }
+    if(bank==='gastos'){ t.fileCat=bankCat; t.fileType=/business/i.test(typeCol)?'business':'personal'; t.fileReviewed=cols.reviewed>=0&&/^yes$/i.test(r[cols.reviewed]||''); t.fileNote=cols.note>=0?(r[cols.note]||'').trim():''; t.fileTrip=cols.trip>=0?(r[cols.trip]||'').trim():''; }
     tx.push(t); });
   return {ok:true,bank,tx}; }
 
 /* ---------- state ---------- */
-const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{},notes:{},showPayments:false,lastChange:null};
+const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{},notes:{},showPayments:false,lastChange:null,trips:[],tripOf:{},selTrip:null,filterTrip:null,editTrip:null};
+const TRIP_SENSITIVE=new Set(['Dining Out','Groceries','Gas','Rideshare & Transit','Parking & Tolls','Flights','Lodging','Travel Extras','Entertainment','Clothes','Shopping','Beauty & Personal Care','Laundry','Uncategorized','Car']);
+const ONLINE_RX=/AMAZON|AMZN|SHEIN|TEMU|TIKTOK|EBAY|ETSY|WALMART\.COM|TARGET\.COM/i;
+const tripById=id=>state.trips.find(x=>x.id===id);
 function load(key,def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; } }
-function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); }catch(e){} }
-function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes and budgets on this device.'); }
+function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); localStorage.setItem('gastos.trips',JSON.stringify({trips:state.trips,tripOf:state.tripOf})); }catch(e){} }
+function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.trips=[]; state.tripOf={}; state.selTrip=null; state.filterTrip=null; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes, trips and budgets on this device.'); }
 
 /* ---------- categorize ---------- */
 function categorizeAll(){
@@ -413,7 +447,10 @@ function categorizeAll(){
     if(t.fileCat){ cat=t.fileCat; type=t.fileType||type; }
     const ur=state.userRules[t.key]; if(ur){ if(ur.category) cat=ur.category; if(ur.type) type=ur.type; }
     const ov=state.txOverrides[t.id]; if(ov){ if(ov.category) cat=ov.category; if(ov.type) type=ov.type; }
-    t.category=cat; t.type=type; });
+    let trip=''; const ex=state.tripOf[t.id]; if(ex!==undefined){ trip=ex&&tripById(ex)?ex:''; }
+    else if(state.trips.length&&TRIP_SENSITIVE.has(cat)&&!state.recurring[t.key]&&!ONLINE_RX.test(t.desc)){ const d=ymd(t.date); const tr=state.trips.find(x=>x.start<=d&&d<=x.end); if(tr) trip=tr.id; }
+    if(trip){ const tr=tripById(trip); if(tr.type==='business'&&TRIP_SENSITIVE.has(cat)&&!(ov&&ov.type)) type='business'; }
+    t.category=cat; t.type=type; t.trip=trip; });
 }
 function allCategories(){ const s=new Set(CATEGORIES); state.tx.forEach(t=>{ if(t.category&&t.category!=='Card Payment') s.add(t.category); }); Object.values(state.userRules).forEach(r=>{ if(r.category) s.add(r.category); }); return [...s].sort((a,b)=>a==='Uncategorized'?1:b==='Uncategorized'?-1:a.localeCompare(b)); }
 function colorFor(cat){ if(state.colors[cat]) return state.colors[cat]; const used=new Set(Object.values(state.colors)); for(let i=1;i<=8;i++){ const c='var(--s'+i+')'; if(!used.has(c)){ state.colors[cat]=c; return c; } } return 'var(--s-other)'; }
@@ -433,13 +470,47 @@ function rebuild(){
     parsed.tx.forEach(t=>{ if(f.sample) t.bank='sample'; const base=t.bank+'|'+ymd(t.date)+'|'+t.desc+'|'+t.amount.toFixed(2); const n=(counts.get(base)||0); counts.set(base,n+1); const key=base+'|'+n; if(seen.has(key)) return; seen.set(key,1); t.id=key; if(t.fileNote&&!state.notes[t.id]) state.notes[t.id]=t.fileNote; state.tx.push(t); f.count++; });
     const ds=parsed.tx.map(t=>t.date); if(ds.length){ f.from=new Date(Math.min(...ds)); f.to=new Date(Math.max(...ds)); } });
   state.tx.sort((a,b)=>b.date-a.date);
-  categorizeAll(); assignColors(); computeRecurring();
+  importFromFiles();
+  computeRecurring(); categorizeAll(); assignColors();
   const periods=new Set(['all']); state.tx.forEach(t=>{periods.add('Y'+t.year); periods.add('M'+t.month);});
   if(!periods.has(state.period)) state.period='all';
   if(state.filterCat&&!state.tx.some(t=>t.category===state.filterCat)) state.filterCat=null;
+  if(state.filterTrip&&!tripById(state.filterTrip)) state.filterTrip=null;
+  if(!state.selTrip||!tripById(state.selTrip)) state.selTrip=state.trips.length?state.trips[0].id:null;
   renderAll();
 }
-function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrend(); renderTx(); renderDownloads(); }
+function importFromFiles(){ let changed=false;
+  /* trips named in a Gastos file become trips here */
+  const byTrip={}; state.tx.forEach(t=>{ if(t.fileTrip){ (byTrip[t.fileTrip]=byTrip[t.fileTrip]||[]).push(t); } });
+  Object.entries(byTrip).forEach(([name,arr])=>{ let trip=state.trips.find(x=>x.name.toLowerCase()===name.toLowerCase()); if(!trip){ const ds=arr.map(t=>t.date.getTime()); const biz=arr.filter(t=>t.fileType==='business').length; trip={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,start:ymd(new Date(Math.min(...ds))),end:ymd(new Date(Math.max(...ds))),type:biz>arr.length/2?'business':'personal'}; state.trips.push(trip); changed=true; } arr.forEach(t=>{ if(state.tripOf[t.id]===undefined){ state.tripOf[t.id]=trip.id; changed=true; } }); });
+  /* reviewed merchants in a Gastos file become remembered rules */
+  const byKey={}; state.tx.forEach(t=>{ if(t.fileReviewed&&t.fileCat&&!t.isPayment) (byKey[t.key]=byKey[t.key]||[]).push(t); });
+  Object.entries(byKey).forEach(([key,arr])=>{ if(state.userRules[key]) return; const cat=arr[0].fileCat, ty=arr[0].fileType||'personal'; if(arr.every(t=>t.fileCat===cat&&(t.fileType||'personal')===ty)){ state.userRules[key]={category:cat,type:ty,ok:1}; changed=true; } });
+  if(changed) persist(); }
+function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); }
+/* ---------- trips ---------- */
+function tripRows(id){ return spendRows().filter(t=>t.trip===id); }
+function tripDays(tr){ return Math.max(1,Math.round((new Date(tr.end)-new Date(tr.start))/86400000)+1); }
+function fmtRange(tr){ const a=new Date(tr.start), b=new Date(tr.end); return `${MONTHS[a.getUTCMonth()]} ${a.getUTCDate()} to ${MONTHS[b.getUTCMonth()]} ${b.getUTCDate()}, ${b.getUTCFullYear()}`; }
+function renderTrips(){ const tabs=$('#trip-tabs'), det=$('#trip-detail'); $('#trip-count').textContent=state.trips.length?state.trips.length+(state.trips.length>1?' trips':' trip'):'';
+  if(!state.trips.length){ tabs.innerHTML=''; det.innerHTML='<p class="empty">No trips yet. Add one and its spending gets its own tab.</p>'; return; }
+  tabs.innerHTML=state.trips.map(tr=>`<button type="button" data-triptab="${tr.id}" aria-pressed="${state.selTrip===tr.id}">${esc(tr.name)}</button>`).join('');
+  const tr=tripById(state.selTrip)||state.trips[0]; state.selTrip=tr.id; const rows=tripRows(tr.id); const total=rows.reduce((a,t)=>a+t.amount,0); const days=tripDays(tr);
+  const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); const list=Object.entries(totals).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...list.map(e=>e[1]));
+  det.innerHTML=`<div class="tripcard"><div class="head"><div><h3 style="font-size:18px">${esc(tr.name)} <span class="type-tag${tr.type==='business'?' biz':''}">${tr.type}</span></h3><div class="meta">${fmtRange(tr)} · ${days} day${days>1?'s':''} · ${rows.length} transaction${rows.length!==1?'s':''}</div></div><div style="text-align:right"><div class="fig">${fmt0(total)}</div><div class="meta">${fmt0(total/days)} a day</div></div></div>
+    ${list.length?`<ul class="tripcats">${list.map(([c,a])=>`<li><span class="sw" style="background:${colorFor(c)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c)}</span><span class="num" style="font-weight:600">${fmt0(a)}</span><span></span><div class="bar" style="grid-column:2 / span 2"><i style="width:${Math.max(0,a)/max*100}%;background:${colorFor(c)}"></i></div></li>`).join('')}</ul>`:'<p class="empty">Nothing is assigned to this trip yet. Check the dates, or set the trip on a transaction below.</p>'}
+    <div class="actions"><button type="button" class="btn small" data-tripshow="${tr.id}">Show its transactions</button><button type="button" class="btn ghost small" data-tripedit="${tr.id}">Edit</button><button type="button" class="btn ghost small" data-tripdel="${tr.id}">Remove trip</button></div>
+    <p class="muted" style="font-size:12px;margin-top:8px">Flights or hotels paid before the trip started are not picked up by the dates. Find them in the list below and choose this trip on them.${tr.type==='business'?' Because this is a business trip, its food, travel and lodging count as business.':''}</p></div>`; }
+$('#trip-tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-triptab]'); if(!b) return; state.selTrip=b.dataset.triptab; renderTrips(); });
+$('#trip-detail').addEventListener('click',e=>{ const s=e.target.closest('[data-tripshow]'); if(s){ state.filterTrip=s.dataset.tripshow; state.filterCat=null; state.view='all'; state.shown=60; renderCategories(); renderTx(); $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  const ed=e.target.closest('[data-tripedit]'); if(ed){ openTripForm(tripById(ed.dataset.tripedit)); return; }
+  const dl=e.target.closest('[data-tripdel]'); if(dl){ const id=dl.dataset.tripdel; const tr=tripById(id); if(!tr) return; if(dl.dataset.armed!=='1'){ dl.dataset.armed='1'; dl.textContent='Tap again to remove '+tr.name; return; } state.trips=state.trips.filter(x=>x.id!==id); Object.keys(state.tripOf).forEach(k=>{ if(state.tripOf[k]===id) delete state.tripOf[k]; }); if(state.filterTrip===id) state.filterTrip=null; state.selTrip=null; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); toast('Removed '+tr.name); } });
+function openTripForm(tr){ state.editTrip=tr?tr.id:null; const f=$('#trip-form'); f.hidden=false; $('#trip-name').value=tr?tr.name:''; $('#trip-start').value=tr?tr.start:''; $('#trip-end').value=tr?tr.end:''; $('#trip-type').value=tr?tr.type:'personal'; $('#trip-save').textContent=tr?'Save changes':'Save trip'; $('#trip-name').focus(); }
+$('#trip-add').addEventListener('click',()=>openTripForm(null));
+$('#trip-cancel').addEventListener('click',()=>{ $('#trip-form').hidden=true; state.editTrip=null; });
+$('#trip-form').addEventListener('submit',e=>{ e.preventDefault(); const name=$('#trip-name').value.trim(), start=$('#trip-start').value, end=$('#trip-end').value, type=$('#trip-type').value; if(!name||!start||!end) return; if(end<start){ toast('The end date is before the start date.'); return; }
+  let tr=state.editTrip?tripById(state.editTrip):null; if(tr){ Object.assign(tr,{name,start,end,type}); } else { tr={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,start,end,type}; state.trips.push(tr); }
+  state.trips.sort((a,b)=>a.start<b.start?-1:1); state.selTrip=tr.id; state.editTrip=null; $('#trip-form').hidden=true; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const n=tripRows(tr.id).length; toast(`${tr.name}: ${n} transaction${n!==1?'s':''} on those dates.`); });
 function renderUnc(){ const el=$('#unc-note'); const rows=spendRows().filter(t=>t.category==='Uncategorized'); if(!rows.length){ el.hidden=true; return; } const total=rows.reduce((a,t)=>a+t.amount,0); const n=new Set(rows.map(t=>t.key)).size;
   el.innerHTML=`<span><b>${rows.length}</b> transaction${rows.length>1?'s':''} (${fmt0(total)}) from ${n} merchant${n>1?'s':''} still have no category.</span><button type="button" class="btn small" id="unc-go">Sort them now</button>`; el.hidden=false; }
 $('#unc-note').addEventListener('click',e=>{ if(e.target.id!=='unc-go') return; state.view='all'; state.filterCat='Uncategorized'; state.search=''; $('#search').value=''; state.shown=60; renderCategories(); renderTx(); $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); });
@@ -474,13 +545,13 @@ function renderHero(){ const rows=spendRows().filter(scopeFilter).filter(inPerio
 function renderCategories(){ const rows=spendRows().filter(scopeFilter).filter(inPeriod); const nM=monthsInPeriod(); const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount);
   const list=Object.entries(totals).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...list.map(e=>e[1]));
   $('#cat-count').textContent=list.length?list.length+' categories':'';
-  $('#clear-cat').hidden=!state.filterCat;
+  $('#clear-cat').hidden=!(state.filterCat||state.filterTrip);
   if(!list.length){ $('#cats').innerHTML='<li class="empty">Nothing to show yet.</li>'; return; }
   $('#cats').innerHTML=list.map(([cat,amt])=>{ const avg=amt/nM; const b=+state.budgets[cat]||0; let status=''; if(b>0){ const over=avg-b; status=over>0?`<span class="chip bad">▲ ${fmt0(over)}/mo over budget</span>`:`<span class="chip good">✓ ${fmt0(-over)}/mo under</span>`; }
     return `<li class="cat${state.filterCat===cat?' on':''}"><button type="button" class="cat-main" data-cat="${esc(cat)}" aria-pressed="${state.filterCat===cat}"><span class="sw" style="background:${colorFor(cat)}"></span><span class="cat-name">${esc(cat)}</span><span class="cat-amt num">${fmt0(amt)}</span></button><div class="bar"><i style="width:${Math.max(0,amt)/max*100}%;background:${colorFor(cat)}"></i></div><div class="cat-meta"><span class="num">${fmt0(avg)}/mo</span><label>Budget $<input type="number" inputmode="decimal" min="0" step="10" placeholder="—" value="${b||''}" data-budget="${esc(cat)}" id="budget-${esc(cat.replace(/\W+/g,'-'))}" aria-label="Monthly budget for ${esc(cat)}"></label>${status}</div></li>`; }).join(''); }
 $('#cats').addEventListener('click',e=>{ const b=e.target.closest('[data-cat]'); if(!b) return; state.filterCat=state.filterCat===b.dataset.cat?null:b.dataset.cat; state.shown=60; renderCategories(); renderTx(); if(state.filterCat) $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); });
 $('#cats').addEventListener('change',e=>{ const i=e.target.closest('[data-budget]'); if(!i) return; const v=+i.value; if(v>0) state.budgets[i.dataset.budget]=v; else delete state.budgets[i.dataset.budget]; persist(); renderCategories(); });
-$('#clear-cat').addEventListener('click',()=>{ state.filterCat=null; renderCategories(); renderTx(); });
+$('#clear-cat').addEventListener('click',()=>{ state.filterCat=null; state.filterTrip=null; renderCategories(); renderTx(); });
 
 /* ---------- trend chart ---------- */
 let tipPinned=false;
@@ -513,7 +584,7 @@ function renderTrend(){ const el=$('#trend'); const rows=spendRows().filter(scop
 document.addEventListener('click',e=>{ if(!e.target.closest('#trend')){ tipPinned=false; const t=$('#tip'); if(t) t.hidden=true; } });
 
 /* ---------- transactions ---------- */
-function txRows(){ return state.tx.filter(t=>(state.showPayments||!t.isPayment)&&(state.scope==='all'||t.isPayment||t.type===state.scope)&&inPeriod(t)&&(!state.filterCat||t.category===state.filterCat)&&matchesSearch(t)); }
+function txRows(){ return state.tx.filter(t=>(state.showPayments||!t.isPayment)&&(state.scope==='all'||t.isPayment||t.type===state.scope)&&(state.filterTrip?t.trip===state.filterTrip:inPeriod(t))&&(!state.filterCat||t.category===state.filterCat)&&matchesSearch(t)); }
 function hiddenPayments(){ return state.tx.filter(t=>t.isPayment&&inPeriod(t)); }
 function decided(t){ return !!(state.userRules[t.key]||state.txOverrides[t.id]||t.fileReviewed); }
 function computeRecurring(){ const by={}; spendRows().forEach(t=>{ (by[t.key]=by[t.key]||[]).push(t); }); state.recurring={};
@@ -541,13 +612,14 @@ function renderTx(){ const cats=allCategories(); const opts=cats.map(c=>`<option
     const left=groups.length-shown.length; $('#more').innerHTML=left>0?`<button type="button" class="btn ghost small" id="more-btn">Show ${Math.min(left,100)} more of ${left}</button>`:''; return; }
   if(state.view==='recurring'){ const groups=recurringGroups(); const monthly=groups.reduce((a,g)=>a+g.monthly,0); $('#tx-count').textContent=groups.length?`${groups.length} recurring · ${fmt0(monthly)} a month`:''; $('#insight').hidden=true;
     $('#tx').innerHTML=groups.length?groups.map(g=>groupRow(g,'recurring',opts)).join(''):'<li class="empty">Nothing repeats every month yet. This needs at least three months of statements.</li>'; $('#more').innerHTML=''; return; }
-  const rows=txRows(); $('#tx-count').textContent=rows.length?rows.length+(state.filterCat?' in '+state.filterCat:''):''; renderInsight(rows);
+  const rows=txRows(); const ft=state.filterTrip?tripById(state.filterTrip):null; $('#tx-count').textContent=rows.length?rows.length+(ft?' on '+ft.name:'')+(state.filterCat?' in '+state.filterCat:''):''; renderInsight(rows);
+  const tripSel=t=>state.trips.length?`<select class="trip" data-trip="${esc(t.id)}" aria-label="Trip for ${esc(t.desc)}"><option value="">No trip</option>${state.trips.map(tr=>`<option value="${tr.id}"${t.trip===tr.id?' selected':''}>${esc(tr.name)}</option>`).join('')}</select>`:'';
   const shown=rows.slice(0,state.shown);
   $('#tx').innerHTML=shown.length?shown.map(t=>{ if(t.isPayment) return `<li class="pay"><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num neg">${fmt(t.amount)}</span><span class="m">${esc(t.desc)}</span><span class="muted" style="font-size:12px">Payment to the card, not spending</span></li>`;
     const rec=state.recurring[t.key]?' <span class="chip rec">recurring</span>':''; const hint=t.bankCat&&!/payment|credit/i.test(t.bankCat)?` <span class="hint-bank">· bank says ${esc(t.bankCat)}</span>`:'';
     const note=state.notes[t.id]; const noteRow=note?`<span class="note"><span class="txt">${esc(note)}</span><button type="button" class="link" data-note-edit="${esc(t.id)}">Edit</button></span>`:`<span class="note"><button type="button" class="link" data-note-edit="${esc(t.id)}">Add a note</button></span>`;
     const lc=state.lastChange; const strip=lc&&lc.id===t.id?`<span class="applyall">Changed this one.<button type="button" class="btn small" data-applyall="${esc(t.id)}">Apply to all ${lc.n} from ${esc(t.key)}</button></span>`:'';
-    return `<li><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num${t.amount<0?' neg':''}">${fmt(t.amount)}</span><span class="m" title="${esc(t.desc)}">${esc(t.desc)}${rec}${hint}</span><span></span><span class="row2">${selectFor('data-id',t.id,t.category,opts,t.desc)}<label class="biz"><input type="checkbox" data-biz="${esc(t.id)}" ${t.type==='business'?'checked':''}> Business</label></span>${noteRow}${strip}</li>`; }).join(''):'<li class="empty">No transactions match.</li>';
+    return `<li><span class="d">${ymd(t.date)} · ${esc(BANK_NAMES[t.bank]||t.bank)}</span><span class="a num${t.amount<0?' neg':''}">${fmt(t.amount)}</span><span class="m" title="${esc(t.desc)}">${esc(t.desc)}${rec}${hint}</span><span></span><span class="row2">${selectFor('data-id',t.id,t.category,opts,t.desc)}<label class="biz"><input type="checkbox" data-biz="${esc(t.id)}" ${t.type==='business'?'checked':''}> Business</label>${tripSel(t)}</span>${noteRow}${strip}</li>`; }).join(''):'<li class="empty">No transactions match.</li>';
   const left=rows.length-shown.length; let more=left>0?`<button type="button" class="btn ghost small" id="more-btn">Show ${Math.min(left,100)} more of ${left}</button>`:'';
   const pays=hiddenPayments(); if(pays.length){ const sum=pays.reduce((a,t)=>a-t.amount,0); more+=`<p class="pay-note">${state.showPayments?'Showing':'Hiding'} ${pays.length} payment${pays.length>1?'s':''} you made to the card (${fmt0(sum)}). Those are you paying the bill, not spending, so they are never counted. <button type="button" class="link" data-toggle-pay="1">${state.showPayments?'Hide them':'Show them'}</button></p>`; }
   $('#more').innerHTML=more; }
@@ -572,11 +644,12 @@ $('#tx').addEventListener('change',e=>{ const sel=e.target.closest('select[data-
   const cb=e.target.closest('input[data-biz]'); if(cb){ const t=findTx(cb.dataset.biz); if(t) changeOne(t,{type:cb.checked?'business':'personal'}); return; }
   const firstOf=key=>state.tx.find(x=>x.key===key&&!x.isPayment&&!x.isIncome);
   const gs=e.target.closest('select[data-key]'); if(gs){ const t=firstOf(gs.dataset.key); if(!t) return; if(gs.value==='__new'){ const inp=document.createElement('input'); inp.className='newcat'; inp.placeholder='Category name'; inp.setAttribute('aria-label','New category name'); gs.replaceWith(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) applyRule(t,{category:v},false); else renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape') renderTx(); }); inp.addEventListener('blur',done); return; } applyRule(t,{category:gs.value},false); return; }
-  const gb=e.target.closest('input[data-bizkey]'); if(gb){ const t=firstOf(gb.dataset.bizkey); if(t) applyRule(t,{type:gb.checked?'business':'personal'},false); } });
+  const gb=e.target.closest('input[data-bizkey]'); if(gb){ const t=firstOf(gb.dataset.bizkey); if(t) applyRule(t,{type:gb.checked?'business':'personal'},false); return; }
+  const ts=e.target.closest('select[data-trip]'); if(ts){ const t=findTx(ts.dataset.trip); if(!t) return; state.tripOf[t.id]=ts.value; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const tr=tripById(ts.value); toast(tr?`Added to ${tr.name}`:'Removed from the trip'); } });
 
 /* ---------- downloads ---------- */
 const round2=x=>Math.round(x*100)/100;
-function txTable(){ const rows=state.tx.slice().sort((a,b)=>a.date-b.date); return [['Date','Month','Bank','Description','Amount','Category','Type','Merchant','Note','Payment','Reviewed'],...rows.map(t=>[ymd(t.date),monthLabel(t.month),BANK_NAMES[t.bank]||t.bank,t.desc,round2(t.amount),t.category,t.isPayment?'':t.type,t.key,state.notes[t.id]||'',t.isPayment?'yes':'no',t.isPayment?'':(decided(t)?'yes':'no')])]; }
+function txTable(){ const rows=state.tx.slice().sort((a,b)=>a.date-b.date); return [['Date','Month','Bank','Description','Amount','Category','Type','Merchant','Trip','Note','Payment','Reviewed'],...rows.map(t=>[ymd(t.date),monthLabel(t.month),BANK_NAMES[t.bank]||t.bank,t.desc,round2(t.amount),t.category,t.isPayment?'':t.type,t.key,t.trip&&tripById(t.trip)?tripById(t.trip).name:'',state.notes[t.id]||'',t.isPayment?'yes':'no',t.isPayment?'':(decided(t)?'yes':'no')])]; }
 function matrixAoa(rows){ const months=[...new Set(rows.map(t=>t.month))].sort(); const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); const cats=Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
   const aoa=[['Month',...cats,'TOTAL']]; const colT={}; months.forEach(m=>{ const line=[monthLabel(m)]; let tot=0; cats.forEach(c=>{ const v=round2(rows.filter(t=>t.month===m&&t.category===c).reduce((a,t)=>a+t.amount,0)); colT[c]=(colT[c]||0)+v; tot+=v; line.push(v); }); line.push(round2(tot)); aoa.push(line); });
   const grand=cats.reduce((a,c)=>a+(colT[c]||0),0); aoa.push(['TOTAL',...cats.map(c=>round2(colT[c]||0)),round2(grand)]); const n=Math.max(1,months.length); aoa.push(['MONTHLY AVG',...cats.map(c=>round2((colT[c]||0)/n)),round2(grand/n)]); return aoa; }
@@ -629,9 +702,24 @@ async function buildWorkbook(){ const E=window.ExcelJS; const wb=new E.Workbook(
     for(let c=2;c<=8;c++) d.getCell(r,c).border={bottom:thin}; const sw=d.getCell(r,2); sw.border={bottom:thin,left:{style:'thick',color:argb(hexFor(cat))}}; });
   if(catList.length){ d.addConditionalFormatting({ref:`C${h0+1}:C${h0+catList.length}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]}); }
   /* Transactions */
-  const table=txTable(); const t=wb.addWorksheet('Transactions',{views:[{state:'frozen',ySplit:1}]}); t.addRows(table); header(t,1,1,table[0].length); t.autoFilter={from:'A1',to:colL(table[0].length)+table.length}; [11,9,12,44,11,22,10,22,30,8,9].forEach((w,i)=>t.getColumn(i+1).width=w); t.getColumn(5).numFmt=money; t.getColumn(5).alignment={horizontal:'right'};
-  table.slice(1).forEach((r,i)=>{ const rr=t.getRow(i+2); if(r[9]==='yes'){ rr.font={color:argb(XC.muted),italic:true}; } else if(r[6]==='business'){ rr.getCell(7).fill={type:'pattern',pattern:'solid',fgColor:argb(XC.soft)}; rr.getCell(7).font={bold:true,color:argb(XC.accent)}; } if(r[5]==='Uncategorized') rr.getCell(6).font={bold:true,color:argb(XC.bad)}; if(r[8]) rr.getCell(9).font={italic:true,color:argb(XC.ink2)}; });
+  const table=txTable(); const t=wb.addWorksheet('Transactions',{views:[{state:'frozen',ySplit:1}]}); t.addRows(table); header(t,1,1,table[0].length); t.autoFilter={from:'A1',to:colL(table[0].length)+table.length}; [11,9,12,44,11,22,10,22,18,30,8,9].forEach((w,i)=>t.getColumn(i+1).width=w); t.getColumn(5).numFmt=money; t.getColumn(5).alignment={horizontal:'right'};
+  table.slice(1).forEach((r,i)=>{ const rr=t.getRow(i+2); if(r[10]==='yes'){ rr.font={color:argb(XC.muted),italic:true}; } else if(r[6]==='business'){ rr.getCell(7).fill={type:'pattern',pattern:'solid',fgColor:argb(XC.soft)}; rr.getCell(7).font={bold:true,color:argb(XC.accent)}; } if(r[5]==='Uncategorized') rr.getCell(6).font={bold:true,color:argb(XC.bad)}; if(r[9]) rr.getCell(10).font={italic:true,color:argb(XC.ink2)}; });
   if(table.length>1) t.addConditionalFormatting({ref:`E2:E${table.length}`,rules:[{type:'cellIs',operator:'lessThan',formulae:['0'],style:{font:{color:argb(XC.good)}}}]});
+  /* One sheet per trip */
+  const usedNames=new Set(['Dashboard','Transactions','Personal by month','Business by month','Recurring']);
+  state.trips.forEach(tr=>{ const rows=tripRows(tr.id).slice().sort((a,b)=>a.date-b.date); if(!rows.length) return; let name=('Trip - '+tr.name).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31); let k=2; while(usedNames.has(name)){ name=name.slice(0,28)+' '+(k++); } usedNames.add(name);
+    const ws=wb.addWorksheet(name,{views:[{showGridLines:false}]}); ws.columns=[{width:12},{width:44},{width:12},{width:22},{width:11},{width:30}];
+    const total=rows.reduce((a,x)=>a+x.amount,0); const days=tripDays(tr);
+    ws.getCell('A1').value=tr.name; ws.getCell('A1').font={bold:true,size:20,color:argb(XC.ink)}; ws.getRow(1).height=28;
+    ws.getCell('A2').value=`${fmtRange(tr)} · ${days} day${days>1?'s':''} · ${tr.type} trip · ${rows.length} transactions`; ws.getCell('A2').font={size:11,color:argb(XC.muted)};
+    [['Total',total,money0],['Per day',total/days,money0],['Days',days,'0']].forEach(([l,v,nf],i)=>{ const lc=ws.getCell(4,1+i*2), vc=ws.getCell(5,1+i*2); lc.value=l; lc.font={size:9,bold:true,color:argb(XC.muted)}; vc.value=round2(v); vc.numFmt=nf; vc.font={bold:true,size:16}; [lc,vc].forEach(c=>{ c.fill={type:'pattern',pattern:'solid',fgColor:argb(XC.paper)}; c.alignment={horizontal:'left',indent:1,vertical:'middle'}; }); }); ws.getRow(5).height=28;
+    const ct={}; rows.forEach(x=>ct[x.category]=(ct[x.category]||0)+x.amount); const cl=Object.entries(ct).sort((a,b)=>b[1]-a[1]);
+    let r=7; ws.getCell(r,1).value='Category'; ws.getCell(r,2).value='Amount'; ws.getCell(r,3).value='Share'; header(ws,r,1,3);
+    cl.forEach(([c,a],i)=>{ const rr=r+1+i; ws.getCell(rr,1).value=c; ws.getCell(rr,1).border={left:{style:'thick',color:argb(hexFor(c))},bottom:thin}; ws.getCell(rr,2).value=round2(a); ws.getCell(rr,2).numFmt=money0; ws.getCell(rr,3).value=total?a/total:0; ws.getCell(rr,3).numFmt='0.0%'; });
+    if(cl.length) ws.addConditionalFormatting({ref:`B${r+1}:B${r+cl.length}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]});
+    r=r+cl.length+3; ['Date','Description','Amount','Category','Type','Note'].forEach((h,i)=>ws.getCell(r,1+i).value=h); header(ws,r,1,6);
+    rows.forEach((x,i)=>{ const rr=r+1+i; ws.getCell(rr,1).value=ymd(x.date); ws.getCell(rr,2).value=x.desc; ws.getCell(rr,3).value=round2(x.amount); ws.getCell(rr,3).numFmt=money; ws.getCell(rr,4).value=x.category; ws.getCell(rr,5).value=x.type; ws.getCell(rr,6).value=state.notes[x.id]||''; for(let c=1;c<=6;c++) ws.getCell(rr,c).border={bottom:thin}; });
+    totalRow(ws,r+rows.length+1,1,6); ws.getCell(r+rows.length+1,1).value='TOTAL'; ws.getCell(r+rows.length+1,3).value=round2(total); ws.getCell(r+rows.length+1,3).numFmt=money; });
   /* Monthly matrices */
   const matrixSheet=(name,rows)=>{ if(!rows.length) return; const aoa=matrixAoa(rows); const ws=wb.addWorksheet(name,{views:[{state:'frozen',xSplit:1,ySplit:1}]}); ws.addRows(aoa); const nc=aoa[0].length, nr=aoa.length; header(ws,1,1,nc); ws.getColumn(1).width=14; ws.getColumn(1).font={bold:true}; for(let c=2;c<=nc;c++){ ws.getColumn(c).width=Math.max(11,Math.min(22,String(aoa[0][c-1]).length+2)); ws.getColumn(c).numFmt=money0; ws.getColumn(c).alignment={horizontal:'right'}; } ws.getCell(1,1).alignment={horizontal:'left'}; totalRow(ws,nr-1,1,nc); ws.getRow(nr).font={italic:true,color:argb(XC.ink2)}; ws.getColumn(nc).font={bold:true};
     const dataRows=nr-3; if(dataRows>0&&nc>2){ ws.addConditionalFormatting({ref:`B2:${colL(nc-1)}${1+dataRows}`,rules:[{type:'colorScale',cfvo:[{type:'num',value:0},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FF9EC5F4'}]}]}); ws.addConditionalFormatting({ref:`${colL(nc)}2:${colL(nc)}${1+dataRows}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]}); } };
@@ -663,12 +751,14 @@ function sampleCSV(){ const L=[['09/02/2026','WHOLE FOODS MKT #10234 ANYTOWN US'
   return 'Status,Date,Description,Debit,Credit,Member Name\r\n'+L.map(([d,m,a])=>csvLine(['Cleared',d,m,a>0?a.toFixed(2):'',a<0?a.toFixed(2):'','SAMPLE'])).join('\r\n')+'\r\n'; }
 
 /* ---------- boot ---------- */
-function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments}; }
+function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments,trips:state.trips,tripOf:state.tripOf,selTrip:state.selTrip}; }
 function start(data){
   data=data||{};
   state.remember=load('gastos.remember',true)!==false; $('#remember').checked=state.remember;
   if(state.remember){ state.userRules=load('gastos.rules',{})||{}; state.budgets=load('gastos.budgets',{})||{}; state.notes=load('gastos.notes',{})||{}; }
+  if(state.remember){ const tp=load('gastos.trips',null); if(tp&&Array.isArray(tp.trips)){ state.trips=tp.trips; state.tripOf=tp.tripOf||{}; } }
   if(data.notes) state.notes=Object.assign({},state.notes,data.notes); if(data.showPayments) state.showPayments=true;
+  if(Array.isArray(data.trips)&&data.trips.length){ state.trips=data.trips; state.tripOf=data.tripOf||{}; } if(data.selTrip) state.selTrip=data.selTrip;
   if(data.bankPick&&BANK_HELP[data.bankPick]) state.bankPick=data.bankPick;
   renderBanks();
   if(Array.isArray(data.files)&&data.files.length){ state.files=data.files.map(f=>({name:f.name,text:f.text,bank:'other',sample:!!f.sample})); state.sample=!!data.sample; state.txOverrides=data.txOverrides||{}; if(data.scope) state.scope=data.scope; if(data.period) state.period=data.period; $('#scope').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scope===state.scope)); }
