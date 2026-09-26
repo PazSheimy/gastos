@@ -251,8 +251,8 @@ section + section{border-top:1px solid var(--rule)}
 </section>
 
 <section id="trips-sec">
-  <div class="sec-head"><h2>Trips <small id="trip-count"></small></h2><button class="link" id="trip-add" type="button">Add a trip</button></div>
-  <p class="muted" style="font-size:13px;margin-bottom:10px">Give a trip a name and its dates, and everything you spent on those days gets its own tab: flights, hotel, food, clothes. Mark a trip as business and its spending counts as business.</p>
+  <div class="sec-head"><h2>Trips <small id="trip-count"></small></h2><span style="display:flex;gap:14px"><button class="link" id="trip-find" type="button" hidden>Find trips again</button><button class="link" id="trip-add" type="button">Add a trip</button></span></div>
+  <p class="muted" style="font-size:13px;margin-bottom:10px">Trips are found from where you spent: days of purchases away from home become a trip, with the flights and stays you booked ahead. Each trip gets its own tab here and its own sheet in the Excel download. Rename a trip, fix its dates or mark it as business with Edit, or add one yourself.</p>
   <form class="tripform" id="trip-form" hidden>
     <label class="full">Trip name<input id="trip-name" placeholder="Madrid, New Orleans conference…" required maxlength="40"></label>
     <label>From<input type="date" id="trip-start" required></label>
@@ -354,7 +354,10 @@ const DEFAULT_RULES=[
   [/INTEREST CHARGE|LATE FEE|ANNUAL FEE|MEMBERSHIP FEE|FOREIGN TRANSACTION|\bFEE$/i,'Fees & Interest',''],
   [/\bATM\b|CASH ADVANCE|VENMO|ZELLE|CASH APP|PAYPAL TRANSFER|\bWIRE\b/i,'Cash & Transfers',''],
   [/DOORDASH|UBER ?EATS|GRUBHUB|POSTMATES|INSTACART|OLO\.COM/i,'Dining Out',''],
-  [/TST\*|SQ \*|TEXAS ROADHOUSE|CHIPOTLE|CHICK-FIL-A|PANDA EXPRESS|MCDONALD|WENDY|BURGER|TACO|SUBWAY|STARBUCKS|DUNKIN|PANERA|OLIVE GARDEN|APPLEBEE|CHILI'?S|OUTBACK|IHOP|DENNY|WAFFLE HOUSE|FIVE GUYS|SHAKE SHACK|POPEYES|\bKFC\b|DOMINO|PIZZ|PAPA JOHN|LITTLE CAESAR|SONIC|ZAXBY|CULVER|JERSEY MIKE|JIMMY JOHN|WINGSTOP|BUFFALO WILD|RAISING CANE|DUTCH BROS|CAFE|COFFEE|BAKE|SUSHI|GRILL|RESTAUR|RESTOBAR|CERVECERIA|TAQUERIA|CANTINA|BISTRO|DINER|STEAK|KITCHEN|\bDELI\b|EATERY|\bBBQ\b|RAMEN|\bPHO\b|THAI|POKE|BOBA|GELATO|ICE CREAM|CHOCOLAT|DONUT|BAGEL|BREW|TAVERN|\bPUB\b|FOOD HALL|FOOD TRUCK|SNACK|\bEATS\b/i,'Dining Out','']
+  [/TST\*|SQ \*|TEXAS ROADHOUSE|CHIPOTLE|CHICK-FIL-A|PANDA EXPRESS|MCDONALD|WENDY|BURGER|TACO|SUBWAY|STARBUCKS|DUNKIN|PANERA|OLIVE GARDEN|APPLEBEE|CHILI'?S|OUTBACK|IHOP|DENNY|WAFFLE HOUSE|FIVE GUYS|SHAKE SHACK|POPEYES|\bKFC\b|DOMINO|PIZZ|PAPA JOHN|LITTLE CAESAR|SONIC|ZAXBY|CULVER|JERSEY MIKE|JIMMY JOHN|WINGSTOP|BUFFALO WILD|RAISING CANE|DUTCH BROS|CAFE|COFFEE|BAKE|SUSHI|GRILL|RESTAUR|RESTOBAR|CERVECERIA|TAQUERIA|CANTINA|BISTRO|DINER|STEAK|KITCHEN|\bDELI\b|EATERY|\bBBQ\b|RAMEN|\bPHO\b|THAI|POKE|BOBA|GELATO|ICE CREAM|CHOCOLAT|DONUT|BAGEL|BREW|TAVERN|\bPUB\b|FOOD HALL|FOOD TRUCK|SNACK|\bEATS\b/i,'Dining Out',''],
+  [/\bREST\b|\bRTE\b|RESTAU|CERVECER|TABERNA|BRASSERIE|BISTRO|TRATTORIA|HOJALDRE|CHURRER|MEXICAN|\bDELI\b|\bDELY\b|\bCAFE\b|COFFEE|BAKERY|\bGELAT/i,'Dining Out',''],
+  [/MP\*\*DIA\b|\bDIA \d{4}|CARREFOUR|MERCADONA|\bLIDL\b|EL CORTE INGLES SUPER|TESCO|SAINSBURY/i,'Groceries',''],
+  [/DROGUERIA|DRUGSTORE|FARMACIA/i,'Beauty & Personal Care',''],
 ];
 const BANK_CAT_MAP=[[/supermarket|grocer/i,'Groceries'],[/restaurant|dining|fast food|food/i,'Dining Out'],[/gas|fuel/i,'Gas'],[/airline|lodging|hotel|travel/i,'Flights'],[/merchandise|shopping|department|retail|clothing/i,'Shopping'],[/health|medical|pharmacy/i,'Medical'],[/entertainment/i,'Entertainment'],[/utilities|phone|internet|bill/i,'Utilities & Bills'],[/education/i,'Education'],[/home|improvement/i,'Shopping'],[/insurance/i,'Insurance'],[/fee|interest/i,'Fees & Interest'],[/automotive|auto/i,'Car'],[/service/i,'Shopping']];
 const PREFIXES=new Set(['TST','SQ','SP','DD','CP','PP','PAYPAL','IN','MSP','TSP','CKE','PY','WWW','MP','CTLP','ABC','MED','SUMUP','IC','PPL','APL','GOOGLE','AMZN','AMAZON','DIGITAL','THE','AND']);
@@ -429,13 +432,13 @@ function parseStatement(name,text){
   return {ok:true,bank,tx}; }
 
 /* ---------- state ---------- */
-const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{},notes:{},showPayments:false,lastChange:null,trips:[],tripOf:{},selTrip:null,filterTrip:null,editTrip:null};
+const state={files:[],tx:[],userRules:{},txOverrides:{},budgets:{},remember:true,scope:'all',period:'all',filterCat:null,search:'',shown:60,sample:false,bankPick:'citi',colors:{},downloads:null,view:'all',recurring:{},notes:{},showPayments:false,lastChange:null,trips:[],tripOf:{},autoTripOf:{},tripDismissed:[],selTrip:null,filterTrip:null,editTrip:null};
 const TRIP_SENSITIVE=new Set(['Dining Out','Groceries','Gas','Rideshare & Transit','Parking & Tolls','Flights','Lodging','Travel Extras','Entertainment','Clothes','Shopping','Beauty & Personal Care','Laundry','Uncategorized','Car']);
 const ONLINE_RX=/AMAZON|AMZN|SHEIN|TEMU|TIKTOK|EBAY|ETSY|WALMART\.COM|TARGET\.COM/i;
 const tripById=id=>state.trips.find(x=>x.id===id);
 function load(key,def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; } }
-function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); localStorage.setItem('gastos.trips',JSON.stringify({trips:state.trips,tripOf:state.tripOf})); }catch(e){} }
-function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.trips=[]; state.tripOf={}; state.selTrip=null; state.filterTrip=null; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes, trips and budgets on this device.'); }
+function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); localStorage.setItem('gastos.trips',JSON.stringify({trips:state.trips,tripOf:state.tripOf,dismissed:state.tripDismissed})); }catch(e){} }
+function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.trips=[]; state.tripOf={}; state.autoTripOf={}; state.tripDismissed=[]; state.selTrip=null; state.filterTrip=null; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes, trips and budgets on this device.'); }
 
 /* ---------- categorize ---------- */
 function categorizeAll(){
@@ -447,11 +450,15 @@ function categorizeAll(){
     if(t.fileCat){ cat=t.fileCat; type=t.fileType||type; }
     const ur=state.userRules[t.key]; if(ur){ if(ur.category) cat=ur.category; if(ur.type) type=ur.type; }
     const ov=state.txOverrides[t.id]; if(ov){ if(ov.category) cat=ov.category; if(ov.type) type=ov.type; }
-    let trip=''; const ex=state.tripOf[t.id]; if(ex!==undefined){ trip=ex&&tripById(ex)?ex:''; }
-    else if(state.trips.length&&TRIP_SENSITIVE.has(cat)&&!state.recurring[t.key]&&!ONLINE_RX.test(t.desc)){ const d=ymd(t.date); const tr=state.trips.find(x=>x.start<=d&&d<=x.end); if(tr) trip=tr.id; }
+    let trip=''; const ex=state.tripOf[t.id]; const au=state.autoTripOf[t.id]; if(ex!==undefined){ trip=ex&&tripById(ex)?ex:''; }
+    else if(au&&tripById(au)){ trip=au; }
+    else if(state.trips.length&&TRIP_SENSITIVE.has(cat)&&!state.recurring[t.key]&&!ONLINE_RX.test(t.desc)){ const d=ymd(t.date); const tr=state.trips.find(x=>x.start<=d&&d<=x.end&&!atHome(x,t,d,cat)&&!(x.fromFile&&t.fileTrip!==undefined)); if(tr) trip=tr.id; }
     if(trip){ const tr=tripById(trip); if(tr.type==='business'&&TRIP_SENSITIVE.has(cat)&&!(ov&&ov.type)) type='business'; }
     t.category=cat; t.type=type; t.trip=trip; });
 }
+/* On a trip found from the statement, purchases back home only count on the travel days (gas or food on the way to the airport). */
+const EDGE_CATS=new Set(['Gas','Dining Out','Travel Extras','Rideshare & Transit','Parking & Tolls','Flights','Lodging']);
+function atHome(tr,t,d,cat){ if(!tr.auto||!tr.home) return false; const p=placeOf(t.desc); if(!p||p.region!==tr.home) return false; return !((d===tr.start||d===tr.end)&&EDGE_CATS.has(cat)); }
 function allCategories(){ const s=new Set(CATEGORIES); state.tx.forEach(t=>{ if(t.category&&t.category!=='Card Payment') s.add(t.category); }); Object.values(state.userRules).forEach(r=>{ if(r.category) s.add(r.category); }); return [...s].sort((a,b)=>a==='Uncategorized'?1:b==='Uncategorized'?-1:a.localeCompare(b)); }
 function colorFor(cat){ if(state.colors[cat]) return state.colors[cat]; const used=new Set(Object.values(state.colors)); for(let i=1;i<=8;i++){ const c='var(--s'+i+')'; if(!used.has(c)){ state.colors[cat]=c; return c; } } return 'var(--s-other)'; }
 function assignColors(){ state.colors={}; const totals={}; spendRows().forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,8).forEach(([c])=>colorFor(c)); }
@@ -471,7 +478,7 @@ function rebuild(){
     const ds=parsed.tx.map(t=>t.date); if(ds.length){ f.from=new Date(Math.min(...ds)); f.to=new Date(Math.max(...ds)); } });
   state.tx.sort((a,b)=>b.date-a.date);
   importFromFiles();
-  computeRecurring(); categorizeAll(); assignColors();
+  computeRecurring(); categorizeAll(); detectTrips(); attachTrips(); categorizeAll(); assignColors();
   const periods=new Set(['all']); state.tx.forEach(t=>{periods.add('Y'+t.year); periods.add('M'+t.month);});
   if(!periods.has(state.period)) state.period='all';
   if(state.filterCat&&!state.tx.some(t=>t.category===state.filterCat)) state.filterCat=null;
@@ -482,35 +489,90 @@ function rebuild(){
 function importFromFiles(){ let changed=false;
   /* trips named in a Gastos file become trips here */
   const byTrip={}; state.tx.forEach(t=>{ if(t.fileTrip){ (byTrip[t.fileTrip]=byTrip[t.fileTrip]||[]).push(t); } });
-  Object.entries(byTrip).forEach(([name,arr])=>{ let trip=state.trips.find(x=>x.name.toLowerCase()===name.toLowerCase()); if(!trip){ const ds=arr.map(t=>t.date.getTime()); const biz=arr.filter(t=>t.fileType==='business').length; trip={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,start:ymd(new Date(Math.min(...ds))),end:ymd(new Date(Math.max(...ds))),type:biz>arr.length/2?'business':'personal'}; state.trips.push(trip); changed=true; } arr.forEach(t=>{ if(state.tripOf[t.id]===undefined){ state.tripOf[t.id]=trip.id; changed=true; } }); });
+  Object.entries(byTrip).forEach(([name,arr])=>{ let trip=state.trips.find(x=>x.name.toLowerCase()===name.toLowerCase());
+    /* the trip's dates are the days most of its purchases happened, not the day a flight was booked months before */
+    const ds=arr.map(t=>ymd(t.date)).sort(); const naive=[ds[0],ds[ds.length-1]]; const cl=[]; let cur=null; ds.forEach(d=>{ if(cur&&dayNum(d)-dayNum(cur.end)<=2){ cur.end=d; cur.n++; } else { cur={start:d,end:d,n:1}; cl.push(cur); } }); const main=cl.sort((a,b)=>b.n-a.n)[0];
+    if(!trip){ const biz=arr.filter(t=>t.fileType==='business').length; trip={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,start:main.start,end:main.end,type:biz>arr.length/2?'business':'personal',fromFile:true}; state.trips.push(trip); changed=true; }
+    else if(trip.fromFile||(trip.start===naive[0]&&trip.end===naive[1]&&(trip.start!==main.start||trip.end!==main.end))){ if(trip.start!==main.start||trip.end!==main.end){ trip.start=main.start; trip.end=main.end; changed=true; } trip.fromFile=true; } arr.forEach(t=>{ if(state.tripOf[t.id]===undefined){ state.tripOf[t.id]=trip.id; changed=true; } }); });
   /* reviewed merchants in a Gastos file become remembered rules */
   const byKey={}; state.tx.forEach(t=>{ if(t.fileReviewed&&t.fileCat&&!t.isPayment) (byKey[t.key]=byKey[t.key]||[]).push(t); });
   Object.entries(byKey).forEach(([key,arr])=>{ if(state.userRules[key]) return; const cat=arr[0].fileCat, ty=arr[0].fileType||'personal'; if(arr.every(t=>t.fileCat===cat&&(t.fileType||'personal')===ty)){ state.userRules[key]={category:cat,type:ty,ok:1}; changed=true; } });
   if(changed) persist(); }
 function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); }
 /* ---------- trips ---------- */
+/* ---------- finding trips in the statement ---------- */
+const US_STATES={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'Washington DC',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico'};
+const COUNTRIES={ES:'Spain',GB:'United Kingdom',UK:'United Kingdom',FR:'France',IT:'Italy',PT:'Portugal',CH:'Switzerland',NL:'Netherlands',BE:'Belgium',IE:'Ireland',AT:'Austria',GR:'Greece',TR:'Turkey',MX:'Mexico',CU:'Cuba',DO:'Dominican Republic',JM:'Jamaica',BS:'Bahamas',CR:'Costa Rica',PE:'Peru',CL:'Chile',AR:'Argentina',BR:'Brazil',JP:'Japan',KR:'South Korea',TH:'Thailand',AU:'Australia',NZ:'New Zealand',IS:'Iceland',DK:'Denmark',SE:'Sweden',NO:'Norway',FI:'Finland',PL:'Poland',CZ:'Czechia',HU:'Hungary',HR:'Croatia',MA:'Morocco',EG:'Egypt',AE:'United Arab Emirates',CO:'Colombia',VE:'Venezuela',EC:'Ecuador',PA:'Panama',GT:'Guatemala',SV:'El Salvador',HN:'Honduras',NI:'Nicaragua'};
+const ONLINE_ANY=/[A-Z0-9]\.(COM|CO|C|NET|ORG|IO|AI|APP|US)\b|\.COM|\bWWW\b|WWW\.|AMZN|AMAZON|\bLYFT\b|\bUBER\b|DOORDASH|AIRBNB|PAYPAL|SHEIN|\bTEMU\b|TIKTOK|\bEBAY\b|SPOTIFY|NETFLIX|OPENAI|ANTHROPIC|GOOGLE|APPLE|\b8(00|33|44|55|66|77|88)[-\s]?\d{3}-?\d{4}/i;
+const PREPAID_CATS=new Set(['Flights','Lodging']);
+const NOT_EVIDENCE=new Set(['Flights','Laundry']); /* billed from the company's home state, not where you were */
+const titleCase=s=>s.toLowerCase().replace(/(^|[\s\-'])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+/* Where a card purchase happened, read from the end of the description ("... MADRID ES", "... SAN DIEGO CA"). */
+function placeOf(desc){ let s=String(desc).split(/NAME:|PHONE NUMBER:|DEPART:/)[0].trim(); const m=s.match(/([A-Za-z]{2})$/); if(!m) return null; const code=m[1].toUpperCase();
+  const country=COUNTRIES[code]&&!US_STATES[code]?COUNTRIES[code]:null; if(!US_STATES[code]&&!country) return null;
+  const before=s.slice(0,-2).trim().split(/\s+/); const words=[]; for(let i=before.length-1;i>=0&&words.length<3;i--){ const w=before[i]; if(!/^[A-Za-z.'\-]+$/.test(w)||/\./.test(w)&&w.length<4) break; words.unshift(w); }
+  const c1=words.length?words[words.length-1]:'', c2=words.length>1?words.slice(-2).join(' '):'';
+  return {region:code,country,city1:c1.length>=3?c1.toLowerCase():'',city2:c2.toLowerCase()}; }
+function departDate(desc){ const m=String(desc).match(/DEPART:\s*(\d{2})\/(\d{2})\/(\d{4})/); return m?`${m[3]}-${m[1]}-${m[2]}`:''; }
+const dayNum=s=>Math.round(Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/86400000);
+const dayStr=n=>{ const d=new Date(n*86400000); return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0'); };
+function homeRegion(){ const c={}; spendRows().forEach(t=>{ if(ONLINE_ANY.test(t.desc)) return; const p=placeOf(t.desc); if(p) c[p.region]=(c[p.region]||0)+1; }); const top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0]; return top?top[0]:''; }
+function regionName(code){ return COUNTRIES[code]&&!US_STATES[code]?COUNTRIES[code]:code; }
+function nameTrip(ev){ const c1={}, c2={}; ev.forEach(t=>{ const p=t._place; if(p.city1) c1[p.city1+'|'+p.region]=(c1[p.city1+'|'+p.region]||0)+1; if(p.city2) c2[p.city2+'|'+p.region]=(c2[p.city2+'|'+p.region]||0)+1; });
+  const top=o=>Object.entries(o).sort((a,b)=>b[1]-a[1])[0]||['',0]; const [k1,n1]=top(c1), [k2,n2]=top(c2);
+  let key=k1, n=n1; if(k2&&n2>=2&&n2>=0.6*n1&&k2.split('|')[0].split(' ').pop()===k1.split('|')[0]) { key=k2; n=n2; }
+  const regions=[]; ev.forEach(t=>{ const r=t._place.region; if(!regions.includes(r)) regions.push(r); });
+  if(key&&n>=Math.max(2,0.4*ev.length)){ const [city,reg]=key.split('|'); const p=ev.find(t=>t._place.region===reg)._place; return titleCase(city)+', '+(p.country||reg); }
+  if(regions.length===1) return regionName(regions[0])+(US_STATES[regions[0]]?' ('+US_STATES[regions[0]]+')':'');
+  const cnt={}; ev.forEach(t=>cnt[t._place.region]=(cnt[t._place.region]||0)+1); let main=regions.filter(r=>cnt[r]>=2); if(main.length<2) main=regions; if(main.length>4) main=main.slice().sort((a,b)=>cnt[b]-cnt[a]).slice(0,4).sort((a,b)=>regions.indexOf(a)-regions.indexOf(b));
+  return 'Road trip: '+main.map(regionName).join(', '); }
+/* Spending days away from home that sit close together become one trip. */
+function detectTrips(){ const home=homeRegion(); if(!home) return 0;
+  const ev=spendRows().filter(t=>t.amount>0&&TRIP_SENSITIVE.has(t.category)&&!NOT_EVIDENCE.has(t.category)&&!departDate(t.desc)&&!/DEPART:/.test(t.desc)&&!state.recurring[t.key]&&!ONLINE_ANY.test(t.desc)).map(t=>{ t._place=placeOf(t.desc); return t; }).filter(t=>t._place&&t._place.region!==home).sort((a,b)=>a.date-b.date);
+  const clusters=[]; let cur=null; ev.forEach(t=>{ const d=dayNum(ymd(t.date)); if(cur&&d-cur.last<=2){ cur.tx.push(t); cur.last=d; } else { cur={tx:[t],first:d,last:d}; clusters.push(cur); } });
+  let added=0; const dismissed=state.tripDismissed||[];
+  clusters.forEach(c=>{ if(new Set(c.tx.map(t=>t.key)).size<2) return; const start=dayStr(c.first), end=dayStr(c.last);
+    const overlaps=r=>r.start<=end&&start<=r.end; if(state.trips.some(overlaps)||dismissed.some(overlaps)) return;
+    const regions=[...new Set(c.tx.map(t=>t._place.region))];
+    state.trips.push({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:nameTrip(c.tx),start,end,type:'personal',auto:true,home,regions}); added++; });
+  if(added){ state.trips.sort((a,b)=>a.start<b.start?-1:1); persist(); }
+  return added; }
+/* Things paid for a trip but not on its dates: flights (by their departure date), Airbnbs and hotels booked ahead, tickets bought in the same country before leaving. */
+function attachTrips(){ state.autoTripOf={}; if(!state.trips.length) return; const trips=state.trips.slice().sort((a,b)=>a.start<b.start?-1:1);
+  const byCode={}; spendRows().forEach(t=>{ const m=t.desc.match(/AIRBNB \* ?(\w{6,})/i); if(m) (byCode[m[1]]=byCode[m[1]]||[]).push(t); });
+  spendRows().forEach(t=>{ if(t.amount<=0||state.tripOf[t.id]!==undefined||t.fileTrip!==undefined) return; const d=ymd(t.date); if(trips.some(tr=>tr.start<=d&&d<=tr.end)) return;
+    const dep=departDate(t.desc);
+    if(dep){ const tr=trips.find(tr=>dayNum(tr.start)-3<=dayNum(dep)&&dep<=tr.end); if(tr){ state.autoTripOf[t.id]=tr.id; if(tr.auto&&dep<tr.start) tr.start=dep; } return; }
+    if(PREPAID_CATS.has(t.category)){ let ref=d; const m=t.desc.match(/AIRBNB \* ?(\w{6,})/i); if(m&&byCode[m[1]]) ref=ymd(new Date(Math.max(...byCode[m[1]].map(x=>x.date.getTime()))));
+      const tr=trips.find(tr=>tr.start>=ref&&dayNum(tr.start)-dayNum(ref)<=45)||trips.find(tr=>tr.start<=ref&&ref<=tr.end); if(tr) state.autoTripOf[t.id]=tr.id; return; }
+    const p=TRIP_SENSITIVE.has(t.category)&&!ONLINE_ANY.test(t.desc.replace(/\bLYFT\b|\bUBER\b/i,''))?placeOf(t.desc):null;
+    if(p&&p.country){ const tr=trips.find(tr=>tr.auto&&(tr.regions||[]).includes(p.region)&&tr.start>d&&dayNum(tr.start)-dayNum(d)<=30); if(tr) state.autoTripOf[t.id]=tr.id; } }); }
+function recategorize(){ categorizeAll(); attachTrips(); categorizeAll(); }
+
 function tripRows(id){ return spendRows().filter(t=>t.trip===id); }
 function tripDays(tr){ return Math.max(1,Math.round((new Date(tr.end)-new Date(tr.start))/86400000)+1); }
-function fmtRange(tr){ const a=new Date(tr.start), b=new Date(tr.end); return `${MONTHS[a.getUTCMonth()]} ${a.getUTCDate()} to ${MONTHS[b.getUTCMonth()]} ${b.getUTCDate()}, ${b.getUTCFullYear()}`; }
+function fmtRange(tr){ const a=new Date(tr.start), b=new Date(tr.end); if(tr.start===tr.end) return `${MONTHS[a.getUTCMonth()]} ${a.getUTCDate()}, ${a.getUTCFullYear()}`; return `${MONTHS[a.getUTCMonth()]} ${a.getUTCDate()} to ${MONTHS[b.getUTCMonth()]} ${b.getUTCDate()}, ${b.getUTCFullYear()}`; }
 function renderTrips(){ const tabs=$('#trip-tabs'), det=$('#trip-detail'); $('#trip-count').textContent=state.trips.length?state.trips.length+(state.trips.length>1?' trips':' trip'):'';
-  if(!state.trips.length){ tabs.innerHTML=''; det.innerHTML='<p class="empty">No trips yet. Add one and its spending gets its own tab.</p>'; return; }
+  $('#trip-find').hidden=!(state.tripDismissed&&state.tripDismissed.length);
+  if(!state.trips.length){ tabs.innerHTML=''; det.innerHTML='<p class="empty">No trips found in this statement. Add one with its dates and its spending gets its own tab.</p>'; return; }
   tabs.innerHTML=state.trips.map(tr=>`<button type="button" data-triptab="${tr.id}" aria-pressed="${state.selTrip===tr.id}">${esc(tr.name)}</button>`).join('');
   const tr=tripById(state.selTrip)||state.trips[0]; state.selTrip=tr.id; const rows=tripRows(tr.id); const total=rows.reduce((a,t)=>a+t.amount,0); const days=tripDays(tr);
   const totals={}; rows.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount); const list=Object.entries(totals).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...list.map(e=>e[1]));
   det.innerHTML=`<div class="tripcard"><div class="head"><div><h3 style="font-size:18px">${esc(tr.name)} <span class="type-tag${tr.type==='business'?' biz':''}">${tr.type}</span></h3><div class="meta">${fmtRange(tr)} · ${days} day${days>1?'s':''} · ${rows.length} transaction${rows.length!==1?'s':''}</div></div><div style="text-align:right"><div class="fig">${fmt0(total)}</div><div class="meta">${fmt0(total/days)} a day</div></div></div>
     ${list.length?`<ul class="tripcats">${list.map(([c,a])=>`<li><span class="sw" style="background:${colorFor(c)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c)}</span><span class="num" style="font-weight:600">${fmt0(a)}</span><span></span><div class="bar" style="grid-column:2 / span 2"><i style="width:${Math.max(0,a)/max*100}%;background:${colorFor(c)}"></i></div></li>`).join('')}</ul>`:'<p class="empty">Nothing is assigned to this trip yet. Check the dates, or set the trip on a transaction below.</p>'}
     <div class="actions"><button type="button" class="btn small" data-tripshow="${tr.id}">Show its transactions</button><button type="button" class="btn ghost small" data-tripedit="${tr.id}">Edit</button><button type="button" class="btn ghost small" data-tripdel="${tr.id}">Remove trip</button></div>
-    <p class="muted" style="font-size:12px;margin-top:8px">Flights or hotels paid before the trip started are not picked up by the dates. Find them in the list below and choose this trip on them.${tr.type==='business'?' Because this is a business trip, its food, travel and lodging count as business.':''}</p></div>`; }
+    <p class="muted" style="font-size:12px;margin-top:8px">${tr.auto?'Found from your statement. Flights with this departure date and stays booked ahead are included. ':''}Anything missing or extra? Change the trip on that transaction in the list below.${tr.type==='business'?' Because this is a business trip, its food, travel and lodging count as business.':''}</p></div>`; }
 $('#trip-tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-triptab]'); if(!b) return; state.selTrip=b.dataset.triptab; renderTrips(); });
 $('#trip-detail').addEventListener('click',e=>{ const s=e.target.closest('[data-tripshow]'); if(s){ state.filterTrip=s.dataset.tripshow; state.filterCat=null; state.view='all'; state.shown=60; renderCategories(); renderTx(); $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); return; }
   const ed=e.target.closest('[data-tripedit]'); if(ed){ openTripForm(tripById(ed.dataset.tripedit)); return; }
-  const dl=e.target.closest('[data-tripdel]'); if(dl){ const id=dl.dataset.tripdel; const tr=tripById(id); if(!tr) return; if(dl.dataset.armed!=='1'){ dl.dataset.armed='1'; dl.textContent='Tap again to remove '+tr.name; return; } state.trips=state.trips.filter(x=>x.id!==id); Object.keys(state.tripOf).forEach(k=>{ if(state.tripOf[k]===id) delete state.tripOf[k]; }); if(state.filterTrip===id) state.filterTrip=null; state.selTrip=null; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); toast('Removed '+tr.name); } });
+  const dl=e.target.closest('[data-tripdel]'); if(dl){ const id=dl.dataset.tripdel; const tr=tripById(id); if(!tr) return; if(dl.dataset.armed!=='1'){ dl.dataset.armed='1'; dl.textContent='Tap again to remove '+tr.name; return; } if(tr.auto) state.tripDismissed.push({start:tr.start,end:tr.end}); state.trips=state.trips.filter(x=>x.id!==id); Object.keys(state.tripOf).forEach(k=>{ if(state.tripOf[k]===id) delete state.tripOf[k]; }); if(state.filterTrip===id) state.filterTrip=null; state.selTrip=null; persist(); recategorize(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); toast('Removed '+tr.name); } });
 function openTripForm(tr){ state.editTrip=tr?tr.id:null; const f=$('#trip-form'); f.hidden=false; $('#trip-name').value=tr?tr.name:''; $('#trip-start').value=tr?tr.start:''; $('#trip-end').value=tr?tr.end:''; $('#trip-type').value=tr?tr.type:'personal'; $('#trip-save').textContent=tr?'Save changes':'Save trip'; $('#trip-name').focus(); }
 $('#trip-add').addEventListener('click',()=>openTripForm(null));
+$('#trip-find').addEventListener('click',()=>{ state.tripDismissed=[]; const n=detectTrips(); persist(); recategorize(); assignColors(); renderAll(); toast(n?`Found ${n} trip${n>1?'s':''}.`:'No other trips found.'); });
 $('#trip-cancel').addEventListener('click',()=>{ $('#trip-form').hidden=true; state.editTrip=null; });
 $('#trip-form').addEventListener('submit',e=>{ e.preventDefault(); const name=$('#trip-name').value.trim(), start=$('#trip-start').value, end=$('#trip-end').value, type=$('#trip-type').value; if(!name||!start||!end) return; if(end<start){ toast('The end date is before the start date.'); return; }
   let tr=state.editTrip?tripById(state.editTrip):null; if(tr){ Object.assign(tr,{name,start,end,type}); } else { tr={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,start,end,type}; state.trips.push(tr); }
-  state.trips.sort((a,b)=>a.start<b.start?-1:1); state.selTrip=tr.id; state.editTrip=null; $('#trip-form').hidden=true; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const n=tripRows(tr.id).length; toast(`${tr.name}: ${n} transaction${n!==1?'s':''} on those dates.`); });
+  state.trips.sort((a,b)=>a.start<b.start?-1:1); state.selTrip=tr.id; state.editTrip=null; $('#trip-form').hidden=true; persist(); recategorize(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const n=tripRows(tr.id).length; toast(`${tr.name}: ${n} transaction${n!==1?'s':''} on those dates.`); });
 function renderUnc(){ const el=$('#unc-note'); const rows=spendRows().filter(t=>t.category==='Uncategorized'); if(!rows.length){ el.hidden=true; return; } const total=rows.reduce((a,t)=>a+t.amount,0); const n=new Set(rows.map(t=>t.key)).size;
   el.innerHTML=`<span><b>${rows.length}</b> transaction${rows.length>1?'s':''} (${fmt0(total)}) from ${n} merchant${n>1?'s':''} still have no category.</span><button type="button" class="btn small" id="unc-go">Sort them now</button>`; el.hidden=false; }
 $('#unc-note').addEventListener('click',e=>{ if(e.target.id!=='unc-go') return; state.view='all'; state.filterCat='Uncategorized'; state.search=''; $('#search').value=''; state.shown=60; renderCategories(); renderTx(); $('#transactions').scrollIntoView({behavior:'smooth',block:'start'}); });
@@ -645,7 +707,7 @@ $('#tx').addEventListener('change',e=>{ const sel=e.target.closest('select[data-
   const firstOf=key=>state.tx.find(x=>x.key===key&&!x.isPayment&&!x.isIncome);
   const gs=e.target.closest('select[data-key]'); if(gs){ const t=firstOf(gs.dataset.key); if(!t) return; if(gs.value==='__new'){ const inp=document.createElement('input'); inp.className='newcat'; inp.placeholder='Category name'; inp.setAttribute('aria-label','New category name'); gs.replaceWith(inp); inp.focus(); let finished=false; const done=()=>{ if(finished) return; finished=true; const v=inp.value.trim(); if(v) applyRule(t,{category:v},false); else renderTx(); }; inp.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); done(); } if(ev.key==='Escape') renderTx(); }); inp.addEventListener('blur',done); return; } applyRule(t,{category:gs.value},false); return; }
   const gb=e.target.closest('input[data-bizkey]'); if(gb){ const t=firstOf(gb.dataset.bizkey); if(t) applyRule(t,{type:gb.checked?'business':'personal'},false); return; }
-  const ts=e.target.closest('select[data-trip]'); if(ts){ const t=findTx(ts.dataset.trip); if(!t) return; state.tripOf[t.id]=ts.value; persist(); categorizeAll(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const tr=tripById(ts.value); toast(tr?`Added to ${tr.name}`:'Removed from the trip'); } });
+  const ts=e.target.closest('select[data-trip]'); if(ts){ const t=findTx(ts.dataset.trip); if(!t) return; state.tripOf[t.id]=ts.value; persist(); recategorize(); assignColors(); renderHero(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); const tr=tripById(ts.value); toast(tr?`Added to ${tr.name}`:'Removed from the trip'); } });
 
 /* ---------- downloads ---------- */
 const round2=x=>Math.round(x*100)/100;
@@ -678,60 +740,135 @@ function chartCategoriesPNG(rows,nM){ const totals={}; rows.forEach(t=>totals[t.
   const W=720,rowH=26,H=44+list.length*rowH+12; const [c,g]=makeCanvas(W,H); const max=Math.max(1,...list.map(e=>e[1])); const labelW=190, valW=170, barX=labelW+10, barW=W-barX-valW-16; chartTitle(g,'Where it went');
   list.forEach(([cat,amt],i)=>{ const y=44+i*rowH+rowH/2; g.fillStyle='#'+XC.ink; g.textAlign='right'; g.fillText(cat.length>26?cat.slice(0,25)+'…':cat,labelW,y); g.fillStyle='#'+XC.rule; g.fillRect(barX,y-6,barW,12); g.fillStyle='#'+hexFor(cat); g.fillRect(barX,y-6,Math.max(0,amt)/max*barW,12); g.textAlign='left'; g.fillStyle='#'+XC.ink; g.font='bold 12px '+FONT; g.fillText(fmt0(amt),barX+barW+10,y); g.font='12px '+FONT; g.fillStyle='#'+XC.muted; g.fillText(fmt0(amt/nM)+'/mo',barX+barW+82,y); });
   return {png:c.toDataURL('image/png'),h:H}; }
-function chartSplitPNG(per,biz){ const W=320,H=200; const [c,g]=makeCanvas(W,H); const total=(per+biz)||1; const cx=90,cy=112,r=64; let a=-Math.PI/2; chartTitle(g,'Personal vs business');
+function chartSplitPNG(per,biz){ const W=400,H=200; const [c,g]=makeCanvas(W,H); const total=(per+biz)||1; const cx=90,cy=112,r=64; let a=-Math.PI/2; chartTitle(g,'Personal vs business');
   [[per,'#'+XC.accent,'Personal'],[biz,'#EB6834','Business']].forEach(([v,col,name],i)=>{ const ang=Math.max(0,v)/total*2*Math.PI; g.beginPath(); g.moveTo(cx,cy); g.arc(cx,cy,r,a,a+ang); g.closePath(); g.fillStyle=col; g.fill(); a+=ang; g.fillRect(180,92+i*30,10,10); g.fillStyle='#'+XC.ink; g.textAlign='left'; g.fillText(name+'  '+fmt0(v)+'  ('+Math.round(Math.max(0,v)/total*100)+'%)',196,97+i*30); });
   g.beginPath(); g.arc(cx,cy,36,0,2*Math.PI); g.fillStyle='#ffffff'; g.fill(); return c.toDataURL('image/png'); }
 const colL=n=>{ let s=''; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; };
+/* ---------- Excel workbook: Summary, Trips, one sheet per trip, then the detail sheets ---------- */
+const PALETTE=['2A78D6','EB6834','1BAF7A','EDA100','E87BA4','4A3AA7','E34948','008300','5FB2C9','A0785A','7E8C3A','898781'];
+const TRIP_GROUPS=[['Flights',['Flights'],'2A78D6'],['Lodging',['Lodging'],'4A3AA7'],['Food',['Dining Out','Groceries'],'EB6834'],['Getting around',['Rideshare & Transit','Gas','Parking & Tolls','Car'],'1BAF7A'],['Shopping',['Clothes','Shopping','Online Shopping','Beauty & Personal Care'],'E87BA4'],['Activities',['Entertainment','Gym & Fitness','Education'],'EDA100'],['Other',null,'898781']];
+const groupOf=cat=>{ for(const [g,cats] of TRIP_GROUPS){ if(cats&&cats.includes(cat)) return g; } return 'Other'; };
+const xlDate=d=>new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+const xlDay=s=>new Date(Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10)));
+const WEEKDAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function tripSpend(tr){ return tripRows(tr.id).slice().sort((a,b)=>a.date-b.date||b.amount-a.amount); }
+function chartDonutPNG(list,total,caption){ const W=360,H=250; const [c,g]=makeCanvas(W,H); const cx=W/2, cy=H/2, r=108, ri=66; let a=-Math.PI/2; const pos=list.reduce((s,e)=>s+Math.max(0,e[1]),0)||1;
+  list.forEach(([cat,amt],i)=>{ const ang=Math.max(0,amt)/pos*2*Math.PI; if(ang<=0) return; g.beginPath(); g.moveTo(cx,cy); g.arc(cx,cy,r,a,a+ang); g.closePath(); g.fillStyle='#'+PALETTE[i%PALETTE.length]; g.fill(); g.strokeStyle='#ffffff'; g.lineWidth=2; g.stroke(); a+=ang; });
+  g.beginPath(); g.arc(cx,cy,ri,0,2*Math.PI); g.fillStyle='#ffffff'; g.fill(); g.textAlign='center'; g.fillStyle='#'+XC.ink; g.font='bold 24px '+FONT; g.fillText(fmt0(total),cx,cy-6); g.font='12px '+FONT; g.fillStyle='#'+XC.muted; g.fillText(caption,cx,cy+18); return c.toDataURL('image/png'); }
+function chartTripsPNG(trips){ const W=900,rowH=34,top=70,H=top+trips.length*rowH+16; const [c,g]=makeCanvas(W,H); chartTitle(g,'What each trip cost');
+  let lx=16; g.textAlign='left'; TRIP_GROUPS.forEach(([name,,col])=>{ g.fillStyle='#'+col; g.fillRect(lx,44,10,10); g.fillStyle='#'+XC.ink2; g.fillText(name,lx+14,49); lx+=g.measureText(name).width+30; });
+  const labelW=230, valW=90, barX=labelW+12, barW=W-barX-valW-10; const max=Math.max(1,...trips.map(t=>t.total));
+  trips.forEach((t,i)=>{ const y=top+i*rowH+rowH/2; g.textAlign='right'; g.fillStyle='#'+XC.ink; g.font='bold 12px '+FONT; const nm=t.name.length>30?t.name.slice(0,29)+'…':t.name; g.fillText(nm,labelW,y-6); g.font='11px '+FONT; g.fillStyle='#'+XC.muted; g.fillText(t.range,labelW,y+8); g.font='12px '+FONT;
+    let x=barX; TRIP_GROUPS.forEach(([name,,col])=>{ const v=Math.max(0,t.groups[name]||0); const w=v/max*barW; if(w<=0) return; g.fillStyle='#'+col; g.fillRect(x,y-9,Math.max(1,w-1),18); x+=w; });
+    g.textAlign='left'; g.fillStyle='#'+XC.ink; g.font='bold 12px '+FONT; g.fillText(fmt0(t.total),x+8,y); g.font='12px '+FONT; });
+  return {png:c.toDataURL('image/png'),w:W,h:H}; }
+function safeSheetName(name,used){ let n=String(name).replace(/\s*:\s*/g,' - ').replace(/[\[\]*?\/\\]/g,' ').replace(/\s+/g,' ').replace(/^'+|'+$/g,'').trim().slice(0,31)||'Trip'; let k=2; const base=n; while(used.has(n.toLowerCase())){ const suf=' ('+(k++)+')'; n=base.slice(0,31-suf.length)+suf; } used.add(n.toLowerCase()); return n; }
+const sheetRef=n=>"'"+n.replace(/'/g,"''")+"'";
 async function buildWorkbook(){ const E=window.ExcelJS; const wb=new E.Workbook(); wb.creator='Gastos'; wb.created=new Date();
   const spend=spendRows(); const months=[...new Set(spend.map(t=>t.month))].sort(); const nM=Math.max(1,months.length); const total=spend.reduce((a,t)=>a+t.amount,0); const per=spend.filter(t=>t.type==='personal').reduce((a,t)=>a+t.amount,0); const biz=total-per; const unc=spend.filter(t=>t.category==='Uncategorized');
-  const money='"$"#,##0.00', money0='"$"#,##0'; const thin={style:'thin',color:{argb:'FF'+XC.rule}}; const argb=h=>({argb:'FF'+h});
-  const header=(ws,row,from,to)=>{ for(let i=from;i<=to;i++){ const c=ws.getCell(row,i); c.font={bold:true,color:{argb:'FFFFFFFF'}}; c.fill={type:'pattern',pattern:'solid',fgColor:argb(XC.ink)}; c.alignment={vertical:'middle'}; } ws.getRow(row).height=20; };
-  const totalRow=(ws,row,from,to)=>{ for(let i=from;i<=to;i++){ const c=ws.getCell(row,i); c.font={bold:true}; c.border={top:{style:'medium',color:argb(XC.ink)}}; } };
-  const rowsPerImage=h=>Math.ceil(h/20)+1;
-  /* Dashboard */
-  const d=wb.addWorksheet('Dashboard',{views:[{showGridLines:false}]}); d.columns=[{width:3},{width:24},{width:15},{width:15},{width:15},{width:15},{width:15},{width:12}];
-  d.getCell('B2').value='Gastos'; d.getCell('B2').font={bold:true,size:24,color:argb(XC.ink)}; d.getRow(2).height=32;
-  d.getCell('B3').value=months.length?`${monthLabel(months[0])} to ${monthLabel(months[months.length-1])} · ${spend.length} transactions · made ${ymd(new Date())}`:'No data'; d.getCell('B3').font={size:11,color:argb(XC.muted)};
-  [['Total spent',total,money0],['Per month',total/nM,money0],['Personal',per,money0],['Business',biz,money0],['Uncategorized',unc.length,'0'],['Months',nM,'0']].forEach(([label,val,nf],i)=>{ const col=2+i; const l=d.getCell(5,col), v=d.getCell(6,col); l.value=label; l.font={size:9,bold:true,color:argb(XC.muted)}; v.value=round2(val); v.numFmt=nf; v.font={bold:true,size:18,color:argb(XC.ink)}; [l,v].forEach(c=>{ c.fill={type:'pattern',pattern:'solid',fgColor:argb(XC.paper)}; c.alignment={horizontal:'left',indent:1,vertical:'middle'}; }); }); d.getRow(5).height=16; d.getRow(6).height=32;
-  let row=8; const img1=chartMonthlyPNG(spend); if(img1){ d.addImage(wb.addImage({base64:img1,extension:'png'}),{tl:{col:1,row:row},ext:{width:720,height:360}}); row+=rowsPerImage(360); }
-  const img2=chartCategoriesPNG(spend,nM); if(img2){ d.addImage(wb.addImage({base64:img2.png,extension:'png'}),{tl:{col:1,row:row},ext:{width:720,height:img2.h}}); row+=rowsPerImage(img2.h); }
-  d.addImage(wb.addImage({base64:chartSplitPNG(per,biz),extension:'png'}),{tl:{col:1,row:row},ext:{width:320,height:200}}); row+=rowsPerImage(200)+1;
-  const catTot={}; spend.forEach(t=>{ const o=catTot[t.category]=catTot[t.category]||{amt:0,n:0,biz:0}; o.amt+=t.amount; o.n++; if(t.type==='business') o.biz++; }); const catList=Object.entries(catTot).sort((a,b)=>b[1].amt-a[1].amt);
-  const h0=row+1; ['Category','Total','Per month','Share','Transactions','Budget /mo','Status'].forEach((t,i)=>d.getCell(h0,2+i).value=t); header(d,h0,2,8);
-  catList.forEach(([cat,o],i)=>{ const r=h0+1+i; const b=+state.budgets[cat]||0; const avg=o.amt/nM; d.getCell(r,2).value=cat; d.getCell(r,3).value=round2(o.amt); d.getCell(r,3).numFmt=money0; d.getCell(r,4).value=round2(avg); d.getCell(r,4).numFmt=money0; d.getCell(r,5).value=total?o.amt/total:0; d.getCell(r,5).numFmt='0.0%'; d.getCell(r,6).value=o.n; if(b){ d.getCell(r,7).value=b; d.getCell(r,7).numFmt=money0; const over=avg-b; const s=d.getCell(r,8); s.value=over>0?'Over by '+fmt0(over):'Under'; s.font={bold:true,color:argb(over>0?XC.bad:XC.good)}; s.fill={type:'pattern',pattern:'solid',fgColor:argb(over>0?XC.badSoft:XC.goodSoft)}; }
-    for(let c=2;c<=8;c++) d.getCell(r,c).border={bottom:thin}; const sw=d.getCell(r,2); sw.border={bottom:thin,left:{style:'thick',color:argb(hexFor(cat))}}; });
-  if(catList.length){ d.addConditionalFormatting({ref:`C${h0+1}:C${h0+catList.length}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]}); }
-  /* Transactions */
-  const table=txTable(); const t=wb.addWorksheet('Transactions',{views:[{state:'frozen',ySplit:1}]}); t.addRows(table); header(t,1,1,table[0].length); t.autoFilter={from:'A1',to:colL(table[0].length)+table.length}; [11,9,12,44,11,22,10,22,18,30,8,9].forEach((w,i)=>t.getColumn(i+1).width=w); t.getColumn(5).numFmt=money; t.getColumn(5).alignment={horizontal:'right'};
-  table.slice(1).forEach((r,i)=>{ const rr=t.getRow(i+2); if(r[10]==='yes'){ rr.font={color:argb(XC.muted),italic:true}; } else if(r[6]==='business'){ rr.getCell(7).fill={type:'pattern',pattern:'solid',fgColor:argb(XC.soft)}; rr.getCell(7).font={bold:true,color:argb(XC.accent)}; } if(r[5]==='Uncategorized') rr.getCell(6).font={bold:true,color:argb(XC.bad)}; if(r[9]) rr.getCell(10).font={italic:true,color:argb(XC.ink2)}; });
-  if(table.length>1) t.addConditionalFormatting({ref:`E2:E${table.length}`,rules:[{type:'cellIs',operator:'lessThan',formulae:['0'],style:{font:{color:argb(XC.good)}}}]});
-  /* One sheet per trip */
-  const usedNames=new Set(['Dashboard','Transactions','Personal by month','Business by month','Recurring']);
-  state.trips.forEach(tr=>{ const rows=tripRows(tr.id).slice().sort((a,b)=>a.date-b.date); if(!rows.length) return; let name=('Trip - '+tr.name).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31); let k=2; while(usedNames.has(name)){ name=name.slice(0,28)+' '+(k++); } usedNames.add(name);
-    const ws=wb.addWorksheet(name,{views:[{showGridLines:false}]}); ws.columns=[{width:12},{width:44},{width:12},{width:22},{width:11},{width:30}];
-    const total=rows.reduce((a,x)=>a+x.amount,0); const days=tripDays(tr);
-    ws.getCell('A1').value=tr.name; ws.getCell('A1').font={bold:true,size:20,color:argb(XC.ink)}; ws.getRow(1).height=28;
-    ws.getCell('A2').value=`${fmtRange(tr)} · ${days} day${days>1?'s':''} · ${tr.type} trip · ${rows.length} transactions`; ws.getCell('A2').font={size:11,color:argb(XC.muted)};
-    [['Total',total,money0],['Per day',total/days,money0],['Days',days,'0']].forEach(([l,v,nf],i)=>{ const lc=ws.getCell(4,1+i*2), vc=ws.getCell(5,1+i*2); lc.value=l; lc.font={size:9,bold:true,color:argb(XC.muted)}; vc.value=round2(v); vc.numFmt=nf; vc.font={bold:true,size:16}; [lc,vc].forEach(c=>{ c.fill={type:'pattern',pattern:'solid',fgColor:argb(XC.paper)}; c.alignment={horizontal:'left',indent:1,vertical:'middle'}; }); }); ws.getRow(5).height=28;
+  const money='"$"#,##0.00', money0='"$"#,##0', dateF='mmm d, yyyy'; const argb=h=>({argb:'FF'+h}); const fill=h=>({type:'pattern',pattern:'solid',fgColor:argb(h)}); const thin={style:'thin',color:argb(XC.rule)};
+  const band=(ws,title,sub,last)=>{ ws.pageSetup={fitToPage:true,fitToWidth:1,fitToHeight:0,orientation:last>9?'landscape':'portrait',margins:{left:0.4,right:0.4,top:0.5,bottom:0.5,header:0.2,footer:0.2}}; ws.getRow(1).height=8; ws.getRow(2).height=38; ws.getRow(3).height=22; for(let r=2;r<=3;r++) for(let c=2;c<=last;c++) ws.getCell(r,c).fill=fill(XC.ink);
+    ws.mergeCells(2,2,2,last); ws.mergeCells(3,2,3,last); const t=ws.getCell(2,2); t.value=title; t.font={bold:true,size:20,color:argb('FFFFFF')}; t.alignment={vertical:'middle',indent:1}; const s=ws.getCell(3,2); s.value=sub; s.font={size:11,color:argb('C9D1C6')}; s.alignment={vertical:'top',indent:1}; };
+  const cards=(ws,row,items)=>{ ws.getRow(row).height=18; ws.getRow(row+1).height=32; ws.getRow(row+2).height=18;
+    items.forEach(({from,to,label,value,fmt,sub,color})=>{ to=to||from; if(to>from){ ws.mergeCells(row,from,row,to); ws.mergeCells(row+1,from,row+1,to); ws.mergeCells(row+2,from,row+2,to); }
+      for(let r=row;r<=row+2;r++) for(let c=from;c<=to;c++){ const cell=ws.getCell(r,c); cell.fill=fill(XC.paper); if(r===row) cell.border={top:{style:'thick',color:argb(color||XC.accent)}}; }
+      const l=ws.getCell(row,from), v=ws.getCell(row+1,from), s=ws.getCell(row+2,from); l.value=label.toUpperCase(); l.font={size:8,bold:true,color:argb(XC.muted)}; v.value=value; if(fmt) v.numFmt=fmt; v.font={bold:true,size:18,color:argb(XC.ink)}; s.value=sub||''; s.font={size:9,color:argb(XC.ink2)};
+      [l,v,s].forEach(c=>c.alignment={horizontal:'left',vertical:'middle',indent:1}); }); };
+  const section=(ws,row,from,to,text)=>{ const c=ws.getCell(row,from); c.value=text; c.font={bold:true,size:13,color:argb(XC.ink)}; ws.getRow(row).height=24; c.alignment={vertical:'bottom'}; for(let i=from;i<=to;i++) ws.getCell(row,i).border={bottom:{style:'medium',color:argb(XC.ink)}}; };
+  const head=(ws,row,from,labels,right)=>{ labels.forEach((t,i)=>{ const c=ws.getCell(row,from+i); c.value=t; c.font={bold:true,size:10,color:argb(XC.ink2)}; c.fill=fill('E9EDE6'); c.border={bottom:{style:'thin',color:argb(XC.rule2||'C9D1C6')}}; c.alignment={vertical:'middle',horizontal:(right||[]).includes(i)?'right':'left',indent:(right||[]).includes(i)?0:1}; }); ws.getRow(row).height=22; };
+  const zebra=(ws,row,from,to,i)=>{ for(let c=from;c<=to;c++){ const cell=ws.getCell(row,c); if(i%2) cell.fill=fill('FAFBF9'); cell.border={bottom:thin}; } };
+  const totalLine=(ws,row,from,to)=>{ for(let c=from;c<=to;c++){ const cell=ws.getCell(row,c); cell.font={bold:true,color:argb(XC.ink)}; cell.border={top:{style:'medium',color:argb(XC.ink)}}; } ws.getRow(row).height=22; };
+  const imgRows=(h,rowH)=>Math.ceil(h/(rowH||20))+1;
+  const used=new Set(['summary','trips','transactions','personal by month','business by month','recurring']);
+  /* trip figures */
+  const trips=state.trips.slice().sort((a,b)=>a.start<b.start?-1:1).map(tr=>{ const rows=tripSpend(tr); const tot=rows.reduce((a,x)=>a+x.amount,0); const groups={}; rows.forEach(x=>{ const g=groupOf(x.category); groups[g]=(groups[g]||0)+x.amount; }); return {tr,rows,total:tot,days:tripDays(tr),groups,name:tr.name,range:fmtRange(tr)}; }).filter(t=>t.rows.length);
+  trips.forEach(t=>t.sheet=safeSheetName(t.name,used));
+  const tripTotal=trips.reduce((a,t)=>a+t.total,0);
+
+  /* ===== Summary ===== */
+  const d=wb.addWorksheet('Summary',{views:[{showGridLines:false}],properties:{tabColor:argb(XC.ink)}}); d.columns=[{width:2},{width:26},{width:15},{width:15},{width:12},{width:14},{width:14},{width:16}];
+  band(d,'Where your money went',months.length?`${monthLabel(months[0])} to ${monthLabel(months[months.length-1])}  ·  ${spend.length} purchases  ·  made ${ymd(new Date())}`:'No data',8);
+  cards(d,5,[{from:2,label:'Total spent',value:round2(total),fmt:money0,sub:fmt0(total/nM)+' a month'},{from:3,label:'Personal',value:round2(per),fmt:money0,sub:total?Math.round(per/total*100)+'% of spending':'',color:XC.accent},{from:4,label:'Business',value:round2(biz),fmt:money0,sub:total?Math.round(biz/total*100)+'% of spending':'',color:'EB6834'},{from:5,to:6,label:'On trips',value:round2(tripTotal),fmt:money0,sub:trips.length?`${trips.length} trip${trips.length>1?'s':''} · ${total?Math.round(tripTotal/total*100):0}% of spending`:'No trips found',color:'1BAF7A'},{from:7,to:8,label:'To review',value:unc.length,fmt:'0',sub:unc.length?'purchases without a category':'everything has a category',color:unc.length?XC.bad:XC.good}]);
+  let row=9; const img1=chartMonthlyPNG(spend); if(img1){ d.addImage(wb.addImage({base64:img1,extension:'png'}),{tl:{col:1,row:row},ext:{width:720,height:360}}); row+=imgRows(360); }
+  const catTot={}; spend.forEach(t=>{ const o=catTot[t.category]=catTot[t.category]||{amt:0,n:0}; o.amt+=t.amount; o.n++; }); const catList=Object.entries(catTot).sort((a,b)=>b[1].amt-a[1].amt);
+  section(d,row,2,8,'Spending by category'); row++; head(d,row,2,['Category','Total','Per month','Share','Purchases','Budget / mo','Status'],[1,2,3,4,5]); const h0=row;
+  catList.forEach(([cat,o],i)=>{ const r=h0+1+i; const b=+state.budgets[cat]||0; const avg=o.amt/nM; zebra(d,r,2,8,i); d.getCell(r,2).value=cat; d.getCell(r,2).border={bottom:thin,left:{style:'thick',color:argb(hexFor(cat))}}; d.getCell(r,2).alignment={indent:1}; d.getCell(r,3).value=round2(o.amt); d.getCell(r,3).numFmt=money0; d.getCell(r,4).value=round2(avg); d.getCell(r,4).numFmt=money0; d.getCell(r,5).value=total?o.amt/total:0; d.getCell(r,5).numFmt='0.0%'; d.getCell(r,6).value=o.n;
+    if(b){ d.getCell(r,7).value=b; d.getCell(r,7).numFmt=money0; const over=avg-b; const s=d.getCell(r,8); s.value=over>0?'Over by '+fmt0(over):'Under'; s.font={bold:true,color:argb(over>0?XC.bad:XC.good)}; s.fill=fill(over>0?XC.badSoft:XC.goodSoft); } });
+  if(catList.length){ const last=h0+catList.length; d.addConditionalFormatting({ref:`C${h0+1}:C${last}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('9EC5F4'),gradient:false}]}); totalLine(d,last+1,2,8); d.getCell(last+1,2).value='Total'; d.getCell(last+1,2).alignment={indent:1}; d.getCell(last+1,3).value={formula:`SUM(C${h0+1}:C${last})`,result:round2(total)}; d.getCell(last+1,3).numFmt=money0; d.getCell(last+1,4).value={formula:`SUM(D${h0+1}:D${last})`,result:round2(total/nM)}; d.getCell(last+1,4).numFmt=money0; d.getCell(last+1,6).value={formula:`SUM(F${h0+1}:F${last})`,result:spend.length}; row=last+3; }
+  d.addImage(wb.addImage({base64:chartSplitPNG(per,biz),extension:'png'}),{tl:{col:1,row:row},ext:{width:400,height:200}});
+
+  /* ===== Trips overview ===== */
+  const T=wb.addWorksheet('Trips',{views:[{showGridLines:false}],properties:{tabColor:argb('1BAF7A')}}); const gN=TRIP_GROUPS.length, lastC=4+gN+3; // B trip, C dates, D days, E kind, groups, total, per day
+  T.columns=[{width:2},{width:30},{width:22},{width:7},{width:10},...TRIP_GROUPS.map(()=>({width:13})),{width:13},{width:11}];
+  band(T,'Your trips',trips.length?`${trips.length} trip${trips.length>1?'s':''}  ·  ${fmt0(tripTotal)} in all  ·  click a trip name to open its sheet`:'No trips in this statement',lastC);
+  if(!trips.length){ T.getCell(5,2).value='No trips were found. On the Gastos page, add a trip with its dates and download again: it gets its own sheet here.'; T.getCell(5,2).font={color:argb(XC.ink2)}; }
+  else { const days=trips.reduce((a,t)=>a+t.days,0); const big=trips.slice().sort((a,b)=>b.total-a.total)[0];
+    cards(T,5,[{from:2,label:'Trips',value:trips.length,fmt:'0',sub:`${days} days away`},{from:3,label:'Spent on trips',value:round2(tripTotal),fmt:money0,sub:total?Math.round(tripTotal/total*100)+'% of all spending':'',color:'1BAF7A'},{from:4,to:6,label:'Per trip day',value:round2(tripTotal/Math.max(1,days)),fmt:money0,sub:'on average',color:'EB6834'},{from:7,to:9,label:'Biggest trip',value:round2(big.total),fmt:money0,sub:big.name,color:'4A3AA7'},{from:10,to:lastC,label:'Biggest cost',value:(()=>{ const g={}; trips.forEach(t=>Object.entries(t.groups).forEach(([k,v])=>g[k]=(g[k]||0)+v)); const top=Object.entries(g).sort((a,b)=>b[1]-a[1])[0]; return top?top[0]:''; })(),sub:'across all trips',color:'2A78D6'}]);
+    let r=9; const ch=chartTripsPNG(trips); T.addImage(wb.addImage({base64:ch.png,extension:'png'}),{tl:{col:1,row:r},ext:{width:ch.w,height:ch.h}}); r+=imgRows(ch.h);
+    section(T,r,2,lastC,'Trip by trip'); r++; const cols=['Trip','Dates','Days','Kind',...TRIP_GROUPS.map(g=>g[0]),'Total','Per day']; head(T,r,2,cols,[2,...TRIP_GROUPS.map((_,i)=>4+i),4+gN,5+gN]); const th=r;
+    trips.forEach((t,i)=>{ const rr=th+1+i; zebra(T,rr,2,lastC,i); T.getRow(rr).height=20; const nc=T.getCell(rr,2); nc.value={text:t.name,hyperlink:'#'+sheetRef(t.sheet)+'!A1'}; nc.font={bold:true,color:argb(XC.accent),underline:true}; nc.alignment={indent:1}; T.getCell(rr,3).value=t.range; T.getCell(rr,3).font={color:argb(XC.ink2)}; T.getCell(rr,4).value=t.days; T.getCell(rr,5).value=t.tr.type==='business'?'Business':'Personal'; T.getCell(rr,5).alignment={indent:1}; if(t.tr.type==='business') T.getCell(rr,5).font={bold:true,color:argb('EB6834')};
+      TRIP_GROUPS.forEach(([g],k)=>{ const c=T.getCell(rr,6+k); const v=round2(t.groups[g]||0); c.value=v||null; c.numFmt=money0; });
+      const tc=T.getCell(rr,6+gN); tc.value={formula:`SUM(${colL(6)}${rr}:${colL(5+gN)}${rr})`,result:round2(t.total)}; tc.numFmt=money0; tc.font={bold:true}; const pd=T.getCell(rr,7+gN); pd.value={formula:`${colL(6+gN)}${rr}/D${rr}`,result:round2(t.total/t.days)}; pd.numFmt=money0; });
+    const last=th+trips.length; T.addConditionalFormatting({ref:`${colL(6+gN)}${th+1}:${colL(6+gN)}${last}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('A8DCC5'),gradient:false}]});
+    T.addConditionalFormatting({ref:`F${th+1}:${colL(5+gN)}${last}`,rules:[{type:'colorScale',cfvo:[{type:'num',value:0},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FFF7C9B2'}]}]});
+    const tl=last+1; totalLine(T,tl,2,lastC); T.getCell(tl,2).value='All trips'; T.getCell(tl,2).alignment={indent:1}; T.getCell(tl,4).value={formula:`SUM(D${th+1}:D${last})`,result:days};
+    for(let k=0;k<=gN;k++){ const cl=colL(6+k); const c=T.getCell(tl,6+k); const res=k<gN?round2(trips.reduce((a,t)=>a+(t.groups[TRIP_GROUPS[k][0]]||0),0)):round2(tripTotal); c.value={formula:`SUM(${cl}${th+1}:${cl}${last})`,result:res}; c.numFmt=money0; }
+    const pc=T.getCell(tl,7+gN); pc.value={formula:`${colL(6+gN)}${tl}/D${tl}`,result:round2(tripTotal/Math.max(1,days))}; pc.numFmt=money0;
+    const sh=T.getCell(tl+1,2); sh.value='Share of trip spending'; sh.font={italic:true,color:argb(XC.ink2)}; sh.alignment={indent:1}; for(let k=0;k<gN;k++){ const cl=colL(6+k); const c=T.getCell(tl+1,6+k); c.value={formula:`IF(${colL(6+gN)}${tl}=0,0,${cl}${tl}/${colL(6+gN)}${tl})`,result:tripTotal?(trips.reduce((a,t)=>a+(t.groups[TRIP_GROUPS[k][0]]||0),0))/tripTotal:0}; c.numFmt='0%'; c.font={italic:true,color:argb(XC.ink2)}; }
+    const nt=T.getCell(tl+3,2); nt.value='Food is dining out and groceries. Getting around is rideshare, taxis, trains, gas, parking and tolls. Shopping includes clothes and beauty. Flights and stays paid before a trip are counted in that trip.'; nt.font={size:9,color:argb(XC.muted)}; T.mergeCells(tl+3,2,tl+3,lastC); nt.alignment={wrapText:true,vertical:'top'}; T.getRow(tl+3).height=30; }
+
+  /* ===== one sheet per trip ===== */
+  trips.forEach((t,ti)=>{ const {tr,rows}=t; const ws=wb.addWorksheet(t.sheet,{views:[{showGridLines:false}],properties:{tabColor:argb(PALETTE[ti%PALETTE.length])}});
+    ws.columns=[{width:2},{width:15},{width:42},{width:22},{width:13},{width:13},{width:11},{width:28}];
+    band(ws,tr.name,`${t.range}  ·  ${t.days} day${t.days>1?'s':''}  ·  ${tr.type==='business'?'Business':'Personal'} trip  ·  ${rows.length} purchases`,8);
+    const back=ws.getCell(1,8); back.value={text:'‹ All trips',hyperlink:"#'Trips'!A1"}; back.font={size:9,color:argb(XC.accent),underline:true}; back.alignment={horizontal:'right'}; ws.getRow(1).height=16;
+    const pre=rows.filter(x=>ymd(x.date)<tr.start); const biggest=rows.slice().sort((a,b)=>b.amount-a.amount)[0];
     const ct={}; rows.forEach(x=>ct[x.category]=(ct[x.category]||0)+x.amount); const cl=Object.entries(ct).sort((a,b)=>b[1]-a[1]);
-    let r=7; ws.getCell(r,1).value='Category'; ws.getCell(r,2).value='Amount'; ws.getCell(r,3).value='Share'; header(ws,r,1,3);
-    cl.forEach(([c,a],i)=>{ const rr=r+1+i; ws.getCell(rr,1).value=c; ws.getCell(rr,1).border={left:{style:'thick',color:argb(hexFor(c))},bottom:thin}; ws.getCell(rr,2).value=round2(a); ws.getCell(rr,2).numFmt=money0; ws.getCell(rr,3).value=total?a/total:0; ws.getCell(rr,3).numFmt='0.0%'; });
-    if(cl.length) ws.addConditionalFormatting({ref:`B${r+1}:B${r+cl.length}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]});
-    r=r+cl.length+3; ['Date','Description','Amount','Category','Type','Note'].forEach((h,i)=>ws.getCell(r,1+i).value=h); header(ws,r,1,6);
-    rows.forEach((x,i)=>{ const rr=r+1+i; ws.getCell(rr,1).value=ymd(x.date); ws.getCell(rr,2).value=x.desc; ws.getCell(rr,3).value=round2(x.amount); ws.getCell(rr,3).numFmt=money; ws.getCell(rr,4).value=x.category; ws.getCell(rr,5).value=x.type; ws.getCell(rr,6).value=state.notes[x.id]||''; for(let c=1;c<=6;c++) ws.getCell(rr,c).border={bottom:thin}; });
-    totalRow(ws,r+rows.length+1,1,6); ws.getCell(r+rows.length+1,1).value='TOTAL'; ws.getCell(r+rows.length+1,3).value=round2(total); ws.getCell(r+rows.length+1,3).numFmt=money; });
-  /* Monthly matrices */
-  const matrixSheet=(name,rows)=>{ if(!rows.length) return; const aoa=matrixAoa(rows); const ws=wb.addWorksheet(name,{views:[{state:'frozen',xSplit:1,ySplit:1}]}); ws.addRows(aoa); const nc=aoa[0].length, nr=aoa.length; header(ws,1,1,nc); ws.getColumn(1).width=14; ws.getColumn(1).font={bold:true}; for(let c=2;c<=nc;c++){ ws.getColumn(c).width=Math.max(11,Math.min(22,String(aoa[0][c-1]).length+2)); ws.getColumn(c).numFmt=money0; ws.getColumn(c).alignment={horizontal:'right'}; } ws.getCell(1,1).alignment={horizontal:'left'}; totalRow(ws,nr-1,1,nc); ws.getRow(nr).font={italic:true,color:argb(XC.ink2)}; ws.getColumn(nc).font={bold:true};
+    /* transactions go at the bottom; work out where so the formulas above can point at them */
+    const byDay={}; rows.forEach(x=>{ const k=ymd(x.date); (byDay[k]=byDay[k]||[]).push(x); }); const dayKeys=Object.keys(byDay).sort();
+    const catStart=10, catRowsN=Math.max(cl.length,11); const dayHead=catStart+catRowsN+3; const dayStart=dayHead+1; const txHead=dayStart+dayKeys.length+3; const tx0=txHead+1, tx1=txHead+rows.length; const totalRef=`$E$${tx1+1}`;
+    const amtR=`$E$${tx0}:$E$${tx1}`, catR=`$D$${tx0}:$D$${tx1}`, dateR=`$B$${tx0}:$B$${tx1}`;
+    cards(ws,5,[{from:2,label:'Total spent',value:{formula:totalRef.replace(/\$/g,''),result:round2(t.total)},fmt:money0,sub:pre.length?`incl. ${fmt0(pre.reduce((a,x)=>a+x.amount,0))} paid before`:'all during the trip'},{from:3,label:'Biggest purchase',value:biggest?round2(biggest.amount):0,fmt:money0,sub:biggest?biggest.desc.split(/NAME:|PHONE NUMBER:/)[0].trim().slice(0,40):'',color:'EB6834'},{from:4,label:'Per day',value:{formula:`${totalRef.replace(/\$/g,'')}/E6`,result:round2(t.total/t.days)},fmt:money0,sub:'on average',color:'1BAF7A'},{from:5,to:6,label:'Days',value:t.days,fmt:'0',sub:fmtRange(tr).replace(/, \d{4}$/,''),color:'4A3AA7'},{from:7,to:8,label:'Purchases',value:rows.length,fmt:'0',sub:`${dayKeys.length} day${dayKeys.length>1?'s':''} with spending`,color:'EDA100'}]);
+    /* where it went + donut */
+    section(ws,catStart-1-0,2,8,'Where the money went'); head(ws,catStart,3,['Category','Amount','Share'],[1,2]);
+    cl.forEach(([c,a],i)=>{ const r=catStart+1+i; zebra(ws,r,3,5,i); const n=ws.getCell(r,3); n.value=c; n.border={bottom:thin,left:{style:'thick',color:argb(PALETTE[i%PALETTE.length])}}; n.alignment={indent:1}; const v=ws.getCell(r,4); v.value={formula:`SUMIF(${catR},C${r},${amtR})`,result:round2(a)}; v.numFmt=money0; const s=ws.getCell(r,5); s.value={formula:`IF(${totalRef}=0,0,D${r}/${totalRef})`,result:t.total?a/t.total:0}; s.numFmt='0%'; s.font={color:argb(XC.ink2)}; });
+    if(cl.length){ ws.addConditionalFormatting({ref:`D${catStart+1}:D${catStart+cl.length}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('9EC5F4'),gradient:false}]}); const r=catStart+cl.length+1; totalLine(ws,r,3,5); ws.getCell(r,3).value='Total'; ws.getCell(r,3).alignment={indent:1}; ws.getCell(r,4).value={formula:`SUM(D${catStart+1}:D${catStart+cl.length})`,result:round2(t.total)}; ws.getCell(r,4).numFmt=money0; }
+    ws.addImage(wb.addImage({base64:chartDonutPNG(cl,t.total,`${t.days} day${t.days>1?'s':''} · ${fmt0(t.total/t.days)}/day`),extension:'png'}),{tl:{col:5.2,row:catStart-1},ext:{width:300,height:208}});
+    /* day by day */
+    section(ws,dayHead-1,2,8,'Day by day'); head(ws,dayHead,2,['Date','Day','Spent','Purchases','Biggest that day'],[2,3]); ws.mergeCells(dayHead,6,dayHead,8);
+    dayKeys.forEach((k,i)=>{ const r=dayStart+i; const list=byDay[k]; zebra(ws,r,2,8,i); const dd=ws.getCell(r,2); dd.value=xlDay(k); dd.numFmt='ddd, mmm d'; dd.alignment={horizontal:'left',indent:1}; const n=dayNum(k)-dayNum(tr.start)+1; const lab=ws.getCell(r,3); lab.value=n<1?'Paid before the trip':(k>tr.end?'After the trip':'Day '+n+' · '+WEEKDAYS[xlDay(k).getUTCDay()]); if(n<1||k>tr.end) lab.font={italic:true,color:argb(XC.muted)};
+      const v=ws.getCell(r,4); v.value={formula:`SUMIF(${dateR},B${r},${amtR})`,result:round2(list.reduce((a,x)=>a+x.amount,0))}; v.numFmt=money0; v.font={bold:true}; ws.getCell(r,5).value={formula:`COUNTIF(${dateR},B${r})`,result:list.length}; ws.getCell(r,5).alignment={horizontal:'right'};
+      const top=list.slice().sort((a,b)=>b.amount-a.amount)[0]; ws.mergeCells(r,6,r,8); const tc=ws.getCell(r,6); tc.value=`${top.desc.split(/NAME:|PHONE NUMBER:/)[0].trim().slice(0,38)}  ${fmt0(top.amount)}`; tc.font={color:argb(XC.ink2)}; tc.alignment={indent:2}; });
+    if(dayKeys.length) ws.addConditionalFormatting({ref:`D${dayStart}:D${dayStart+dayKeys.length-1}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('F7C9B2'),gradient:false}]});
+    /* every purchase */
+    section(ws,txHead-1,2,8,'Every purchase'); head(ws,txHead,2,['Date','Description','Category','Amount','When','Type','Note'],[3]);
+    rows.forEach((x,i)=>{ const r=tx0+i; zebra(ws,r,2,8,i); const k=ymd(x.date); const c=ws.getCell(r,2); c.value=xlDate(x.date); c.numFmt=dateF; c.alignment={horizontal:'left',indent:1}; ws.getCell(r,3).value=x.desc.split(/NAME:|PHONE NUMBER:/)[0].trim(); ws.getCell(r,4).value=x.category; if(x.category==='Uncategorized') ws.getCell(r,4).font={bold:true,color:argb(XC.bad)};
+      const a=ws.getCell(r,5); a.value=round2(x.amount); a.numFmt=money; if(x.amount<0) a.font={color:argb(XC.good)}; const w=ws.getCell(r,6); const n=dayNum(k)-dayNum(tr.start)+1; w.value=n<1?'Before':(k>tr.end?'After':'Day '+n); if(n<1||k>tr.end) w.font={italic:true,color:argb(XC.muted)}; w.alignment={indent:1};
+      const ty=ws.getCell(r,7); ty.value=x.type==='business'?'Business':'Personal'; if(x.type==='business') ty.font={bold:true,color:argb('EB6834')}; ws.getCell(r,8).value=state.notes[x.id]||''; ws.getCell(r,8).font={italic:true,color:argb(XC.ink2)}; });
+    ws.autoFilter={from:{row:txHead,column:2},to:{row:tx1,column:8}};
+    const tr1=tx1+1; totalLine(ws,tr1,2,8); ws.getCell(tr1,2).value='Total'; ws.getCell(tr1,2).alignment={indent:1}; ws.getCell(tr1,5).value={formula:`SUM(E${tx0}:E${tx1})`,result:round2(t.total)}; ws.getCell(tr1,5).numFmt=money;
+    ws.getCell(tr1+2,2).value='Change a category in the Category column and the totals and chart table above follow it.'; ws.getCell(tr1+2,2).font={size:9,color:argb(XC.muted)};
+  });
+
+  /* ===== Transactions ===== */
+  const table=txTable(); const txs=wb.addWorksheet('Transactions',{views:[{state:'frozen',ySplit:1,showGridLines:false}],properties:{tabColor:argb(XC.muted)}}); txs.addRows(table.map((r,i)=>i?[xlDay(r[0]),...r.slice(1)]:r));
+  head(txs,1,1,table[0],[4]); txs.autoFilter={from:'A1',to:colL(table[0].length)+table.length}; [13,10,10,46,12,22,10,22,22,30,9,9].forEach((w,i)=>txs.getColumn(i+1).width=w); txs.getColumn(1).numFmt=dateF; txs.getColumn(5).numFmt=money;
+  table.slice(1).forEach((r,i)=>{ const rr=txs.getRow(i+2); for(let c=1;c<=table[0].length;c++){ const cell=rr.getCell(c); cell.border={bottom:thin}; if(i%2) cell.fill=fill('FAFBF9'); }
+    if(r[10]==='yes'){ rr.font={color:argb(XC.muted),italic:true}; } else if(r[6]==='business'){ rr.getCell(7).font={bold:true,color:argb('EB6834')}; } if(r[5]==='Uncategorized') rr.getCell(6).font={bold:true,color:argb(XC.bad)}; if(r[8]){ rr.getCell(9).font={bold:true,color:argb('1BAF7A')}; } });
+  if(table.length>1) txs.addConditionalFormatting({ref:`E2:E${table.length}`,rules:[{type:'cellIs',operator:'lessThan',formulae:['0'],style:{font:{color:argb(XC.good)}}}]});
+  /* ===== Monthly matrices ===== */
+  const matrixSheet=(name,rows)=>{ if(!rows.length) return; const aoa=matrixAoa(rows); const ws=wb.addWorksheet(name,{views:[{state:'frozen',xSplit:1,ySplit:1,showGridLines:false}],properties:{tabColor:argb(XC.muted)}}); ws.addRows(aoa); const nc=aoa[0].length, nr=aoa.length; head(ws,1,1,aoa[0],aoa[0].map((_,i)=>i).slice(1)); ws.getColumn(1).width=14; for(let c=2;c<=nc;c++){ ws.getColumn(c).width=Math.max(11,Math.min(22,String(aoa[0][c-1]).length+2)); ws.getColumn(c).numFmt=money0; } for(let r=2;r<=nr;r++) ws.getCell(r,1).font={bold:true}; totalLine(ws,nr-1,1,nc); ws.getRow(nr).font={italic:true,color:argb(XC.ink2)}; ws.getColumn(nc).font={bold:true};
     const dataRows=nr-3; if(dataRows>0&&nc>2){ ws.addConditionalFormatting({ref:`B2:${colL(nc-1)}${1+dataRows}`,rules:[{type:'colorScale',cfvo:[{type:'num',value:0},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FF9EC5F4'}]}]}); ws.addConditionalFormatting({ref:`${colL(nc)}2:${colL(nc)}${1+dataRows}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb(XC.accent),gradient:false}]}); } };
   matrixSheet('Personal by month',spend.filter(x=>x.type==='personal')); matrixSheet('Business by month',spend.filter(x=>x.type==='business'));
-  /* Recurring */
+  /* ===== Recurring ===== */
   const rec=groupBy(spend.filter(x=>state.recurring[x.key])).map(g=>Object.assign(g,state.recurring[g.key])).sort((a,b)=>b.monthly-a.monthly);
-  if(rec.length){ const ws=wb.addWorksheet('Recurring',{views:[{state:'frozen',ySplit:1}]}); ws.addRows([['Merchant','Category','Type','Per month','Months seen','Charges'],...rec.map(g=>[g.key,g.tx[0].category,g.tx[0].type,round2(g.monthly),g.months,g.count]),['TOTAL','','',round2(rec.reduce((a,g)=>a+g.monthly,0)),'','']]); header(ws,1,1,6); [28,22,11,12,12,9].forEach((w,i)=>ws.getColumn(i+1).width=w); ws.getColumn(4).numFmt=money; totalRow(ws,rec.length+2,1,6); ws.addConditionalFormatting({ref:`D2:D${rec.length+1}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('EB6834'),gradient:false}]}); }
+  if(rec.length){ const ws=wb.addWorksheet('Recurring',{views:[{state:'frozen',ySplit:1,showGridLines:false}],properties:{tabColor:argb(XC.muted)}}); ws.addRows([['Merchant','Category','Type','Per month','Months seen','Charges'],...rec.map(g=>[g.key,g.tx[0].category,g.tx[0].type,round2(g.monthly),g.months,g.count]),['TOTAL','','',round2(rec.reduce((a,g)=>a+g.monthly,0)),'','']]); head(ws,1,1,['Merchant','Category','Type','Per month','Months seen','Charges'],[3,4,5]); [28,22,11,12,12,9].forEach((w,i)=>ws.getColumn(i+1).width=w); ws.getColumn(4).numFmt=money; totalLine(ws,rec.length+2,1,6); ws.addConditionalFormatting({ref:`D2:D${rec.length+1}`,rules:[{type:'dataBar',cfvo:[{type:'num',value:0},{type:'max'}],color:argb('F7C9B2'),gradient:false}]}); }
+  wb.views=[{activeTab:trips.length?1:0}];
   return await wb.xlsx.writeBuffer(); }
 function nativeDownload(name,data){ try{ const blob=new Blob([data],{type:/\.xlsx$/i.test(name)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); toast('Saved '+name); }catch(e){ toast('Could not save the file. Use Copy instead.'); } }
 function renderDownloads(){ const has=state.tx.length>0; const scopeName=state.scope==='all'?'all':state.scope; const dl=$('#dl');
   const xl=!!window.ExcelJS;
-  if(state.downloads||state.native){ dl.innerHTML=`${xl?`<button type="button" class="btn" id="dl-xlsx" ${has?'':'disabled'}>Download Excel workbook</button>`:''}<button type="button" class="btn${xl?' ghost':''}" id="dl-tx" ${has?'':'disabled'}>Transactions CSV</button><button type="button" class="btn ghost" id="dl-sum" ${has?'':'disabled'}>Monthly summary CSV (${scopeName})</button>`; $('#dl-note').textContent=(xl?'The Excel file has separate sheets: every transaction with your notes, personal by month, business by month, categories, and recurring charges. ':'')+'The transactions CSV keeps your categories and notes, so you can open it here again next month and continue.'; }
+  if(state.downloads||state.native){ dl.innerHTML=`${xl?`<button type="button" class="btn" id="dl-xlsx" ${has?'':'disabled'}>Download Excel workbook</button>`:''}<button type="button" class="btn${xl?' ghost':''}" id="dl-tx" ${has?'':'disabled'}>Transactions CSV</button><button type="button" class="btn ghost" id="dl-sum" ${has?'':'disabled'}>Monthly summary CSV (${scopeName})</button>`; $('#dl-note').textContent=(xl?'The Excel file opens on your trips: a summary of every trip, then one sheet per trip with what it cost by category and day by day. After those come a spending summary, every transaction with your notes, personal and business by month, and recurring charges. ':'')+'The transactions CSV keeps your categories and notes, so you can open it here again next month and continue.'; }
   else if(state.downloads===null&&state.dlChecked){ dl.innerHTML=`<button type="button" class="btn" id="cp-tx" ${has?'':'disabled'}>Copy transactions CSV</button><button type="button" class="btn ghost" id="cp-sum" ${has?'':'disabled'}>Copy monthly summary (${scopeName})</button>`; $('#dl-note').textContent='Saving files is not available in this view. Copy the CSV and paste it into a new file ending in .csv.'; }
   else { dl.innerHTML=`<button type="button" class="btn" disabled>Download transactions CSV</button>`; $('#dl-note').textContent='Checking whether files can be saved here…'; } }
 async function saveFile(name,data){ try{ await state.downloads.save({filename:name,data}); toast('Saved '+name); }catch(e){ const code=e&&e.code; if(code==='declined') return; if(code==='rate_limited'){ toast('One download at a time. Try again in a moment.'); return; } toast('Could not save the file here. Use Copy instead.'); state.downloads=null; state.dlChecked=true; renderDownloads(); } }
@@ -751,14 +888,14 @@ function sampleCSV(){ const L=[['09/02/2026','WHOLE FOODS MKT #10234 ANYTOWN US'
   return 'Status,Date,Description,Debit,Credit,Member Name\r\n'+L.map(([d,m,a])=>csvLine(['Cleared',d,m,a>0?a.toFixed(2):'',a<0?a.toFixed(2):'','SAMPLE'])).join('\r\n')+'\r\n'; }
 
 /* ---------- boot ---------- */
-function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments,trips:state.trips,tripOf:state.tripOf,selTrip:state.selTrip}; }
+function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments,trips:state.trips,tripOf:state.tripOf,tripDismissed:state.tripDismissed,selTrip:state.selTrip}; }
 function start(data){
   data=data||{};
   state.remember=load('gastos.remember',true)!==false; $('#remember').checked=state.remember;
   if(state.remember){ state.userRules=load('gastos.rules',{})||{}; state.budgets=load('gastos.budgets',{})||{}; state.notes=load('gastos.notes',{})||{}; }
-  if(state.remember){ const tp=load('gastos.trips',null); if(tp&&Array.isArray(tp.trips)){ state.trips=tp.trips; state.tripOf=tp.tripOf||{}; } }
+  if(state.remember){ const tp=load('gastos.trips',null); if(tp&&Array.isArray(tp.trips)){ state.trips=tp.trips; state.tripOf=tp.tripOf||{}; state.tripDismissed=Array.isArray(tp.dismissed)?tp.dismissed:[]; } }
   if(data.notes) state.notes=Object.assign({},state.notes,data.notes); if(data.showPayments) state.showPayments=true;
-  if(Array.isArray(data.trips)&&data.trips.length){ state.trips=data.trips; state.tripOf=data.tripOf||{}; } if(data.selTrip) state.selTrip=data.selTrip;
+  if(Array.isArray(data.trips)&&data.trips.length){ state.trips=data.trips; state.tripOf=data.tripOf||{}; } if(Array.isArray(data.tripDismissed)) state.tripDismissed=data.tripDismissed; if(data.selTrip) state.selTrip=data.selTrip;
   if(data.bankPick&&BANK_HELP[data.bankPick]) state.bankPick=data.bankPick;
   renderBanks();
   if(Array.isArray(data.files)&&data.files.length){ state.files=data.files.map(f=>({name:f.name,text:f.text,bank:'other',sample:!!f.sample})); state.sample=!!data.sample; state.txOverrides=data.txOverrides||{}; if(data.scope) state.scope=data.scope; if(data.period) state.period=data.period; $('#scope').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scope===state.scope)); }

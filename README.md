@@ -8,6 +8,8 @@ Open the page, pick your bank, choose the CSV you downloaded from the bank, and 
 - every category with its monthly average and an optional budget
 - a month-by-month chart
 - the full transaction list, where you can fix a category and it applies to that merchant everywhere
+- your trips, found from the statement itself: days of purchases away from home become a trip, together with the flights (matched by departure date) and the stays booked ahead
+- an Excel download with a Trips sheet comparing every trip, one sheet per trip (by category, day by day, every purchase), a spending summary, all transactions and the monthly tables
 - a download of the sorted transactions and a monthly summary, as CSV
 
 Everything runs in the browser. There is no server and nothing is stored, except the category choices and budgets you make, which stay in your own browser and can be forgotten with one tap.
