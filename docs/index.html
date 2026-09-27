@@ -195,6 +195,21 @@ section + section{border-top:1px solid var(--rule)}
 
 /* export */
 .dl{display:flex;gap:10px;flex-wrap:wrap}
+.intro{margin-bottom:6px}
+.intro h1{font-family:var(--display);font-size:24px;line-height:1.15;letter-spacing:-.01em;margin:0 0 6px}
+.intro .lede{font-size:14px;color:var(--ink-2);max-width:62ch;margin:0}
+.steps{list-style:none;counter-reset:st;margin:12px 0 0;padding:0;display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.steps a,.safe a{color:var(--accent)}
+@media (min-width:720px){.steps{grid-template-columns:repeat(4,1fr)}}
+.steps li{counter-increment:st;display:grid;grid-template-columns:22px 1fr;gap:7px;align-items:start;font-size:12.5px;line-height:1.35;color:var(--ink-2);background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:10px 12px}
+.steps li::before{content:counter(st);width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:12px;display:grid;place-items:center}
+.steps b{color:var(--ink);display:block;font-size:14px;margin-bottom:2px}
+.safe{margin-top:12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--good-soft);border:1px solid color-mix(in srgb,var(--good) 30%,transparent);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--ink-2)}
+.safe svg{width:22px;height:22px;color:var(--good-text);margin-top:2px}
+.safe strong{color:var(--ink);font-size:15px;display:block;margin-bottom:3px}
+.safe p{margin:0;max-width:66ch}
+.safe p + p{margin-top:8px}
+.safe label{display:inline-flex;gap:8px;align-items:center;color:var(--ink);font-weight:600}
 .foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink-2);max-width:66ch}
 .foot p + p{margin-top:8px}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9;display:flex;justify-content:center;pointer-events:none}
@@ -212,6 +227,17 @@ section + section{border-top:1px solid var(--rule)}
 
 <main class="wrap">
 
+<section class="intro" id="intro">
+  <h1>See where your money goes, trip by trip</h1>
+  <p class="lede">Gastos reads the statement file you download from your bank or card and sorts every purchase: groceries, dining, gas, flights and more. It splits personal from business, finds your trips on its own, and makes an Excel report you can keep or send to your accountant.</p>
+  <ol class="steps">
+    <li><span><b>Get your statement</b>Download your transactions from your bank as a CSV file.</span></li>
+    <li><span><b>Open it here</b>Tap Choose statement CSV. It is sorted right away.</span></li>
+    <li><span><b>Check it</b>Fix a category, tick Business or Ask my CPA, rename a trip.</span></li>
+    <li><span><b>Download</b>Get the <a href="#export">Excel workbook</a>, with a sheet for each trip.</span></li>
+  </ol>
+</section>
+
 <section id="import">
   <div class="sec-head"><h2>Which statement do you want to sort?</h2></div>
   <div class="panel">
@@ -225,6 +251,14 @@ section + section{border-top:1px solid var(--rule)}
     </div>
     <ul class="files" id="files"></ul>
     <div class="notice" id="sample-note" hidden>Showing sample data so you can see how it works. Add your own statement to replace it.</div>
+  </div>
+  <div class="safe" id="privacy">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>
+    <div>
+      <strong>Your statement is never uploaded or saved</strong>
+      <p>The file is read by the browser on this device and nowhere else. This page has no server and no account, so there is nothing that could keep a copy. Close the tab and your statement is gone. To come back to it next month, download the transactions CSV below and open it here again.</p>
+      <p><label><input type="checkbox" id="remember" checked> Remember my choices on this device</label><br>Keeps only your category fixes, Business and Ask my CPA ticks, notes, trips and budgets, in this browser, so next month's statement is sorted the way you like. Never the statement itself. <button class="link" id="forget" type="button">Forget everything</button></p>
+    </div>
   </div>
 </section>
 
@@ -295,8 +329,7 @@ section + section{border-top:1px solid var(--rule)}
   <div class="dl" id="dl"></div>
   <p class="muted" style="font-size:13px;margin-top:10px" id="dl-note"></p>
   <div class="foot">
-    <p><strong>How privacy works.</strong> Your statement is read by the browser on this device. It is never uploaded, and this page has no server that could keep it. Close the tab and it is gone.</p>
-    <p><label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="remember" checked> Remember my category choices and budgets on this device</label><br><span class="muted">Only the merchant-to-category choices and budget numbers are kept, in this browser only. <button class="link" id="forget" type="button">Forget them</button></span></p>
+    <p>Your statement stays on this device: nothing is uploaded. <a href="#privacy">How privacy works</a>.</p>
     <p>Works with CSV exports from Citi, Discover, Capital One, Truist, Chase, American Express, Bank of America, and most other banks. Re-open a file you downloaded from here and your categories come back with it.</p>
   </div>
 </section>
@@ -908,7 +941,7 @@ $('#dl').addEventListener('click',e=>{ const id=e.target.id; const stamp=new Dat
 /* ---------- misc UI ---------- */
 let toastTimer=null;
 function toast(msg,actLabel,act){ const el=$('#toast'); $('#toast-msg').textContent=msg; const b=$('#toast-act'); b.hidden=!actLabel; b.textContent=actLabel||''; b.onclick=()=>{ el.hidden=true; if(act) act(); }; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.hidden=true;},actLabel?7000:3500); }
-$('#remember').addEventListener('change',e=>{ state.remember=e.target.checked; try{ localStorage.setItem('gastos.remember',JSON.stringify(state.remember)); if(!state.remember){ localStorage.removeItem('gastos.rules'); localStorage.removeItem('gastos.budgets'); } else persist(); }catch(err){} });
+$('#remember').addEventListener('change',e=>{ state.remember=e.target.checked; try{ localStorage.setItem('gastos.remember',JSON.stringify(state.remember)); if(!state.remember){ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips','gastos.overrides','gastos.cpa'].forEach(k=>localStorage.removeItem(k)); } else persist(); }catch(err){} });
 $('#forget').addEventListener('click',forget);
 
 /* ---------- sample data ---------- */
