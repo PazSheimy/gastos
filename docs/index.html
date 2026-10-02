@@ -191,6 +191,41 @@ section + section{border-top:1px solid var(--rule)}
 .tripcats li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:13px}
 .tripcats .bar{margin:0}
 .tx select.trip{max-width:150px}
+/* header nav + money plan */
+.top .wrap{flex-wrap:wrap}
+.nav{order:3;flex:1 0 100%;display:flex}
+.nav button{flex:1;text-align:center}
+@media (min-width:640px){.nav{order:0;flex:0 0 auto}.nav button{flex:none}}
+.plan-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:720px){.plan-grid{grid-template-columns:5fr 7fr;align-items:start}}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.fields.one{grid-template-columns:1fr}
+.fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;min-width:0}
+.fields input,.fields select{width:100%;border:1px solid var(--rule-2);border-radius:8px;padding:9px 10px;background:var(--surface);font-size:16px;font-weight:400}
+.money-in{display:flex;align-items:center;border:1px solid var(--rule-2);border-radius:8px;background:var(--surface);padding-inline:10px}
+.money-in input{border:0;padding-inline:4px;flex:1;min-width:0;background:transparent}
+.money-in input:focus{outline:none}
+.money-in:focus-within{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:1px}
+.money-in span{color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;font-weight:400}
+.check input{margin-top:3px}
+.plan-out{display:flex;flex-direction:column;gap:12px}
+.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:12px;gap:2px;background:var(--rule)}
+.stack i{display:block;height:100%}
+.buckets{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:560px){.buckets{grid-template-columns:1fr 1fr}}
+.bucket{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:12px 14px;border-left:4px solid var(--b)}
+.bucket .top-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bucket .pct{font-size:12px;color:var(--muted);font-weight:600}
+.bucket .amt{font-size:22px;font-weight:600;margin-top:2px}
+.bucket .hint{font-size:13px;color:var(--ink-2);margin-top:6px}
+.taxtable{width:100%;border-collapse:collapse;font-size:13px}
+.taxtable td{padding:5px 0;border-bottom:1px solid var(--rule)}
+.taxtable tr:last-child td{border-bottom:0}
+.taxtable td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.compare{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:12px 14px}
+.compare .row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.compare .row:last-child{border-bottom:0}
 .empty{color:var(--muted);padding:14px 0}
 
 /* export */
@@ -222,12 +257,13 @@ section + section{border-top:1px solid var(--rule)}
 
 <header class="top"><div class="wrap">
   <div class="brand">Gastos</div>
+  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button></nav>
   <span class="privacy" title="Your statement is read by your browser and never uploaded"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>Stays on your phone</span>
 </div></header>
 
 <main class="wrap">
 
-<section class="intro" id="intro">
+<section class="intro sort-only" id="intro">
   <h1>See where your money goes</h1>
   <p class="lede">Gastos reads the statement file you download from your bank or card and sorts every purchase: groceries, dining, gas, flights and more. It splits personal from business, shows your spending month by month, and makes an Excel report you can keep or send to your accountant. If you travel, it also finds your trips and shows what each one cost.</p>
   <ol class="steps">
@@ -238,7 +274,7 @@ section + section{border-top:1px solid var(--rule)}
   </ol>
 </section>
 
-<section id="import">
+<section id="import" class="sort-only">
   <div class="sec-head"><h2>Which statement do you want to sort?</h2></div>
   <div class="panel">
     <div class="chips" id="banks" role="group" aria-label="Bank"></div>
@@ -262,7 +298,7 @@ section + section{border-top:1px solid var(--rule)}
   </div>
 </section>
 
-<section id="overview">
+<section id="overview" class="sort-only">
   <div class="controls">
     <div class="seg" id="scope" role="group" aria-label="Personal or business">
       <button type="button" data-scope="all" aria-pressed="true">All</button>
@@ -282,12 +318,12 @@ section + section{border-top:1px solid var(--rule)}
   <div class="notice unc" id="unc-note" hidden></div>
 </section>
 
-<section id="categories">
+<section id="categories" class="sort-only">
   <div class="sec-head"><h2>Where it went <small id="cat-count"></small></h2><button class="link" id="clear-cat" type="button" hidden>Show all transactions</button></div>
   <ul class="cats" id="cats"></ul>
 </section>
 
-<section id="trips-sec">
+<section id="trips-sec" class="sort-only">
   <div class="sec-head"><h2>Trips <small id="trip-count"></small></h2><span style="display:flex;gap:14px"><button class="link" id="trip-find" type="button" hidden>Find trips again</button><button class="link" id="trip-add" type="button">Add a trip</button></span></div>
   <p class="muted" style="font-size:13px;margin-bottom:10px">Trips are found from where you spent: days of purchases away from home become a trip, with the flights and stays you booked ahead. Each trip gets its own tab here and its own sheet in the Excel download. Rename a trip, fix its dates or mark it as business with Edit, or add one yourself.</p>
   <form class="tripform" id="trip-form" hidden>
@@ -301,13 +337,13 @@ section + section{border-top:1px solid var(--rule)}
   <div id="trip-detail"></div>
 </section>
 
-<section id="trend-sec">
+<section id="trend-sec" class="sort-only">
   <div class="sec-head"><h2>Month by month</h2></div>
   <div class="chart-wrap" id="trend"></div>
   <div class="legend" id="legend"></div>
 </section>
 
-<section id="transactions">
+<section id="transactions" class="sort-only">
   <div class="sec-head"><h2>Transactions <small id="tx-count"></small></h2></div>
   <div class="tx-tools">
     <div class="seg small" id="view" role="group" aria-label="Transaction view">
@@ -324,13 +360,41 @@ section + section{border-top:1px solid var(--rule)}
   <div class="more" id="more"></div>
 </section>
 
-<section id="export">
+<section id="export" class="sort-only">
   <div class="sec-head"><h2>Download the sorted files</h2></div>
   <div class="dl" id="dl"></div>
   <p class="muted" style="font-size:13px;margin-top:10px" id="dl-note"></p>
   <div class="foot">
     <p>Your statement stays on this device: nothing is uploaded. <a href="#privacy">How privacy works</a>.</p>
     <p>Works with CSV exports from Citi, Discover, Capital One, Truist, Chase, American Express, Bank of America, and most other banks. Re-open a file you downloaded from here and your categories come back with it.</p>
+  </div>
+</section>
+
+<section id="plan-sec" hidden>
+  <div class="sec-head"><h2>Where should your paycheck go?</h2></div>
+  <p class="help" style="margin-top:0;margin-bottom:14px">Five buckets, the same every month. Enter what you earn and the plan is built on what actually lands in your account after taxes, so you never plan with money that is not yours.</p>
+  <div class="plan-grid">
+    <div class="panel">
+      <div class="eyebrow" style="margin-bottom:8px">What you earn</div>
+      <div class="seg" id="pay-mode" role="group" aria-label="How you want to enter income"><button type="button" data-mode="hourly" aria-pressed="true">Hourly</button><button type="button" data-mode="monthly" aria-pressed="false">Monthly</button><button type="button" data-mode="yearly" aria-pressed="false">Yearly</button></div>
+      <div class="fields" id="pay-hourly"><label>Hours per week<input type="number" id="pay-hours" inputmode="decimal" min="1" max="100" value="40"></label><label>Pay per hour<span class="money-in"><span>$</span><input type="number" id="pay-rate" inputmode="decimal" min="0" step="0.5" value="20"></span></label></div>
+      <div class="fields one" id="pay-monthly" hidden><label>Pay per month<span class="money-in"><span>$</span><input type="number" id="pay-month" inputmode="decimal" min="0" step="50" value="3500"></span></label></div>
+      <div class="fields one" id="pay-yearly" hidden><label>Pay per year<span class="money-in"><span>$</span><input type="number" id="pay-year" inputmode="decimal" min="0" step="500" value="42000"></span></label></div>
+      <label class="check"><input type="checkbox" id="pay-gross" checked><span><b>This is before taxes.</b> <span class="ink2">Federal, Social Security, Medicare and state taxes get estimated so the plan uses your real take-home. Untick it if you are entering what you actually receive.</span></span></label>
+      <div class="fields" id="tax-fields">
+        <label>Filing status<select id="pay-status"><option value="single">Single</option><option value="married">Married, filing jointly</option><option value="head">Head of household</option></select></label>
+        <label>State income tax<span class="money-in"><input type="number" id="pay-state" inputmode="decimal" min="0" max="15" step="0.5" value="0"><span>%</span></span><span class="muted" style="font-size:12px;font-weight:400">0 in Florida, Texas, Nevada, Tennessee, Washington, Wyoming, South Dakota, Alaska and New Hampshire.</span></label>
+      </div>
+    </div>
+    <div class="plan-out">
+      <div class="panel"><div class="eyebrow">Take-home pay per month</div><div class="hero-fig" id="plan-net">$0</div><p class="hero-sub" id="plan-sub"></p><div class="stack" id="plan-stack" role="img" aria-label="How take-home pay splits into the five buckets"></div></div>
+      <div class="seg small" id="plan-per" role="group" aria-label="Show amounts per"><button type="button" data-per="12" aria-pressed="true">Per month</button><button type="button" data-per="26" aria-pressed="false">Every 2 weeks</button><button type="button" data-per="52" aria-pressed="false">Per week</button></div>
+      <ul class="buckets" id="plan-buckets"></ul>
+      <div id="plan-tax"></div>
+      <div id="plan-compare"></div>
+      <div class="dl"><button type="button" class="btn ghost small" id="plan-copy">Copy my plan</button></div>
+      <p class="muted" style="font-size:12px">Taxes are a 2026 estimate using the standard deduction only: federal brackets, Social Security 6.2% up to $184,500 of wages, Medicare 1.45%, plus the state rate you enter. Tax credits, 401(k) contributions and health premiums are not included, so your real paycheck may differ a little. Nothing you type here is sent anywhere.</p>
+    </div>
   </div>
 </section>
 
@@ -475,7 +539,7 @@ const ONLINE_RX=/AMAZON|AMZN|SHEIN|TEMU|TIKTOK|EBAY|ETSY|WALMART\.COM|TARGET\.CO
 const tripById=id=>state.trips.find(x=>x.id===id);
 function load(key,def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; } }
 function persist(){ if(!state.remember) return; try{ localStorage.setItem('gastos.rules',JSON.stringify(state.userRules)); localStorage.setItem('gastos.budgets',JSON.stringify(state.budgets)); localStorage.setItem('gastos.notes',JSON.stringify(state.notes)); localStorage.setItem('gastos.overrides',JSON.stringify(state.txOverrides)); localStorage.setItem('gastos.cpa',JSON.stringify(state.cpa)); localStorage.setItem('gastos.trips',JSON.stringify({trips:state.trips,tripOf:state.tripOf,dismissed:state.tripDismissed})); }catch(e){} }
-function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips','gastos.overrides','gastos.cpa'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.cpa={}; state.trips=[]; state.tripOf={}; state.autoTripOf={}; state.tripDismissed=[]; state.selTrip=null; state.filterTrip=null; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes, trips and budgets on this device.'); }
+function forget(){ try{ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips','gastos.overrides','gastos.cpa','gastos.plan'].forEach(k=>localStorage.removeItem(k)); }catch(e){} state.userRules={}; state.budgets={}; state.txOverrides={}; state.notes={}; state.cpa={}; state.trips=[]; state.tripOf={}; state.autoTripOf={}; state.tripDismissed=[]; state.selTrip=null; state.filterTrip=null; state.lastChange=null; rebuild(); toast('Forgot saved categories, notes, trips and budgets on this device.'); }
 
 /* ---------- categorize ---------- */
 function categorizeAll(){
@@ -535,7 +599,7 @@ function importFromFiles(){ let changed=false;
   const byKey={}; state.tx.forEach(t=>{ if(t.fileReviewed&&t.fileCat&&!t.isPayment) (byKey[t.key]=byKey[t.key]||[]).push(t); });
   Object.entries(byKey).forEach(([key,arr])=>{ if(state.userRules[key]) return; const cat=arr[0].fileCat, ty=arr[0].fileType||'personal'; if(arr.every(t=>t.fileCat===cat&&(t.fileType||'personal')===ty)){ state.userRules[key]={category:cat,type:ty,ok:1}; changed=true; } });
   if(changed) persist(); }
-function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); }
+function renderAll(){ renderFiles(); renderPeriods(); renderHero(); renderUnc(); renderCategories(); renderTrips(); renderTrend(); renderTx(); renderDownloads(); renderPlan(); }
 /* ---------- trips ---------- */
 /* ---------- finding trips in the statement ---------- */
 const US_STATES={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'Washington DC',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico'};
@@ -941,7 +1005,7 @@ $('#dl').addEventListener('click',e=>{ const id=e.target.id; const stamp=new Dat
 /* ---------- misc UI ---------- */
 let toastTimer=null;
 function toast(msg,actLabel,act){ const el=$('#toast'); $('#toast-msg').textContent=msg; const b=$('#toast-act'); b.hidden=!actLabel; b.textContent=actLabel||''; b.onclick=()=>{ el.hidden=true; if(act) act(); }; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.hidden=true;},actLabel?7000:3500); }
-$('#remember').addEventListener('change',e=>{ state.remember=e.target.checked; try{ localStorage.setItem('gastos.remember',JSON.stringify(state.remember)); if(!state.remember){ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips','gastos.overrides','gastos.cpa'].forEach(k=>localStorage.removeItem(k)); } else persist(); }catch(err){} });
+$('#remember').addEventListener('change',e=>{ state.remember=e.target.checked; try{ localStorage.setItem('gastos.remember',JSON.stringify(state.remember)); if(!state.remember){ ['gastos.rules','gastos.budgets','gastos.notes','gastos.trips','gastos.overrides','gastos.cpa','gastos.plan'].forEach(k=>localStorage.removeItem(k)); } else persist(); }catch(err){} });
 $('#forget').addEventListener('click',forget);
 
 /* ---------- sample data ---------- */
@@ -949,6 +1013,54 @@ function sampleCSV(){ const L=[['09/02/2026','WHOLE FOODS MKT #10234 ANYTOWN US'
   ['08/01/2026',"TRADER JOE'S #512 ANYTOWN US",72.31],['08/02/2026','STARBUCKS 12345 ANYTOWN US',6.85],['08/03/2026','DELTA AIR 0062357703 ATLANTA GA',286.40],['08/04/2026','MARRIOTT ANYTOWN HOTEL ANYTOWN US',310.00],['08/05/2026','GITHUB, INC. GITHUB.COM CA',4.00],['08/06/2026','OPENAI *CHATGPT SUBSCR OPENAI.COM CA',20.00],['08/07/2026','SPOTIFY USA NY',11.99],['08/08/2026','ONLINE PAYMENT, THANK YOU',-1620.00],['08/09/2026','7-ELEVEN 38985 ANYTOWN US',41.60],['08/10/2026','TARGET 00012345 ANYTOWN US',118.72],['08/11/2026','TEXAS ROADHOUSE #2464 ANYTOWN US',68.90],['08/12/2026','VERIZON WRLS 800-922-0204 NJ',50.00],['08/13/2026','TJ MAXX #1234 ANYTOWN US',54.30],['08/14/2026','CVS PHARMACY #4423 ANYTOWN US',32.15],['08/15/2026','UBER *TRIP HELP.UBER.COM CA',31.16],['08/16/2026','TST* BAKERY ON MAIN ANYTOWN US',22.40],['08/18/2026',"TRADER JOE'S #512 ANYTOWN US",91.15],['08/19/2026','AMAZON MKTPL*BD7XW Amzn.com/billWA',52.10],['08/21/2026','SHELL OIL 57442201 ANYTOWN US',39.80],['08/23/2026','PETCO 1234 ANYTOWN US',35.00],['08/25/2026','PLANET FIT CLUB FEES ANYTOWN US',24.99],['08/27/2026','ULTA #1204 ANYTOWN US',28.60],['08/29/2026','CINEMARK 1234 ANYTOWN US',26.50],
   ['07/01/2026',"TRADER JOE'S #512 ANYTOWN US",68.44],['07/02/2026','SHELL OIL 57442201 ANYTOWN US',46.90],['07/03/2026','H&M #1234 ANYTOWN US',73.20],['07/05/2026','GITHUB, INC. GITHUB.COM CA',4.00],['07/06/2026','OPENAI *CHATGPT SUBSCR OPENAI.COM CA',20.00],['07/07/2026','SPOTIFY USA NY',11.99],['07/08/2026','ONLINE PAYMENT, THANK YOU',-1380.00],['07/09/2026','COSTCO WHSE #0812 ANYTOWN US',188.20],['07/10/2026','TST* LUNA PIZZERIA ANYTOWN US',38.75],['07/12/2026','VERIZON WRLS 800-922-0204 NJ',50.00],['07/13/2026','TRADINGVIEW INC 888-1234567 OH',14.95],['07/14/2026',"TRADER JOE'S #512 ANYTOWN US",55.90],['07/15/2026','EXXONMOBIL 97421 ANYTOWN US',43.25],['07/17/2026','DD *DOORDASH CHIPOTLE DOORDASH.COM CA',27.80],['07/18/2026','OLD NAVY US 1234 ANYTOWN US',48.15],['07/20/2026','AMAZON MKTPL*BQ2LP Amzn.com/billWA',29.99],['07/22/2026','PETCO 1234 ANYTOWN US',35.00],['07/24/2026','PLANET FIT CLUB FEES ANYTOWN US',24.99],['07/26/2026','CHICK-FIL-A #02311 ANYTOWN US',11.90],['07/28/2026','AUTOZONE #1234 ANYTOWN US',64.30],['07/30/2026','TST* THE TAP ROOM ANYTOWN US',31.40]];
   return 'Status,Date,Description,Debit,Credit,Member Name\r\n'+L.map(([d,m,a])=>csvLine(['Cleared',d,m,a>0?a.toFixed(2):'',a<0?a.toFixed(2):'','SAMPLE'])).join('\r\n')+'\r\n'; }
+
+/* ---------- money plan ---------- */
+const TAX={year:2026,
+  brackets:{single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],
+            married:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]],
+            head:[[17700,.10],[67450,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]]},
+  std:{single:16100,married:32200,head:24150},ssBase:184500,ss:.062,medicare:.0145};
+const BUCKETS=[
+  {key:'needs',share:.55,label:'Needs',color:'var(--muted)',hint:'Your ceiling for rent or mortgage, groceries, car, gas, insurance, phone, utilities and credit card payments.'},
+  {key:'fun',share:.05,label:'Fun',color:'var(--s2)',hint:'Eating out, clothes, going out. Spend it without guilt.'},
+  {key:'invest',share:.10,label:'Invest every month',color:'var(--s3)',hint:'Moves into investments the day you get paid, before you can spend it.'},
+  {key:'goals',share:.15,label:'Savings and goals',color:'var(--s1)',hint:'Emergency fund first (three months of needs), then the trip, the car, the deposit.'},
+  {key:'longterm',share:.15,label:'Long-term investing',color:'var(--s7)',hint:'Retirement accounts and money you will not touch for ten or more years.'}];
+const NEEDS_CATS=new Set(['Groceries','Gas','Car','Phone','Utilities & Bills','Insurance','Rent & Housing','Medical','Pets','Parking & Tolls','Rideshare & Transit','Laundry','Education','Fees & Interest']);
+const FUN_CATS=new Set(['Dining Out','Clothes','Online Shopping','Shopping','Beauty & Personal Care','Entertainment','Subscriptions','Gym & Fitness','Flights','Lodging','Travel Extras','Gifts & Donations']);
+const plan={mode:'hourly',hours:40,rate:20,month:3500,year:42000,gross:true,status:'single',state:0,per:12};
+const pnum=v=>{ const n=parseFloat(v); return isFinite(n)&&n>0?n:0; };
+function federalTax(g,st){ let taxable=Math.max(0,g-TAX.std[st]), tax=0, lower=0; for(const [up,rate] of TAX.brackets[st]){ if(taxable<=lower) break; tax+=(Math.min(taxable,up)-lower)*rate; lower=up; } return tax; }
+function takeHome(g,st,stateRate){ const fed=federalTax(g,st), ss=Math.min(g,TAX.ssBase)*TAX.ss, med=g*TAX.medicare, state=g*stateRate; const total=fed+ss+med+state; return {fed,ss,med,state,total,net:Math.max(0,g-total),rate:g>0?total/g:0}; }
+function grossAnnual(){ return plan.mode==='hourly'?pnum(plan.hours)*pnum(plan.rate)*52:plan.mode==='monthly'?pnum(plan.month)*12:pnum(plan.year); }
+function planNumbers(){ const g=grossAnnual(); const stateRate=Math.min(Math.max(pnum(plan.state),0),15)/100; const tx=plan.gross?takeHome(g,TAX.std[plan.status]?plan.status:'single',stateRate):null; return {g,stateRate,tx,netM:(tx?tx.net:g)/12}; }
+function renderPlan(){ if(!$('#plan-net')) return; const {g,stateRate,tx,netM}=planNumbers(); const per=plan.per, f=12/per; const perLabel=per===12?'a month':per===26?'every 2 weeks':'a week';
+  $('#plan-net').textContent=g>0?fmt0(netM):'$0';
+  $('#plan-sub').textContent=g>0?(tx?`From ${fmt0(g/12)} gross a month, after about ${fmt0((g-tx.net)/12)} in taxes (${Math.round(tx.rate*100)}%).`:'Using the amount you entered as your take-home.'):'Enter what you earn to see the plan.';
+  $('#plan-stack').innerHTML=BUCKETS.map(b=>`<i style="width:${b.share*100}%;background:${b.color}" title="${b.label} ${Math.round(b.share*100)}%"></i>`).join('');
+  $('#plan-buckets').innerHTML=BUCKETS.map(b=>`<li class="bucket" style="--b:${b.color}"><div class="top-line"><span style="font-weight:600">${b.label}</span><span class="pct">${Math.round(b.share*100)}%</span></div><div class="amt">${g>0?fmt0(netM*b.share*f):'$0'}</div><div class="muted" style="font-size:12px">${perLabel}</div><div class="hint">${b.hint}</div></li>`).join('');
+  const pct=(stateRate*100).toFixed(1).replace(/\.0$/,'');
+  $('#plan-tax').innerHTML=tx&&g>0?`<div class="panel"><div class="eyebrow" style="margin-bottom:6px">Estimated taxes per month</div><table class="taxtable"><tr><td>Federal income tax</td><td>${fmt0(tx.fed/12)}</td></tr><tr><td>Social Security (6.2%)</td><td>${fmt0(tx.ss/12)}</td></tr><tr><td>Medicare (1.45%)</td><td>${fmt0(tx.med/12)}</td></tr>${stateRate>0?`<tr><td>State income tax (${pct}%)</td><td>${fmt0(tx.state/12)}</td></tr>`:''}<tr><td><b>Total</b></td><td><b>${fmt0(tx.total/12)}</b></td></tr></table></div>`:'';
+  renderCompare(netM);
+  $('#pay-hourly').hidden=plan.mode!=='hourly'; $('#pay-monthly').hidden=plan.mode!=='monthly'; $('#pay-yearly').hidden=plan.mode!=='yearly'; $('#tax-fields').hidden=!plan.gross;
+  $('#pay-mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===plan.mode)); $('#plan-per').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.per===plan.per));
+  if(state.remember){ try{ localStorage.setItem('gastos.plan',JSON.stringify(plan)); }catch(e){} } }
+function renderCompare(netM){ const el=$('#plan-compare'); const rows=spendRows().filter(t=>t.type==='personal'); if(!rows.length||netM<=0){ el.innerHTML=''; return; } const nM=Math.max(1,new Set(rows.map(t=>t.month)).size); let needs=0, fun=0; rows.forEach(t=>{ if(NEEDS_CATS.has(t.category)) needs+=t.amount; else if(FUN_CATS.has(t.category)) fun+=t.amount; }); needs/=nM; fun/=nM;
+  const line=(label,actual,planned)=>{ const d=actual-planned; return `<div class="row"><span>${label}<br><span class="muted" style="font-size:12px">plan ${fmt0(planned)} a month</span></span><span style="text-align:right"><b class="num">${fmt0(actual)}</b><br>${d>0?`<span class="chip bad">▲ ${fmt0(d)} over</span>`:`<span class="chip good">✓ ${fmt0(-d)} under</span>`}</span></div>`; };
+  el.innerHTML=`<div class="compare"><div class="eyebrow" style="margin-bottom:4px">Reality check from your statement${state.sample?' (sample data)':''}</div><p class="muted" style="font-size:12px;margin-bottom:6px">Your personal spending averaged over ${nM} month${nM>1?'s':''}. Needs count groceries, gas, car, phone, bills, insurance, rent and medical. Fun counts eating out, clothes, shopping, entertainment and travel.</p>${line('Needs',needs,netM*.55)}${line('Fun',fun,netM*.05)}</div>`; }
+$('#pay-mode').addEventListener('click',e=>{ const b=e.target.closest('[data-mode]'); if(!b) return; plan.mode=b.dataset.mode; renderPlan(); });
+$('#plan-per').addEventListener('click',e=>{ const b=e.target.closest('[data-per]'); if(!b) return; plan.per=+b.dataset.per; renderPlan(); });
+$('#plan-sec').addEventListener('input',e=>{ const map={'pay-hours':'hours','pay-rate':'rate','pay-month':'month','pay-year':'year','pay-state':'state','pay-status':'status'}; const k=map[e.target.id]; if(k){ plan[k]=e.target.value; renderPlan(); } });
+$('#pay-gross').addEventListener('change',e=>{ plan.gross=e.target.checked; renderPlan(); });
+$('#pay-status').addEventListener('change',e=>{ plan.status=e.target.value; renderPlan(); });
+$('#plan-copy').addEventListener('click',()=>{ const {netM,tx,g}=planNumbers(); if(g<=0){ toast('Enter what you earn first.'); return; } const lines=[`My money plan: take-home ${fmt0(netM)} a month${tx?` (after about ${fmt0((g-tx.net)/12)} in taxes)`:''}`,...BUCKETS.map(b=>`${b.label} ${Math.round(b.share*100)}%: ${fmt0(netM*b.share)} a month`)]; copyText(lines.join('\n'),'your plan'); });
+function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
+  try{ if(p==='plan'){ if(location.hash!=='#plan') history.replaceState(null,'','#plan'); } else if(location.hash==='#plan') history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  if(p==='plan') renderPlan(); }
+$('#nav').addEventListener('click',e=>{ const b=e.target.closest('[data-page]'); if(!b) return; setPage(b.dataset.page); window.scrollTo({top:0,behavior:'smooth'}); });
+window.addEventListener('hashchange',()=>setPage(location.hash==='#plan'?'plan':'sort'));
+function initPlanInputs(){ if(state.remember){ const pl=load('gastos.plan',null); if(pl&&typeof pl==='object') Object.assign(plan,pl); } if(!TAX.std[plan.status]) plan.status='single'; if(![12,26,52].includes(+plan.per)) plan.per=12; plan.per=+plan.per;
+  $('#pay-hours').value=plan.hours; $('#pay-rate').value=plan.rate; $('#pay-month').value=plan.month; $('#pay-year').value=plan.year; $('#pay-state').value=plan.state; $('#pay-gross').checked=!!plan.gross; $('#pay-status').value=plan.status; }
 
 /* ---------- boot ---------- */
 function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,cpa:state.cpa,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments,trips:state.trips,tripOf:state.tripOf,tripDismissed:state.tripDismissed,selTrip:state.selTrip}; }
@@ -960,7 +1072,7 @@ function start(data){
   if(data.notes) state.notes=Object.assign({},state.notes,data.notes); if(data.cpa) state.cpa=Object.assign({},state.cpa,data.cpa); if(data.showPayments) state.showPayments=true;
   if(Array.isArray(data.trips)&&data.trips.length){ state.trips=data.trips; state.tripOf=data.tripOf||{}; } if(Array.isArray(data.tripDismissed)) state.tripDismissed=data.tripDismissed; if(data.selTrip) state.selTrip=data.selTrip;
   if(data.bankPick&&BANK_HELP[data.bankPick]) state.bankPick=data.bankPick;
-  renderBanks();
+  renderBanks(); initPlanInputs(); setPage(location.hash==='#plan'?'plan':'sort');
   if(Array.isArray(data.files)&&data.files.length){ state.files=data.files.map(f=>({name:f.name,text:f.text,bank:'other',sample:!!f.sample})); state.sample=!!data.sample; state.txOverrides=Object.assign({},state.txOverrides,data.txOverrides||{}); if(data.scope) state.scope=data.scope; if(data.period) state.period=data.period; $('#scope').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scope===state.scope)); }
   else { state.files=[{name:'sample-statement.csv',text:sampleCSV(),bank:'sample',sample:true}]; state.sample=true; }
   rebuild();

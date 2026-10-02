@@ -17,6 +17,15 @@ Everything runs in the browser. There is no server and nothing is stored, except
 
 Works with CSV exports from Citi, Discover, Capital One, Truist, Chase, American Express, Bank of America and Wells Fargo, and with most other banks' CSVs.
 
+## Money plan
+
+The header switch opens a second tool, also fully in the browser: enter what you earn
+(hourly, monthly or yearly), optionally let it estimate 2026 US taxes (federal brackets and
+standard deduction, Social Security, Medicare, a flat state rate), and the take-home pay is
+split 55% needs, 5% fun, 10% invest every month, 15% savings and goals, 15% long-term
+investing. If a statement is loaded, it compares your real needs and fun spending to the plan.
+Link straight to it with `#plan`.
+
 ## Files
 
 - `docs/index.html` is the website. GitHub Pages serves it from the `docs` folder.
