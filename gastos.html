@@ -7,7 +7,7 @@
   --paper:#f3f5f0; --surface:#ffffff; --ink:#15201b; --ink-2:#566259; --muted:#8a938d;
   --rule:#dbe1d8; --rule-2:#c9d1c6; --accent:#2c4f9e; --on-accent:#ffffff; --accent-soft:#e6ecf8;
   --good:#0ca30c; --warn:#fab219; --bad:#d03b3b; --good-text:#006300; --bad-text:#b42d2d;
-  --good-soft:#e4f4e4; --bad-soft:#fae4e4;
+  --good-soft:#e4f4e4; --bad-soft:#fae4e4; --warn-soft:#fff3d6; --warn-text:#6b4700; --warn-line:#f1d48a;
   --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948; --s-other:#898781;
   --grid:#e1e0d9; --baseline:#c3c2b7;
   --radius:10px; --shadow:0 1px 2px rgba(21,32,27,.06),0 6px 20px rgba(21,32,27,.05);
@@ -19,7 +19,7 @@
     color-scheme:dark;
     --paper:#111412; --surface:#1a1e1b; --ink:#edf0ea; --ink-2:#b7bfb9; --muted:#7f8781;
     --rule:#2b312d; --rule-2:#3a413c; --accent:#8fabee; --on-accent:#0d1626; --accent-soft:#23304f;
-    --good-text:#4cc44c; --bad-text:#f07a7a; --good-soft:#173a17; --bad-soft:#4a1d1d;
+    --good-text:#4cc44c; --bad-text:#f07a7a; --good-soft:#173a17; --bad-soft:#4a1d1d; --warn-soft:#3a2f12; --warn-text:#f2c35b; --warn-line:#5a4717;
     --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
     --grid:#2c2c2a; --baseline:#383835; --shadow:none;
   }
@@ -28,7 +28,7 @@
   color-scheme:dark;
   --paper:#111412; --surface:#1a1e1b; --ink:#edf0ea; --ink-2:#b7bfb9; --muted:#7f8781;
   --rule:#2b312d; --rule-2:#3a413c; --accent:#8fabee; --on-accent:#0d1626; --accent-soft:#23304f;
-  --good-text:#4cc44c; --bad-text:#f07a7a; --good-soft:#173a17; --bad-soft:#4a1d1d;
+  --good-text:#4cc44c; --bad-text:#f07a7a; --good-soft:#173a17; --bad-soft:#4a1d1d; --warn-soft:#3a2f12; --warn-text:#f2c35b; --warn-line:#5a4717;
   --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
   --grid:#2c2c2a; --baseline:#383835; --shadow:none;
 }
@@ -239,11 +239,40 @@ section + section{border-top:1px solid var(--rule)}
 .toast div{pointer-events:auto;background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 14px;font-size:14px;display:flex;gap:12px;align-items:center;max-width:100%;box-shadow:var(--shadow)}
 .toast button{background:none;border:0;color:inherit;text-decoration:underline;text-underline-offset:2px;padding:0;font-weight:600;white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:width .25s ease}}
+
+/* notes */
+.disclaimer{background:var(--warn-soft);color:var(--warn-text);border:1px solid var(--warn-line);border-radius:var(--radius);padding:12px 14px;font-size:14px;line-height:1.45;margin-bottom:14px}
+.disclaimer b{color:inherit}
+.notes-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.notes-tools input[type=search]{flex:1;min-width:180px;border:1px solid var(--rule-2);border-radius:8px;padding:8px 10px;background:var(--surface)}
+.notes-tools .muted{font-size:13px}
+.note{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow)}
+.note summary{list-style:none;cursor:pointer;padding:14px 44px 14px 16px;display:grid;gap:5px;position:relative}
+.note summary::-webkit-details-marker{display:none}
+.note summary::after{content:"+";position:absolute;right:16px;top:12px;font-size:22px;line-height:1;color:var(--muted);font-weight:300}
+.note[open] summary::after{content:"\2013"}
+.note summary:hover{background:var(--paper);border-radius:var(--radius)}
+.note[open] summary:hover{border-radius:var(--radius) var(--radius) 0 0}
+.note h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.note .meta{font-size:12px;color:var(--muted);display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center}
+.note .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note .tk{font-size:14px;color:var(--ink-2);line-height:1.45}
+.note .body{padding:0 16px 18px;font-size:15px;line-height:1.55;max-width:68ch;border-top:1px solid var(--rule);margin-top:0;padding-top:4px}
+.note .body h4{font-family:var(--display);font-size:15px;font-weight:700;margin:18px 0 6px}
+.note .body p{margin:8px 0}
+.note .body ul{margin:8px 0;padding-left:20px}
+.note .body li{margin:4px 0}
+.note .body .src{font-size:12px;color:var(--muted);margin-top:14px}
+.note-table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+.note-table th,.note-table td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.note-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.note-table td:last-child{font-variant-numeric:tabular-nums}
+.note .body .bottom{background:var(--paper);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-top:14px}
 </style>
 
 <header class="top"><div class="wrap">
   <div class="brand">Gastos</div>
-  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button></nav>
+  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button><button type="button" data-page="notes" aria-pressed="false">Notes</button></nav>
   <span class="privacy" title="Your statement is read by your browser and never uploaded"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>Stays on your phone</span>
 </div></header>
 
@@ -382,6 +411,14 @@ section + section{border-top:1px solid var(--rule)}
       <p class="muted" style="font-size:12px">Taxes are a 2026 estimate using the standard deduction only: federal brackets, Social Security 6.2% up to $184,500 of wages, Medicare 1.45%, plus the state rate you enter. Tax credits, 401(k) contributions and health premiums are not included, so your real paycheck may differ a little. Nothing you type here is sent anywhere.</p>
     </div>
   </div>
+</section>
+
+<section id="notes-sec" hidden>
+  <div class="sec-head"><h2>Things I read and want to remember</h2></div>
+  <p class="help" style="margin-top:0;margin-bottom:14px">Short lessons from books and research, written down so they are easy to find again. They describe US accounts and tax rules as of the date on each note.</p>
+  <div class="disclaimer" role="note"><b>This is not financial advice.</b> These are personal notes that summarize what I read. Rules, limits and tax brackets change, and your situation is your own. Check with a licensed professional before acting on anything here.</div>
+  <div class="notes-tools"><input type="search" id="notes-search" placeholder="Search notes" aria-label="Search notes"><span class="muted" id="notes-count"></span></div>
+  <div id="notes-list"></div>
 </section>
 
 </main>
@@ -1040,14 +1077,47 @@ $('#plan-sec').addEventListener('input',e=>{ const map={'pay-hours':'hours','pay
 $('#pay-gross').addEventListener('change',e=>{ plan.gross=e.target.checked; renderPlan(); });
 $('#pay-status').addEventListener('change',e=>{ plan.status=e.target.value; renderPlan(); });
 $('#plan-copy').addEventListener('click',()=>{ const {netM,tx,g}=planNumbers(); if(g<=0){ toast('Enter what you earn first.'); return; } const lines=[`My money plan: take-home ${fmt0(netM)} a month${tx?` (after about ${fmt0((g-tx.net)/12)} in taxes)`:''}`,...BUCKETS.map(b=>`${b.label} ${Math.round(b.share*100)}%: ${fmt0(netM*b.share)} a month`)]; copyText(lines.join('\n'),'your plan'); });
-function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
-  try{ if(p==='plan'){ if(location.hash!=='#plan') history.replaceState(null,'','#plan'); } else if(location.hash==='#plan') history.replaceState(null,'',location.pathname+location.search); }catch(e){}
-  if(p==='plan') renderPlan(); }
-$('#nav').addEventListener('click',e=>{ const b=e.target.closest('[data-page]'); if(!b) return; setPage(b.dataset.page); window.scrollTo({top:0,behavior:'smooth'}); });
-window.addEventListener('hashchange',()=>setPage(location.hash==='#plan'?'plan':'sort'));
 function initPlanInputs(){ if(state.remember){ const pl=load('gastos.plan',null); if(pl&&typeof pl==='object') Object.assign(plan,pl); } if(!TAX.std[plan.status]) plan.status='single'; if(![12,26,52].includes(+plan.per)) plan.per=12; plan.per=+plan.per;
   $('#pay-hours').value=plan.hours; $('#pay-rate').value=plan.rate; $('#pay-month').value=plan.month; $('#pay-year').value=plan.year; $('#pay-state').value=plan.state; $('#pay-gross').checked=!!plan.gross; $('#pay-status').value=plan.status; }
 
+/* ---------- notes (things I read) ---------- */
+/* Add a note = add one object here. Body is HTML. Keep "added" and "asOf" so readers know how old the rule is. */
+const NOTES=[
+  {id:'contribution-timing',title:'Invest the year’s money early, where the account lets you',added:'2026-10-24',asOf:'US rules as of 2026',tags:['Roth IRA','401(k)','HSA','Compounding'],
+   takeaway:'A dollar invested in January has eleven more months to grow than the same dollar in December. Use that where you control the timing, like an IRA. Do not chase it where an employer match or a payroll tax break is at stake, like a 401(k) or an HSA.',
+   source:'From a book on money management, October 2026.',
+   body:`
+<h4>Why it matters, in numbers</h4>
+<table class="note-table"><tr><th>Same $7,500 contribution, 8% average return</th><th>First year</th></tr>
+<tr><td>All of it in January</td><td>earns about $600</td></tr>
+<tr><td>Spread over 12 paychecks</td><td>earns about $300, half as much</td></tr>
+<tr><td>All of it in December</td><td>earns almost nothing</td></tr></table>
+<p>That first-year gap then compounds for as long as the money stays invested. Research on lump sum versus spreading it out finds the lump sum ends up ahead about two times out of three. The one time in three is when the market drops right after you invest, which is why people who would lose sleep over that spread it anyway.</p>
+<h4>Roth IRA: you control it, so January works</h4>
+<p>Nothing stops you from putting the whole year’s limit in on the first business day of the year, as long as the cash is sitting idle anyway and the emergency fund is intact. One detail: the money has to land in a fund, not just the account. A Roth with cash in it compounds at zero.</p>
+<h4>401(k): payroll limits you, and the match changes the math</h4>
+<p>Most plans let you change the contribution percentage any time, so you could set it high in January and drop it later. The trap is the match. Employers typically match per paycheck, say 100% of the first 6% of that paycheck. If you hit the annual cap by June and contribute nothing from July on, those later paychecks get no match, and most plans do not pay it back at year end. Some do, through what is called a <b>true-up</b>.</p>
+<ul><li>Ask HR one question: does the plan true-up the match?</li>
+<li>If yes, front-load freely.</li>
+<li>If no, contribute at least the match percentage every single paycheck all year, and front-load only whatever you want above that.</li></ul>
+<p>A guaranteed 50% or 100% match beats a few months of market return by a mile. Never trade one for the other.</p>
+<h4>HSA: keep it in payroll, for a different reason</h4>
+<p>HSA money taken from a paycheck skips Social Security and Medicare tax, about 7.65%. Money added on your own later still gets the income tax deduction but not that part. A 7.65% instant gain beats the few percent you would earn from earlier timing, so payroll is the better door. You can still front-load through payroll by raising the per-paycheck election early in the year, but watch the ceiling: the employer’s free monthly money counts toward the annual limit, and going over it carries a penalty.</p>
+<p>The bigger win on an HSA is usually not timing at all. Many people leave the balance in cash. Moving it into an investment fund inside the HSA, if the provider offers one, is what makes it compound.</p>
+<div class="bottom"><b>Short version:</b> IRA in January, 401(k) at least the match every paycheck, HSA through payroll, and in all three make sure the dollars are actually invested rather than parked.</div>`}
+];
+function renderNotes(){ const list=$('#notes-list'); if(!list) return; const q=(state.notesQ||'').trim().toLowerCase();
+  const rows=NOTES.filter(n=>!q||[n.title,n.takeaway,n.tags.join(' '),n.body].join(' ').toLowerCase().includes(q));
+  $('#notes-count').textContent=rows.length?`${rows.length} of ${NOTES.length}`:'No notes match';
+  list.innerHTML=rows.map((n,i)=>`<details class="note" id="note-${esc(n.id)}"${(i===0&&!q)||state.openNote===n.id?' open':''}><summary><h3>${esc(n.title)}</h3><div class="meta"><span>Added ${esc(n.added)}</span><span>&middot;</span><span>${esc(n.asOf)}</span>${n.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="tk">${esc(n.takeaway)}</div></summary><div class="body">${n.body}${n.source?`<p class="src">${esc(n.source)}</p>`:''}</div></details>`).join('')||'<p class="empty">Nothing here yet.</p>'; }
+$('#notes-search').addEventListener('input',e=>{ state.notesQ=e.target.value; renderNotes(); });
+function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; return 'sort'; }
+function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#notes-sec').hidden=p!=='notes'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
+  try{ const want=p==='plan'?'#plan':p==='notes'?(location.hash.startsWith('#note-')?location.hash:'#notes'):''; if(want&&location.hash!==want) history.replaceState(null,'',want); else if(!want&&location.hash) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  if(p==='plan') renderPlan();
+  if(p==='notes'){ const h=location.hash||''; if(h.startsWith('#note-')) state.openNote=h.slice(6); renderNotes(); if(state.openNote){ const el=document.getElementById('note-'+state.openNote); if(el) setTimeout(()=>el.scrollIntoView({block:'start',behavior:'smooth'}),50); } } }
+$('#nav').addEventListener('click',e=>{ const b=e.target.closest('[data-page]'); if(!b) return; state.openNote=null; if(b.dataset.page==='notes'){ try{ history.replaceState(null,'','#notes'); }catch(err){} } setPage(b.dataset.page); window.scrollTo({top:0,behavior:'smooth'}); });
+window.addEventListener('hashchange',()=>setPage(pageFromHash()));
 /* ---------- boot ---------- */
 function snapshot(){ return {files:state.files.map(f=>({name:f.name,text:f.text,sample:!!f.sample})),sample:state.sample,scope:state.scope,period:state.period,txOverrides:state.txOverrides,cpa:state.cpa,bankPick:state.bankPick,notes:state.notes,showPayments:state.showPayments,trips:state.trips,tripOf:state.tripOf,tripDismissed:state.tripDismissed,selTrip:state.selTrip}; }
 function start(data){
@@ -1058,7 +1128,7 @@ function start(data){
   if(data.notes) state.notes=Object.assign({},state.notes,data.notes); if(data.cpa) state.cpa=Object.assign({},state.cpa,data.cpa); if(data.showPayments) state.showPayments=true;
   if(Array.isArray(data.trips)&&data.trips.length){ state.trips=data.trips; state.tripOf=data.tripOf||{}; } if(Array.isArray(data.tripDismissed)) state.tripDismissed=data.tripDismissed; if(data.selTrip) state.selTrip=data.selTrip;
   if(data.bankPick&&BANK_HELP[data.bankPick]) state.bankPick=data.bankPick;
-  renderBanks(); initPlanInputs(); setPage(location.hash==='#plan'?'plan':'sort');
+  renderBanks(); initPlanInputs(); setPage(pageFromHash());
   if(Array.isArray(data.files)&&data.files.length){ state.files=data.files.map(f=>({name:f.name,text:f.text,bank:'other',sample:!!f.sample})); state.sample=!!data.sample; state.txOverrides=Object.assign({},state.txOverrides,data.txOverrides||{}); if(data.scope) state.scope=data.scope; if(data.period) state.period=data.period; $('#scope').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scope===state.scope)); }
   else { state.files=[{name:'sample-statement.csv',text:sampleCSV(),bank:'sample',sample:true}]; state.sample=true; }
   rebuild();

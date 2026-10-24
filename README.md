@@ -26,6 +26,13 @@ split 55% needs, 5% fun, 10% invest every month, 15% savings and goals, 15% long
 investing. If a statement is loaded, it compares your real needs and fun spending to the plan.
 Link straight to it with `#plan`.
 
+## Notes tab
+
+A third tab, Notes, is a personal notebook of lessons read in books and research, with a
+'not financial advice' banner. Each lesson is one entry in the `NOTES` array in `gastos.html`
+(title, takeaway, tags, HTML body); adding a lesson is adding one entry. Link straight to it
+with `#notes`, or to one note with `#note-<id>`.
+
 ## Files
 
 - `docs/index.html` is the website. GitHub Pages serves it from the `docs` folder.
