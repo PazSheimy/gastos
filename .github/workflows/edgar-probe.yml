@@ -1,0 +1,21 @@
+name: EDGAR probe
+
+# Manual only. Prints what the free SEC EDGAR APIs return for one company,
+# so we can design the next data source without hitting the SEC from a home address.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests
+      - run: python congress/edgar_probe.py
