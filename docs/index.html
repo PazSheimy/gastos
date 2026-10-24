@@ -293,6 +293,21 @@ section + section{border-top:1px solid var(--rule)}
 .cg-kpis .tile .v small{font-size:12px;font-weight:400;color:var(--muted)}
 .cg-kpis .tile .v.in,.cg-row .net.in,.watch .net.in{color:var(--good-text)}
 .cg-kpis .tile .v.out,.cg-row .net.out,.watch .net.out{color:var(--bad-text)}
+.cg-kpis.etf{grid-template-columns:repeat(3,1fr)}
+.cg-kpis.etf .tile .v{font-size:18px}
+.cg-stats{margin:0 0 14px}
+.cg-stats-t{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden}
+.cg-stats-t td{padding:0;border-bottom:1px solid var(--rule)}
+.cg-stats-t tr:last-child td{border-bottom:0}
+.cg-stats-t td.num{font-variant-numeric:tabular-nums;font-weight:600;padding:9px 12px;text-align:right;white-space:nowrap}
+.cg-stat{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;color:var(--accent);font-weight:500;line-height:1.35}
+.cg-stat:hover{background:var(--paper);text-decoration:underline}
+.etf-t th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 12px;text-align:left;font-weight:600;border-bottom:1px solid var(--rule)}
+.etf-t th.num,.etf-t td.num{text-align:right}
+.etf-t td{padding:8px 12px;font-size:14px}
+.etf-t td.good{color:var(--good-text)} .etf-t td.bad{color:var(--bad-text)}
+.cg-active{margin:0 0 10px}
+.chip-btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .cg-views{display:flex;max-width:100%;overflow-x:auto}
 .cg-views button{white-space:nowrap}
 .cg-sort{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0 4px;font-size:13px;color:var(--muted)}
@@ -311,6 +326,8 @@ section + section{border-top:1px solid var(--rule)}
 .flow{height:6px;border-radius:3px;background:var(--rule);overflow:hidden;display:flex;flex:0 0 96px}
 .flow i{display:block;height:100%}
 .flow .b{background:var(--good)} .flow .s{background:var(--bad)}
+.sc{grid-column:1/-1;display:flex;gap:4px 14px;flex-wrap:wrap;font-size:13px;margin-top:2px;align-items:baseline}
+.sc .good{color:var(--good-text);font-weight:600} .sc .bad{color:var(--bad-text);font-weight:600}
 .cg-trades{margin:0 0 10px;padding:0;list-style:none;border-top:1px dashed var(--rule)}
 .cg-trades li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0 8px 12px;border-bottom:1px solid var(--rule);font-size:14px;border-left:2px solid var(--rule)}
 .cg-trades li:last-child{border-bottom:0}
@@ -318,6 +335,13 @@ section + section{border-top:1px solid var(--rule)}
 .cg-trades .amt{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .cg-trades .meta{grid-column:1/-1;font-size:12px;color:var(--muted);display:flex;gap:4px 10px;flex-wrap:wrap;align-items:center}
 .cg-trades .meta a{color:var(--accent)}
+.cg-trades .desc{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cg-trades .pieces{grid-column:1/-1;display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.cg-trades .pieces i{font-style:normal;color:var(--ink-2)}
+.pcs{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn-text);vertical-align:middle;margin-left:4px}
+.ret{display:inline-flex;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--paper);border:1px solid var(--rule-2);color:var(--ink-2);white-space:nowrap}
+.ret.good{background:var(--good-soft);color:var(--good-text);border-color:transparent}
+.ret.bad{background:var(--bad-soft);color:var(--bad-text);border-color:transparent}
 .side{display:inline-flex;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
 .side.P{background:var(--good-soft);color:var(--good-text)}
 .side.S,.side.SP{background:var(--bad-soft);color:var(--bad-text)}
@@ -491,7 +515,7 @@ section + section{border-top:1px solid var(--rule)}
 <section id="congress-sec" hidden>
   <div class="sec-head"><h2>What Congress is trading</h2><span class="muted" id="cg-updated" style="font-size:13px"></span></div>
   <p class="help" style="margin-top:0;margin-bottom:14px">Members of the US House must report every stock trade within 45 days under the STOCK Act. This tab reads those public filings from the House Clerk once a day and lines them up so you can see what was bought, what was sold, and where the money moved. It is a watch list, not a signal: a filing can arrive weeks after the trade.</p>
-  <div class="disclaimer" role="note"><b>Public filings, not advice.</b> Members report a range, not an exact amount, so every total here uses the middle of each range. Filings are self-reported, often late and sometimes amended. Senate filings are not included yet; they are at <a href="https://efdsearch.senate.gov/search/" target="_blank" rel="noopener">efdsearch.senate.gov</a>.</div>
+  <div class="disclaimer" role="note"><b>Public filings, not advice.</b> Members report a range, not an exact amount, so every total here uses the middle of each range. Filings are self-reported, often late and sometimes amended. Price changes are estimates from daily closes. Senate filings are not included yet; they are at <a href="https://efdsearch.senate.gov/search/" target="_blank" rel="noopener">efdsearch.senate.gov</a>.</div>
   <div class="cg-tools">
     <div class="chips" id="cg-period" role="group" aria-label="Filed within">
       <button type="button" class="chip-btn" data-days="1" aria-pressed="false">Newest day</button>
@@ -500,21 +524,24 @@ section + section{border-top:1px solid var(--rule)}
       <button type="button" class="chip-btn" data-days="30" aria-pressed="false">30 days</button>
       <button type="button" class="chip-btn" data-days="90" aria-pressed="false">90 days</button>
     </div>
-    <div class="cg-filters">
-      <input type="search" id="cg-search" placeholder="Ticker, company or member" aria-label="Search trades">
-      <select id="cg-side" aria-label="Buys or sells"><option value="">Buys and sells</option><option value="P">Buys only</option><option value="S">Sells only</option></select>
-      <select id="cg-party" aria-label="Party"><option value="">Both parties</option><option value="D">Democrats</option><option value="R">Republicans</option></select>
-      <select id="cg-min" aria-label="Minimum trade size"><option value="0">Any size</option><option value="15001">Over $15,000</option><option value="50001">Over $50,000</option><option value="100001">Over $100,000</option><option value="250001">Over $250,000</option><option value="1000001">Over $1 million</option></select>
-      <label class="check cg-check"><input type="checkbox" id="cg-tickers" checked> Only assets with a ticker</label>
-    </div>
   </div>
   <div id="cg-status" class="empty">Loading the latest filings&hellip;</div>
   <div id="cg-body" hidden>
+    <div class="cg-stats" id="cg-stats"></div>
+    <div class="cg-filters" style="margin-bottom:12px">
+      <input type="search" id="cg-search" placeholder="Ticker, company or member" aria-label="Search trades">
+      <select id="cg-side" aria-label="Buys or sells"><option value="">Buys and sells</option><option value="P">Buys only</option><option value="S">Sells only</option></select>
+      <select id="cg-party" aria-label="Party"><option value="">Both parties</option><option value="D">Democrats</option><option value="R">Republicans</option></select>
+      <select id="cg-size" aria-label="Trade size"><option value="">Any size</option><option value="small">$1,001 to $15,000 only</option><option value="15001">Over $15,000</option><option value="50001">Over $50,000</option><option value="100001">Over $100,000</option><option value="250001">Over $250,000</option><option value="1000001">Over $1 million</option></select>
+      <label class="check cg-check"><input type="checkbox" id="cg-tickers" checked> Only assets with a ticker</label>
+      <label class="check cg-check"><input type="checkbox" id="cg-hidebig"> Hide the 50 largest companies</label>
+    </div>
+    <div class="cg-active" id="cg-active"></div>
     <div class="cg-kpis" id="cg-kpis"></div>
-    <div class="seg small cg-views" id="cg-view" role="group" aria-label="View"><button type="button" data-view="tickers" aria-pressed="true">By stock</button><button type="button" data-view="days" aria-pressed="false">By day</button><button type="button" data-view="members" aria-pressed="false">By member</button><button type="button" data-view="watch" aria-pressed="false">Worth a look</button></div>
+    <div class="seg small cg-views" id="cg-view" role="group" aria-label="View"><button type="button" data-view="tickers" aria-pressed="true">By stock</button><button type="button" data-view="days" aria-pressed="false">By day</button><button type="button" data-view="members" aria-pressed="false">Members</button><button type="button" data-view="watch" aria-pressed="false">Worth a look</button></div>
     <div id="cg-list"></div>
     <div class="dl" style="margin-top:14px"><button type="button" class="btn ghost small" id="cg-csv">Download these trades (CSV)</button></div>
-    <p class="muted" style="font-size:12px;margin-top:10px">Source: <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Clerk of the House, Financial Disclosure Reports</a>, parsed from each Periodic Transaction Report. Party and district from the <a href="https://github.com/unitedstates/congress-legislators" target="_blank" rel="noopener">congress-legislators</a> project. Paper filings and filings the parser could not read are counted but have no trades. Refreshed once a day.</p>
+    <p class="muted" style="font-size:12px;margin-top:10px">Source: <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Clerk of the House, Financial Disclosure Reports</a>, parsed from each Periodic Transaction Report. Party and district from the <a href="https://github.com/unitedstates/congress-legislators" target="_blank" rel="noopener">congress-legislators</a> project. Daily closing prices from Yahoo Finance, adjusted for splits and dividends. Paper filings and filings the parser could not read are counted but have no trades. Refreshed once a day.</p>
   </div>
 </section>
 
@@ -1209,91 +1236,161 @@ function renderNotes(){ const list=$('#notes-list'); if(!list) return; const q=(
   list.innerHTML=rows.map((n,i)=>`<details class="note" id="note-${esc(n.id)}"${(i===0&&!q)||state.openNote===n.id?' open':''}><summary><h3>${esc(n.title)}</h3><div class="meta"><span>Added ${esc(n.added)}</span><span>&middot;</span><span>${esc(n.asOf)}</span>${n.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="tk">${esc(n.takeaway)}</div></summary><div class="body">${n.body}${n.source?`<p class="src">${esc(n.source)}</p>`:''}</div></details>`).join('')||'<p class="empty">Nothing here yet.</p>'; }
 $('#notes-search').addEventListener('input',e=>{ state.notesQ=e.target.value; renderNotes(); });
 /* ---------- congress: public STOCK Act filings from the House ---------- */
-/* Data file: docs/data/congress-trades.json, rebuilt daily by congress/fetch_trades.py (GitHub Actions). */
-const CG_URLS=['data/congress-trades.json','https://pazsheimy.github.io/gastos/data/congress-trades.json'];
-const cg={data:null,loading:false,days:7,view:'tickers',sort:'in',q:'',side:'',party:'',min:0,tickerOnly:true,open:new Set(),shown:40};
+/* Data files in docs/data/, rebuilt daily by GitHub Actions:
+   congress-trades.json (congress/fetch_trades.py) and prices.json (congress/fetch_prices.py:
+   daily closes for every traded ticker plus SPY, NANC and KRUZ). The page works without prices.json. */
+const CG_BASE=['data/','https://pazsheimy.github.io/gastos/data/'];
+const cg={data:null,prices:null,loading:false,days:7,view:'tickers',sort:'in',msort:'size',q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false,open:new Set(),shown:40};
+/* The 50 largest US-listed companies by market value, in the SEC's own order (company_tickers.json, Oct 2026). */
+const BIG50=new Set('NVDA AAPL GOOGL GOOG MSFT AMZN META AVGO TSLA BRK-B BRK.B LLY MU WMT AMD JPM V XOM ASML JNJ MA ABBV INTC PLTR CVX COST CSCO KO ORCL UNH MRK PG BAC CAT LRCX AMAT HSBC HD DELL PM GE SHEL NVS MS PANW RY NFLX SAP GS AZN TXN'.split(' '));
 const SIDE_LABEL={P:'Buy',S:'Sell',SP:'Partial sell',E:'Exchange'};
-const OWNER_LABEL={SP:'spouse',DC:'child',JT:'joint'};
+const OWNER_LABEL={self:'own account',SP:'spouse',DC:'child',JT:'joint'};
 const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const cgFmt0=x=>'$'+Math.round(x).toLocaleString('en-US');
 const kfmt=x=>{ const a=Math.abs(x), s=x<0?'−':''; const r=(v,d)=>v.toFixed(d).replace(/\.0$/,''); if(a>=1e9) return s+'$'+r(a/1e9,1)+'B'; if(a>=1e6) return s+'$'+r(a/1e6,a>=1e7?0:1)+'M'; if(a>=1e3) return s+'$'+r(a/1e3,a>=1e5?0:1)+'K'; return s+'$'+Math.round(a); };
+const pct1=r=>(r>0?'+':r<0?'−':'')+Math.abs(r*100).toFixed(1)+'%';
 const cgMid=t=>t.lo==null?0:(t.hi==null?t.lo:(t.lo+t.hi)/2);
 const isBuy=t=>t.type==='P', isSell=t=>t.type==='S'||t.type==='SP';
 const dUTC=s=>new Date(s+'T00:00:00Z');
 const dLong=s=>{ const d=dUTC(s); return `${WD[d.getUTCDay()]} ${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
 const dShort=s=>{ if(!s) return ''; const d=dUTC(s); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
 const dDiff=(a,b)=>Math.round((dUTC(b)-dUTC(a))/864e5);
-const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+const cgPct=(a,b)=>b>0?Math.round(a/b*100):0;
 const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
 const cleanName=s=>String(s||'').replace(/\s*[-,]?\s*(Class [A-C] )?(Common Stock|Ordinary Shares|Common Shares|Capital Stock|American Depositary Shares.*|Depositary Shares.*)\s*$/i,'').replace(/\s*-\s*$/,'').trim();
 const localISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 
+async function cgFetch(name){ for(const b of CG_BASE){ try{ const r=await fetch(b+name,{cache:'no-cache'}); if(!r.ok) throw new Error('http '+r.status); return await r.json(); }catch(e){ console.warn('congress data',b+name,e); } } return null; }
 async function openCongress(){ if(cg.data||cg.loading){ renderCongress(); return; } cg.loading=true; renderCongress();
-  for(const u of CG_URLS){ try{ const r=await fetch(u,{cache:'no-cache'}); if(!r.ok) throw new Error('http '+r.status); const j=await r.json(); if(!j||!Array.isArray(j.trades)||!Array.isArray(j.filings)) throw new Error('shape'); cg.data=j; break; }catch(e){ console.warn('congress data',u,e); } }
+  const [d,p]=await Promise.all([cgFetch('congress-trades.json'),cgFetch('prices.json')]);
   cg.loading=false;
-  if(cg.data){ const F={}; cg.data.filings.forEach(f=>F[f.id]=f); cg.data.trades=cg.data.trades.filter(t=>F[t.id]); cg.data.trades.forEach(t=>{ t.f=F[t.id]; t.mid=cgMid(t); t.key=t.ticker||t.asset; }); cg.data.maxFiled=cg.data.filings.reduce((m,f)=>f.filed>m?f.filed:m,''); }
+  if(d&&Array.isArray(d.trades)&&Array.isArray(d.filings)){ const F={}; d.filings.forEach(f=>F[f.id]=f); d.trades=d.trades.filter(t=>F[t.id]); d.trades.forEach(t=>{ t.f=F[t.id]; t.mid=cgMid(t); t.key=t.ticker||t.asset; }); d.maxFiled=d.filings.reduce((m,f)=>f.filed>m?f.filed:m,''); cg.data=d; }
+  if(p&&Array.isArray(p.dates)&&p.closes) cg.prices=p;
   renderCongress(); }
 
+/* ---- prices: closes aligned to SPY trading days; null where a ticker has no close ---- */
+function pxAt(tk,date){ const p=cg.prices; if(!p) return null; const s=p.closes[tk]; if(!s) return null; let i=p.dates.findIndex(x=>x>=date); if(i<0) i=s.length-1; for(;i<s.length;i++){ if(s[i]!=null) return s[i]; } return null; }
+function pxLast(tk){ const p=cg.prices; if(!p) return null; const s=p.closes[tk]; if(!s) return null; for(let i=s.length-1;i>=0;i--) if(s[i]!=null) return s[i]; return null; }
+function retSince(tk,date){ if(!tk) return null; const a=pxAt(tk,date), b=pxLast(tk); return a&&b?b/a-1:null; }
+function retChip(g){ if(!cg.prices||!g.ticker) return ''; const r=retSince(g.ticker,g.date); if(r==null) return ''; const s=retSince('SPY',g.date); const good=g.side==='P'?(s==null?r>0:r>s):g.side==='S'?(s==null?r<0:r<s):null;
+  return `<span class="ret ${good===true?'good':good===false?'bad':''}" title="Price change from the trade date to the latest close, next to SPY over the same days">${g.side==='S'?'since sold':'since then'} ${pct1(r)}${s!=null?` · SPY ${pct1(s)}`:''}</span>`; }
+
+/* ---- period and filters ---- */
 function cgSince(){ if(cg.days===1) return cg.data.maxFiled; const s=new Date(); s.setDate(s.getDate()-(cg.days-1)); const iso=localISO(s); return iso>cg.data.maxFiled?cg.data.maxFiled:iso; }
-function cgFiltered(){ const d=cg.data; if(!d) return []; const since=cgSince(); const q=cg.q.trim().toLowerCase();
-  return d.trades.filter(t=>{ const f=t.f; if(f.filed<since) return false; if(cg.tickerOnly&&!t.ticker) return false; if(cg.side==='P'&&!isBuy(t)) return false; if(cg.side==='S'&&!isSell(t)) return false; if(cg.party&&f.party!==cg.party) return false; if(cg.min&&(t.lo==null||t.lo<cg.min)) return false;
-    if(q){ const hay=`${t.ticker||''} ${t.asset} ${f.name} ${f.state}`.toLowerCase(); if(!hay.includes(q)) return false; } return true; }); }
+function cgPeriodRows(){ const since=cgSince(); return cg.data.trades.filter(t=>t.f.filed>=since); }
+/* One order = the pieces one member traded in one name, one side, one day (often split across accounts). */
+function cgGroups(rows){ const m=new Map();
+  rows.forEach(t=>{ const side=isBuy(t)?'P':isSell(t)?'S':'E'; const k=`${t.f.name}|${t.key}|${side}|${t.date}`; let g=m.get(k);
+    if(!g){ g={k,f:t.f,ticker:t.ticker,asset:t.asset,key:t.key,side,type:t.type,date:t.date,filed:t.f.filed,lo:0,hi:0,openEnd:false,mid:0,pieces:[],owners:new Set(),ids:new Set(),desc:''}; m.set(k,g); }
+    g.pieces.push(t); g.lo+=t.lo||0; if(t.hi==null) g.openEnd=true; else g.hi+=t.hi; g.mid+=t.mid; g.owners.add(t.owner||'self'); g.ids.add(t.id); if(t.f.filed>g.filed) g.filed=t.f.filed; if(t.type==='S') g.type='S'; if(t.desc&&!g.desc) g.desc=t.desc; if(t.asset.length<g.asset.length) g.asset=t.asset; });
+  return [...m.values()].map(g=>{ g.n=g.pieces.length; g.amount=g.n===1?g.pieces[0].amount:(g.openEnd?`over ${cgFmt0(g.lo)}`:`${cgFmt0(g.lo)} to ${cgFmt0(g.hi)}`); return g; }); }
+function cgFiltered(){ const d=cg.data; if(!d) return []; const q=cg.q.trim().toLowerCase();
+  const rows=cgPeriodRows().filter(t=>{ const f=t.f; if(cg.tickerOnly&&!t.ticker) return false; if(cg.hideBig&&t.ticker&&BIG50.has(t.ticker)) return false; if(cg.side==='P'&&!isBuy(t)) return false; if(cg.side==='S'&&!isSell(t)) return false; if(cg.party&&f.party!==cg.party) return false;
+    if(q){ const hay=`${t.ticker||''} ${t.asset} ${f.name} ${f.state}`.toLowerCase(); if(!hay.includes(q)) return false; } return true; });
+  let groups=cgGroups(rows);
+  if(cg.size==='small') groups=groups.filter(g=>!g.openEnd&&g.hi<=15000); else if(cg.size) groups=groups.filter(g=>g.lo>=+cg.size);
+  if(cg.piecesOnly) groups=groups.filter(g=>g.n>1);
+  return groups; }
 
-function cgByTicker(rows){ const m=new Map();
-  rows.forEach(t=>{ let a=m.get(t.key); if(!a){ a={key:t.key,ticker:t.ticker,name:t.asset,buy:0,sell:0,n:0,members:new Set(),buyers:new Set(),sellers:new Set(),last:'',trades:[]}; m.set(t.key,a); }
-    a.n++; a.trades.push(t); a.members.add(t.f.name); if(isBuy(t)){ a.buy+=t.mid; a.buyers.add(t.f.name); } else if(isSell(t)){ a.sell+=t.mid; a.sellers.add(t.f.name); } if(t.f.filed>a.last) a.last=t.f.filed; if(t.asset.length<a.name.length) a.name=t.asset; });
+/* ---- the stats table: what is in this period, before filters ---- */
+function cgStats(){ const all=cgPeriodRows(); const tk=all.filter(t=>t.ticker); const tickers=new Set(tk.map(t=>t.ticker)); const outside=[...tickers].filter(x=>!BIG50.has(x)).length; const small=tk.filter(t=>t.hi!=null&&t.hi<=15000).length; const big=tk.filter(t=>t.lo>=250001).length; const multi=cgGroups(tk).filter(g=>g.n>1); const members=new Set(all.map(t=>t.f.name)).size;
+  return [{l:'Trades with a ticker',v:tk.length,act:'tickers',hint:'stocks, ETFs and options; see them by stock'},
+    {l:'Different tickers',v:tickers.size,act:'tickers',hint:'most traded first'},
+    {l:'Tickers outside the 50 largest companies',v:outside,act:'small-caps',hint:'hide the mega caps and look at the rest'},
+    {l:'Trades in the smallest bucket, $1,001 to $15,000',v:small,act:'small',hint:'only the small ones'},
+    {l:'Trades over $250,000',v:big,act:'big',hint:'only the large ones'},
+    {l:'Orders made in pieces (same name, same day)',v:multi.length?`${multi.length} orders in ${multi.reduce((s,g)=>s+g.n,0)} pieces`:0,act:'pieces',hint:'pieces added up into one order'},
+    {l:'Members who filed',v:members,act:'members',hint:'who moved the most'},
+    {l:'Trades without a ticker (bonds, funds, private)',v:all.length-tk.length,act:'no-ticker',hint:'include them in the lists'}]; }
+function cgApplyStat(act){ Object.assign(cg,{q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false,shown:40});
+  if(act==='tickers'){ cg.view='tickers'; cg.sort='active'; }
+  else if(act==='small-caps'){ cg.view='tickers'; cg.sort='active'; cg.hideBig=true; }
+  else if(act==='small'){ cg.view='tickers'; cg.sort='active'; cg.size='small'; }
+  else if(act==='big'){ cg.view='tickers'; cg.sort='in'; cg.size='250001'; }
+  else if(act==='pieces'){ cg.view='tickers'; cg.sort='active'; cg.piecesOnly=true; }
+  else if(act==='members'){ cg.view='members'; cg.msort='size'; }
+  else if(act==='no-ticker'){ cg.view='tickers'; cg.sort='active'; cg.tickerOnly=false; }
+  cgSyncControls(); renderCongress(); const el=$('#cg-active'); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); }
+function cgSyncControls(){ $('#cg-search').value=cg.q; $('#cg-side').value=cg.side; $('#cg-party').value=cg.party; $('#cg-size').value=cg.size; $('#cg-tickers').checked=cg.tickerOnly; $('#cg-hidebig').checked=cg.hideBig; }
+
+/* ---- shared pieces ---- */
+function ownersText(g){ return [...g.owners].map(o=>OWNER_LABEL[o]||o).join(', '); }
+function filingLinks(g){ const ids=[...g.ids]; return ids.map((id,i)=>`<a href="${esc(cg.data.filings.find(f=>f.id===id)?.url||'#')}" target="_blank" rel="noopener">${ids.length>1?'filing '+(i+1):'filing'}</a>`).join(''); }
+function tradesList(gs,opts={}){ const sorted=[...gs].sort(opts.byMember?((a,b)=>a.f.name.localeCompare(b.f.name)||b.mid-a.mid):((a,b)=>b.filed.localeCompare(a.filed)||b.date.localeCompare(a.date)||b.mid-a.mid));
+  return `<ul class="cg-trades">${sorted.map(g=>{ const lag=dDiff(g.date,g.filed); return `<li><div class="who">${opts.showAsset?`<span class="tk">${esc(g.ticker||'')}</span> ${esc(cleanName(g.asset))} <span class="muted">·</span> `:''}${esc(g.f.name)}${g.f.party?` <span class="party">${esc(g.f.party)}-${esc(g.f.state)}</span>`:''}</div><div class="amt">${esc(g.amount)}${g.n>1?` <span class="pcs" title="${esc(g.pieces.map(p=>p.amount+' ('+(OWNER_LABEL[p.owner||'self'])+')').join(', '))}">${g.n} pieces</span>`:''}</div><div class="meta"><span class="side ${esc(g.type)}">${SIDE_LABEL[g.type]||esc(g.type)}</span><span>${esc(ownersText(g))}</span><span>traded ${dShort(g.date)}</span><span>filed ${dShort(g.filed)}${lag>0?`, ${plural(lag,'day')} later`:''}</span>${retChip(g)}${g.desc?`<span class="desc" title="${esc(g.desc)}">${esc(g.desc.length>70?g.desc.slice(0,68)+'…':g.desc)}</span>`:''}${filingLinks(g)}</div>${g.n>1?`<div class="pieces">${g.pieces.map(p=>`<span>${esc(p.amount)} <i>${esc(OWNER_LABEL[p.owner||'self'])}</i></span>`).join('')}</div>`:''}</li>`; }).join('')}</ul>`; }
+
+/* ---- aggregations ---- */
+function cgByTicker(gs){ const m=new Map();
+  gs.forEach(g=>{ let a=m.get(g.key); if(!a){ a={key:g.key,ticker:g.ticker,name:g.asset,buy:0,sell:0,n:0,pieces:0,members:new Set(),buyers:new Set(),sellers:new Set(),last:'',first:g.date,groups:[]}; m.set(g.key,a); }
+    a.n++; a.pieces+=g.n; a.groups.push(g); a.members.add(g.f.name); if(g.side==='P'){ a.buy+=g.mid; a.buyers.add(g.f.name); } else if(g.side==='S'){ a.sell+=g.mid; a.sellers.add(g.f.name); } if(g.filed>a.last) a.last=g.filed; if(g.date<a.first) a.first=g.date; if(g.asset.length<a.name.length) a.name=g.asset; });
   return [...m.values()].map(a=>Object.assign(a,{net:a.buy-a.sell})); }
+function scorecard(gs){ let wb=0,eb=0,nb=0,hb=0,ws=0,es=0,ns=0,hs=0;
+  gs.forEach(g=>{ if(!g.ticker) return; const r=retSince(g.ticker,g.date), s=retSince('SPY',g.date); if(r==null||s==null) return; const ex=r-s; if(g.side==='P'){ wb+=g.mid; eb+=ex*g.mid; nb++; if(ex>0) hb++; } else if(g.side==='S'){ ws+=g.mid; es+=-ex*g.mid; ns++; if(ex<0) hs++; } });
+  return {nb,buyEx:nb&&wb?eb/wb:null,buyHit:nb?hb/nb:null,ns,sellEx:ns&&ws?es/ws:null,sellHit:ns?hs/ns:null}; }
 
-function tradesList(ts,opts={}){ const sorted=[...ts].sort(opts.byMember?((a,b)=>a.f.name.localeCompare(b.f.name)||b.mid-a.mid):((a,b)=>b.f.filed.localeCompare(a.f.filed)||b.date.localeCompare(a.date)));
-  return `<ul class="cg-trades">${sorted.map(t=>{ const lag=dDiff(t.date,t.f.filed); return `<li><div class="who">${opts.showAsset?`<span class="tk">${esc(t.ticker||'')}</span> ${esc(cleanName(t.asset))} <span class="muted">·</span> `:''}${esc(t.f.name)}${t.f.party?` <span class="party">${esc(t.f.party)}-${esc(t.f.state)}</span>`:''}</div><div class="amt">${esc(t.amount)}</div><div class="meta"><span class="side ${esc(t.type)}">${SIDE_LABEL[t.type]||esc(t.type)}</span>${t.owner?`<span>${OWNER_LABEL[t.owner]||esc(t.owner)}</span>`:''}<span>traded ${dShort(t.date)}</span><span>filed ${dShort(t.f.filed)}${lag>0?`, ${plural(lag,'day')} later`:''}</span>${t.desc?`<span title="${esc(t.desc)}">${esc(t.desc.length>60?t.desc.slice(0,58)+'…':t.desc)}</span>`:''}<a href="${esc(t.f.url)}" target="_blank" rel="noopener">filing</a></div></li>`; }).join('')}</ul>`; }
-
-function renderTickers(rows){ const agg=cgByTicker(rows); const sorts={in:(a,b)=>b.net-a.net||b.n-a.n,out:(a,b)=>a.net-b.net||b.n-a.n,active:(a,b)=>b.n-a.n||(b.buy+b.sell)-(a.buy+a.sell),members:(a,b)=>b.members.size-a.members.size||b.n-a.n}; agg.sort(sorts[cg.sort]||sorts.in);
-  const opt=(v,l)=>`<option value="${v}"${cg.sort===v?' selected':''}>${l}</option>`;
-  const shown=agg.slice(0,cg.shown);
+/* ---- views ---- */
+function renderTickers(gs){ const agg=cgByTicker(gs); const sorts={in:(a,b)=>b.net-a.net||b.n-a.n,out:(a,b)=>a.net-b.net||b.n-a.n,active:(a,b)=>b.n-a.n||(b.buy+b.sell)-(a.buy+a.sell),members:(a,b)=>b.members.size-a.members.size||b.n-a.n}; agg.sort(sorts[cg.sort]||sorts.in);
+  const opt=(v,l)=>`<option value="${v}"${cg.sort===v?' selected':''}>${l}</option>`; const shown=agg.slice(0,cg.shown);
   return `<div class="cg-sort"><span>${plural(agg.length,'asset')}, midpoint of each reported range</span><label>Order by <select id="cg-sortsel">${opt('in','Most money in')}${opt('out','Most money out')}${opt('active','Most trades')}${opt('members','Most members')}</select></label></div>
-<ul class="cg-rows">${shown.map(a=>`<details class="cg-row"${cg.open.has(a.key)?' open':''} data-key="${esc(a.key)}"><summary><div class="t"><span class="tk">${esc(a.ticker||'—')}</span><span class="nm">${esc(cleanName(a.name))}</span></div><div class="net ${a.net>0?'in':a.net<0?'out':''}">${a.net>0?'+':''}${kfmt(a.net)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${pct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${pct(a.sell,a.buy+a.sell)}%"></i></span><span>${a.buyers.size?`${a.buyers.size} bought ~${kfmt(a.buy)}`:''}${a.buyers.size&&a.sellers.size?' · ':''}${a.sellers.size?`${a.sellers.size} sold ~${kfmt(a.sell)}`:''}</span><span>${plural(a.n,'trade')}</span><span>last filed ${dShort(a.last)}</span></div></summary>${cg.open.has(a.key)?tradesList(a.trades):''}</details>`).join('')}</ul>${agg.length>shown.length?`<div class="cg-more"><button type="button" class="btn ghost small" id="cg-more">Show all ${agg.length}</button></div>`:''}`; }
+<ul class="cg-rows">${shown.map(a=>{ const r=cg.prices&&a.ticker?retSince(a.ticker,a.first):null, s=r!=null?retSince('SPY',a.first):null;
+    return `<details class="cg-row"${cg.open.has(a.key)?' open':''} data-key="${esc(a.key)}"><summary><div class="t"><span class="tk">${esc(a.ticker||'—')}</span><span class="nm">${esc(cleanName(a.name))}</span></div><div class="net ${a.net>0?'in':a.net<0?'out':''}">${a.net>0?'+':''}${kfmt(a.net)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${cgPct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${cgPct(a.sell,a.buy+a.sell)}%"></i></span><span>${a.buyers.size?`${a.buyers.size} bought ~${kfmt(a.buy)}`:''}${a.buyers.size&&a.sellers.size?' · ':''}${a.sellers.size?`${a.sellers.size} sold ~${kfmt(a.sell)}`:''}</span><span>${plural(a.n,'trade')}${a.pieces>a.n?` in ${a.pieces} pieces`:''}</span><span>last filed ${dShort(a.last)}</span>${r!=null?`<span class="ret ${s!=null&&r>s?'good':s!=null&&r<s?'bad':''}">price since first trade ${pct1(r)}${s!=null?` · SPY ${pct1(s)}`:''}</span>`:''}</div></summary>${cg.open.has(a.key)?tradesList(a.groups):''}</details>`; }).join('')}</ul>${agg.length>shown.length?`<div class="cg-more"><button type="button" class="btn ghost small" id="cg-more">Show all ${agg.length}</button></div>`:''}`; }
 
-function renderDays(rows){ const byDay=new Map(); rows.forEach(t=>{ if(!byDay.has(t.f.filed)) byDay.set(t.f.filed,[]); byDay.get(t.f.filed).push(t); });
-  return [...byDay.keys()].sort().reverse().map(d=>{ const ts=byDay.get(d); const buy=ts.filter(isBuy).reduce((s,t)=>s+t.mid,0), sell=ts.filter(isSell).reduce((s,t)=>s+t.mid,0); const fil=new Set(ts.map(t=>t.id)).size, mem=new Set(ts.map(t=>t.f.name)).size;
+function renderDays(gs){ const byDay=new Map(); gs.forEach(g=>{ if(!byDay.has(g.filed)) byDay.set(g.filed,[]); byDay.get(g.filed).push(g); });
+  return [...byDay.keys()].sort().reverse().map(d=>{ const ts=byDay.get(d); const buy=ts.filter(g=>g.side==='P').reduce((s,g)=>s+g.mid,0), sell=ts.filter(g=>g.side==='S').reduce((s,g)=>s+g.mid,0); const fil=new Set(ts.flatMap(g=>[...g.ids])).size, mem=new Set(ts.map(g=>g.f.name)).size;
     return `<div class="cg-day"><h3>${dLong(d)}</h3><span>${plural(fil,'filing')} from ${plural(mem,'member')} · ${plural(ts.length,'trade')} · bought ~${kfmt(buy)} · sold ~${kfmt(sell)}</span></div>${tradesList(ts,{showAsset:true,byMember:true})}`; }).join(''); }
 
-function renderMembers(rows){ const m=new Map();
-  rows.forEach(t=>{ const k=t.f.name; let a=m.get(k); if(!a){ a={name:k,party:t.f.party,state:t.f.state,dist:t.f.dist,buy:0,sell:0,n:0,trades:[],tickers:new Map()}; m.set(k,a); } a.n++; a.trades.push(t); if(isBuy(t)) a.buy+=t.mid; else if(isSell(t)) a.sell+=t.mid; a.tickers.set(t.ticker||cleanName(t.asset),(a.tickers.get(t.ticker||cleanName(t.asset))||0)+1); });
-  const arr=[...m.values()].sort((a,b)=>(b.buy+b.sell)-(a.buy+a.sell)||b.n-a.n);
-  return `<div class="cg-sort"><span>${plural(arr.length,'member')}, biggest movers first</span></div><ul class="cg-rows">${arr.map(a=>{ const key='m:'+a.name; const top=[...a.tickers.entries()].sort((x,y)=>y[1]-x[1]).slice(0,4).map(e=>esc(e[0])).join(', ');
-    return `<details class="cg-row"${cg.open.has(key)?' open':''} data-key="${esc(key)}"><summary><div class="t"><span class="tk">${esc(a.name)}</span>${a.party?`<span class="party">${esc(a.party)}-${esc(a.state)}${a.dist?'-'+esc(a.dist.replace(/^0/,'')):''}</span>`:''}</div><div class="net">~${kfmt(a.buy+a.sell)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${pct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${pct(a.sell,a.buy+a.sell)}%"></i></span><span>bought ~${kfmt(a.buy)} · sold ~${kfmt(a.sell)}</span><span>${plural(a.n,'trade')}</span><span>${top}</span></div></summary>${cg.open.has(key)?tradesList(a.trades,{showAsset:true}):''}</details>`; }).join('')}</ul>`; }
+function renderMembers(gs){ const m=new Map();
+  gs.forEach(g=>{ const k=g.f.name; let a=m.get(k); if(!a){ a={name:k,party:g.f.party,state:g.f.state,dist:g.f.dist,buy:0,sell:0,n:0,groups:[],tickers:new Map()}; m.set(k,a); } a.n++; a.groups.push(g); if(g.side==='P') a.buy+=g.mid; else if(g.side==='S') a.sell+=g.mid; const tk=g.ticker||cleanName(g.asset); a.tickers.set(tk,(a.tickers.get(tk)||0)+1); });
+  const arr=[...m.values()]; const withPx=!!cg.prices; if(withPx) arr.forEach(a=>a.sc=scorecard(a.groups));
+  const sorts={size:(a,b)=>(b.buy+b.sell)-(a.buy+a.sell)||b.n-a.n,buys:(a,b)=>((b.sc&&b.sc.buyEx)??-9)-((a.sc&&a.sc.buyEx)??-9),sells:(a,b)=>((b.sc&&b.sc.sellEx)??-9)-((a.sc&&a.sc.sellEx)??-9)}; arr.sort(sorts[cg.msort]||sorts.size);
+  const opt=(v,l)=>`<option value="${v}"${cg.msort===v?' selected':''}>${l}</option>`;
+  const etf=withPx?etfPanel():'';
+  return etf+`<div class="cg-sort"><span>${plural(arr.length,'member')}</span>${withPx?`<label>Order by <select id="cg-msortsel">${opt('size','Biggest movers')}${opt('buys','Best buys vs SPY')}${opt('sells','Best sells vs SPY')}</select></label>`:''}</div>${withPx?`<p class="help" style="margin:0 0 10px;font-size:13px">Scorecard is an estimate: each trade at the midpoint of its range, from the closing price on the trade date to the latest close, against SPY over the same days. For sells, a positive number means the stock did worse than SPY after they sold. Nobody outside the member knows the real return.</p>`:''}<ul class="cg-rows">${arr.map(a=>{ const key='m:'+a.name; const top=[...a.tickers.entries()].sort((x,y)=>y[1]-x[1]).slice(0,4).map(e=>esc(e[0])).join(', '); const sc=a.sc;
+    return `<details class="cg-row"${cg.open.has(key)?' open':''} data-key="${esc(key)}"><summary><div class="t"><span class="tk">${esc(a.name)}</span>${a.party?`<span class="party">${esc(a.party)}-${esc(a.state)}${a.dist?'-'+esc(a.dist.replace(/^0/,'')):''}</span>`:''}</div><div class="net">~${kfmt(a.buy+a.sell)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${cgPct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${cgPct(a.sell,a.buy+a.sell)}%"></i></span><span>bought ~${kfmt(a.buy)} · sold ~${kfmt(a.sell)}</span><span>${plural(a.n,'trade')}</span><span>${top}</span></div>${sc&&(sc.nb||sc.ns)?`<div class="sc">${sc.nb?`<span class="${sc.buyEx>0?'good':sc.buyEx<0?'bad':''}">buys vs SPY ${pct1(sc.buyEx)}</span><span class="muted">${Math.round(sc.buyHit*100)}% of ${sc.nb} beat it</span>`:''}${sc.ns?`<span class="${sc.sellEx>0?'good':sc.sellEx<0?'bad':''}">sells vs SPY ${pct1(sc.sellEx)}</span><span class="muted">${Math.round(sc.sellHit*100)}% of ${sc.ns} were right</span>`:''}</div>`:''}</summary>${cg.open.has(key)?tradesList(a.groups,{showAsset:true}):''}</details>`; }).join('')}</ul>`; }
 
-function renderWatch(rows){ const agg=cgByTicker(rows); const items=[];
+function etfPanel(){ const p=cg.prices; const windows=[['1 month',30],['3 months',91],['6 months',182],['1 year',365]];
+  const retOver=(tk,days)=>{ const s=p.closes[tk]; if(!s) return null; const d=dUTC(p.asof); d.setUTCDate(d.getUTCDate()-days); const want=d.toISOString().slice(0,10); const i=p.dates.findIndex(x=>x>=want); if(i<0||dDiff(want,p.dates[i])>10) return null; let a=null; for(let j=i;j<s.length;j++){ if(s[j]!=null){ a=s[j]; break; } } const b=pxLast(tk); return a&&b?b/a-1:null; };
+  const funds=[['SPY','S&P 500 fund'],['NANC','copies Democrats’ trades'],['KRUZ','copies Republicans’ trades']];
+  const rows=funds.map(([tk,l])=>`<tr><td><b>${tk}</b> <span class="muted">${esc(l)}</span></td>${windows.map(([,days])=>{ const r=retOver(tk,days); return `<td class="num ${r>0?'good':r<0?'bad':''}">${r==null?'—':pct1(r)}</td>`; }).join('')}</tr>`).join('');
+  return `<div class="eyebrow" style="margin:14px 0 6px">Could you just buy the copy-trade ETFs?</div><table class="cg-stats-t etf-t"><thead><tr><th></th>${windows.map(w=>`<th class="num">${w[0]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table><p class="help" style="margin:6px 0 12px;font-size:13px">NANC and KRUZ are real funds that copy the trades members report, with the same delay you see here. Their return next to SPY over the same months is the honest answer to “does copying Congress beat the market”. A dash means the price source has no quote for that fund or that far back.</p>`; }
+
+function renderWatch(gs){ const agg=cgByTicker(gs); const items=[];
   agg.forEach(a=>{ const nb=a.buyers.size, ns=a.sellers.size;
     if(nb>=2&&ns===0) items.push({a,score:nb*3+Math.log10(1+a.buy),kind:'Crowd buying',why:`${nb} members bought and none sold, about ${kfmt(a.buy)} in.`});
     else if(ns>=2&&nb===0) items.push({a,score:ns*3+Math.log10(1+a.sell),kind:'Crowd selling',why:`${ns} members sold and none bought, about ${kfmt(a.sell)} out.`});
     else if(nb>=1&&ns>=1&&a.members.size>=2) items.push({a,score:(nb+ns)*1.5,kind:'Split',why:`${plural(nb,'member')} bought while ${ns} sold. They disagree on this one.`});
-    const big=a.trades.filter(t=>t.lo>=250001).sort((x,y)=>y.lo-x.lo); if(big.length) items.push({a,score:2+big.length+Math.log10(big[0].lo),kind:'Large trade',why:big.slice(0,2).map(t=>`${t.f.name} ${isBuy(t)?'bought':isSell(t)?'sold':'exchanged'} ${t.amount}${t.owner?` (${OWNER_LABEL[t.owner]||t.owner})`:''}`).join('. ')+'.'});
-    const per=new Map(); a.trades.forEach(t=>{ const k=t.f.name+'|'+(isBuy(t)?'b':isSell(t)?'s':'e'); per.set(k,(per.get(k)||0)+1); });
-    per.forEach((n,k)=>{ if(n>=3){ const [nm,s]=k.split('|'); if(s==='e') return; items.push({a,score:1+n*.7,kind:s==='b'?'Kept adding':'Kept trimming',why:`${nm} ${s==='b'?'bought':'sold'} it ${n} times in this period.`}); } }); });
+    const big=a.groups.filter(g=>g.lo>=250001).sort((x,y)=>y.lo-x.lo); if(big.length) items.push({a,score:2+big.length+Math.log10(big[0].lo),kind:'Large trade',why:big.slice(0,2).map(g=>`${g.f.name} ${g.side==='P'?'bought':g.side==='S'?'sold':'exchanged'} ${g.amount}${g.n>1?` in ${g.n} pieces`:''} (${ownersText(g)})`).join('. ')+'.'});
+    const per=new Map(); a.groups.forEach(g=>{ if(g.side==='E') return; const k=g.f.name+'|'+g.side; per.set(k,(per.get(k)||0)+1); });
+    per.forEach((n,k)=>{ if(n>=3){ const [nm,s]=k.split('|'); items.push({a,score:1+n*.7,kind:s==='P'?'Kept adding':'Kept trimming',why:`${nm} ${s==='P'?'bought':'sold'} it on ${n} different days in this period.`}); } });
+    if(cg.prices&&a.ticker){ const r=retSince(a.ticker,a.first), s=retSince('SPY',a.first); if(r!=null&&s!=null&&Math.abs(r-s)>=0.15) items.push({a,score:1+Math.abs(r-s)*4,kind:r>s?'Moved up since':'Moved down since',why:`${pct1(r)} since the first trade here, against SPY ${pct1(s)}.`}); } });
   const byKey=new Map(); items.forEach(it=>{ const c=byKey.get(it.a.key)||{a:it.a,score:0,reasons:[]}; c.score+=it.score; c.reasons.push(it); byKey.set(it.a.key,c); });
   const cards=[...byKey.values()].sort((x,y)=>y.score-x.score);
-  const intro=`<p class="help" style="margin:0 0 12px">Simple rules, not a recommendation: several members on the same side, members on opposite sides, one trade over $250,000, or one member trading the same name three times or more. Check the filing before you believe any row.</p>`;
+  const intro=`<p class="help" style="margin:0 0 12px">Simple rules, not a recommendation: several members on the same side, members on opposite sides, one order over $250,000, one member trading the same name on three or more days${cg.prices?', or a price that moved 15 points or more against SPY since the first trade':''}. Check the filing before you believe any row.</p>`;
   if(!cards.length) return intro+'<p class="empty">Nothing stands out in this period. Try a longer one or clear a filter.</p>';
   return intro+`<div class="watch">${cards.map(c=>`<div class="card"><div class="t"><span class="tk">${esc(c.a.ticker||'—')}</span><span class="nm">${esc(cleanName(c.a.name))}</span><span class="net ${c.a.net>0?'in':c.a.net<0?'out':''}">${c.a.net>0?'+':''}${kfmt(c.a.net)}</span></div>${c.reasons.map(r=>`<div class="why"><b>${r.kind}.</b> ${esc(r.why)}</div>`).join('')}<div class="sub" style="margin-top:8px"><button type="button" class="btn ghost small" data-open="${esc(c.a.key)}">See the ${plural(c.a.n,'trade')}</button></div></div>`).join('')}</div>`; }
 
+/* ---- main render ---- */
 function renderCongress(){ const st=$('#cg-status'), body=$('#cg-body'); if(!st) return;
   $('#cg-period').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.days===cg.days));
   $('#cg-view').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===cg.view));
   if(cg.loading){ st.hidden=false; st.textContent='Loading the latest filings…'; body.hidden=true; return; }
   if(!cg.data){ st.hidden=false; st.innerHTML='Could not load the filings right now. <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Open the House Clerk site</a> instead, or try again in a minute.'; body.hidden=true; return; }
   st.hidden=true; body.hidden=false; const d=cg.data;
-  $('#cg-updated').textContent=`Updated ${dShort(d.generated.slice(0,10))} · newest filing ${dShort(d.maxFiled)}`;
-  const rows=cgFiltered(); const buy=rows.filter(isBuy).reduce((s,t)=>s+t.mid,0), sell=rows.filter(isSell).reduce((s,t)=>s+t.mid,0), net=buy-sell; const members=new Set(rows.map(t=>t.f.name)).size, filings=new Set(rows.map(t=>t.id)).size;
+  $('#cg-updated').textContent=`Updated ${dShort(d.generated.slice(0,10))} · newest filing ${dShort(d.maxFiled)}${cg.prices?` · prices to ${dShort(cg.prices.asof)}`:''}`;
   const since=cgSince(); const when=cg.days===1?`filed ${dLong(d.maxFiled)}`:`filed ${dShort(since)} to ${dShort(d.maxFiled)}`;
-  $('#cg-kpis').innerHTML=`<div class="tile"><div class="l">Bought</div><div class="v in">~${kfmt(buy)}</div></div><div class="tile"><div class="l">Sold</div><div class="v out">~${kfmt(sell)}</div></div><div class="tile"><div class="l">Net flow</div><div class="v ${net>0?'in':net<0?'out':''}">${net>0?'+':''}${kfmt(net)}</div></div><div class="tile"><div class="l">${esc(when)}</div><div class="v">${rows.length} <small>trades, ${plural(filings,'filing')}, ${plural(members,'member')}</small></div></div>`;
+  $('#cg-stats').innerHTML=`<div class="eyebrow" style="margin-bottom:6px">In this period, ${esc(when)}</div><table class="cg-stats-t"><tbody>${cgStats().map(s=>`<tr><td><button type="button" class="cg-stat" data-act="${s.act}" title="${esc(s.hint)}">${esc(s.l)}</button></td><td class="num">${esc(String(s.v))}</td></tr>`).join('')}</tbody></table><p class="muted" style="font-size:12px;margin-top:6px">Tap a row to open that slice below.</p>`;
+  const gs=cgFiltered(); const buy=gs.filter(g=>g.side==='P').reduce((s,g)=>s+g.mid,0), sell=gs.filter(g=>g.side==='S').reduce((s,g)=>s+g.mid,0), net=buy-sell; const members=new Set(gs.map(g=>g.f.name)).size, filings=new Set(gs.flatMap(g=>[...g.ids])).size, pieces=gs.reduce((s,g)=>s+g.n,0);
+  $('#cg-kpis').innerHTML=`<div class="tile"><div class="l">Bought</div><div class="v in">~${kfmt(buy)}</div></div><div class="tile"><div class="l">Sold</div><div class="v out">~${kfmt(sell)}</div></div><div class="tile"><div class="l">Net flow</div><div class="v ${net>0?'in':net<0?'out':''}">${net>0?'+':''}${kfmt(net)}</div></div><div class="tile"><div class="l">Showing</div><div class="v">${gs.length} <small>trades${pieces>gs.length?` in ${pieces} pieces`:''}, ${plural(filings,'filing')}, ${plural(members,'member')}</small></div></div>`;
+  const active=[]; if(cg.hideBig) active.push(['hideBig','Hiding the 50 largest companies']); if(cg.size==='small') active.push(['size','$1,001 to $15,000 only']); else if(cg.size) active.push(['size',`Over ${cgFmt0(+cg.size-1)}`]); if(cg.piecesOnly) active.push(['piecesOnly','Only orders made in pieces']); if(!cg.tickerOnly) active.push(['tickerOnly','Including assets without a ticker']); if(cg.side) active.push(['side',cg.side==='P'?'Buys only':'Sells only']); if(cg.party) active.push(['party',cg.party==='D'?'Democrats':'Republicans']); if(cg.q.trim()) active.push(['q',`Search: ${cg.q.trim()}`]);
+  $('#cg-active').innerHTML=active.length?`<div class="chips">${active.map(([k,l])=>`<button type="button" class="chip-btn on" data-clear="${k}">${esc(l)} ×</button>`).join('')}<button type="button" class="chip-btn" data-clear="all">Clear all</button></div>`:'';
   const list=$('#cg-list');
-  if(!rows.length){ list.innerHTML=`<p class="empty">No trades match ${cg.days===1?'on the newest filing day':'in this period'}. Try a longer period or clear a filter.</p>`; return; }
-  list.innerHTML=cg.view==='days'?renderDays(rows):cg.view==='members'?renderMembers(rows):cg.view==='watch'?renderWatch(rows):renderTickers(rows); }
+  if(!gs.length){ list.innerHTML=`<p class="empty">No trades match ${cg.days===1?'on the newest filing day':'in this period'}. Try a longer period or clear a filter.</p>`; return; }
+  list.innerHTML=cg.view==='days'?renderDays(gs):cg.view==='members'?renderMembers(gs):cg.view==='watch'?renderWatch(gs):renderTickers(gs); }
 
-function cgCsv(){ const rows=cgFiltered(); if(!rows.length){ toast('Nothing to download for this selection.'); return; }
-  const cols=['Filed','Trade date','Member','Party','State','District','Owner','Side','Ticker','Asset','Amount','Low','High','Filing'];
+function cgCsv(){ const gs=cgFiltered(); if(!gs.length){ toast('Nothing to download for this selection.'); return; }
+  const cols=['Filed','Trade date','Member','Party','State','District','Owner','Side','Ticker','Asset','Amount','Low','High','Pieces in order','Order low','Order high','Price change since','SPY since','Filing'];
   const q=v=>{ v=v==null?'':String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
-  const lines=[cols.join(',')].concat(rows.map(t=>[t.f.filed,t.date,t.f.name,t.f.party,t.f.state,t.f.dist,OWNER_LABEL[t.owner]||t.owner,SIDE_LABEL[t.type]||t.type,t.ticker||'',t.asset,t.amount,t.lo,t.hi,t.f.url].map(q).join(',')));
+  const lines=[cols.join(',')]; gs.forEach(g=>{ const r=retSince(g.ticker,g.date), s=r!=null?retSince('SPY',g.date):null; g.pieces.forEach(t=>lines.push([t.f.filed,t.date,t.f.name,t.f.party,t.f.state,t.f.dist,OWNER_LABEL[t.owner||'self'],SIDE_LABEL[t.type]||t.type,t.ticker||'',t.asset,t.amount,t.lo,t.hi,g.n,g.lo,g.openEnd?'':g.hi,r==null?'':(r*100).toFixed(2)+'%',s==null?'':(s*100).toFixed(2)+'%',t.f.url].map(q).join(','))); });
   const save=state.downloads?saveFile:nativeDownload; save(`congress-trades-${cg.days}d-${localISO(new Date())}.csv`,'﻿'+lines.join('\r\n')); }
 
 $('#cg-period').addEventListener('click',e=>{ const b=e.target.closest('[data-days]'); if(!b) return; cg.days=+b.dataset.days; cg.shown=40; renderCongress(); });
@@ -1301,9 +1398,12 @@ $('#cg-view').addEventListener('click',e=>{ const b=e.target.closest('[data-view
 $('#cg-search').addEventListener('input',e=>{ cg.q=e.target.value; renderCongress(); });
 $('#cg-side').addEventListener('change',e=>{ cg.side=e.target.value; renderCongress(); });
 $('#cg-party').addEventListener('change',e=>{ cg.party=e.target.value; renderCongress(); });
-$('#cg-min').addEventListener('change',e=>{ cg.min=+e.target.value; renderCongress(); });
+$('#cg-size').addEventListener('change',e=>{ cg.size=e.target.value; renderCongress(); });
 $('#cg-tickers').addEventListener('change',e=>{ cg.tickerOnly=e.target.checked; renderCongress(); });
-$('#cg-list').addEventListener('change',e=>{ if(e.target.id==='cg-sortsel'){ cg.sort=e.target.value; renderCongress(); } });
+$('#cg-hidebig').addEventListener('change',e=>{ cg.hideBig=e.target.checked; renderCongress(); });
+$('#cg-stats').addEventListener('click',e=>{ const b=e.target.closest('[data-act]'); if(b) cgApplyStat(b.dataset.act); });
+$('#cg-active').addEventListener('click',e=>{ const b=e.target.closest('[data-clear]'); if(!b) return; const k=b.dataset.clear; if(k==='all') Object.assign(cg,{q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false}); else if(k==='tickerOnly') cg.tickerOnly=true; else if(k==='hideBig'||k==='piecesOnly') cg[k]=false; else cg[k]=''; cgSyncControls(); renderCongress(); });
+$('#cg-list').addEventListener('change',e=>{ if(e.target.id==='cg-sortsel'){ cg.sort=e.target.value; renderCongress(); } else if(e.target.id==='cg-msortsel'){ cg.msort=e.target.value; renderCongress(); } });
 $('#cg-list').addEventListener('toggle',e=>{ const d=e.target; if(!d.classList||!d.classList.contains('cg-row')) return; const k=d.dataset.key; if(d.open){ cg.open.add(k); if(!d.querySelector('.cg-trades')) renderCongress(); } else cg.open.delete(k); },true);
 $('#cg-list').addEventListener('click',e=>{ const o=e.target.closest('[data-open]'); if(o){ cg.view='tickers'; cg.open.add(o.dataset.open); cg.shown=1e9; renderCongress(); const el=$('#cg-list').querySelector(`[data-key="${CSS.escape(o.dataset.open)}"]`); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); return; } if(e.target.closest('#cg-more')){ cg.shown=1e9; renderCongress(); } });
 $('#cg-csv').addEventListener('click',cgCsv);
