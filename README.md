@@ -33,6 +33,27 @@ A third tab, Notes, is a personal notebook of lessons read in books and research
 (title, takeaway, tags, HTML body); adding a lesson is adding one entry. Link straight to it
 with `#notes`, or to one note with `#note-<id>`.
 
+## Congress tab
+
+A fourth tab, Congress, shows the stock trades that members of the US House report under
+the STOCK Act. Pick a period (newest filing day, 7, 14, 30 or 90 days), filter by side,
+party, trade size or a search, and read it four ways: by stock (money in and out per ticker,
+using the midpoint of each reported range), by day (every filing as it was posted), by member,
+and a "worth a look" list built from simple rules (several members on the same side, members
+on opposite sides, trades over $250,000, one member trading a name three times or more).
+Every row links to the original filing. Link straight to it with `#congress`.
+
+The data is one public file, `docs/data/congress-trades.json`, rebuilt once a day by a
+GitHub Action (`.github/workflows/congress.yml`) that runs `congress/fetch_trades.py`:
+it reads the House Clerk's yearly filing index, downloads each new Periodic Transaction
+Report PDF, parses the transactions table, adds party and district from the
+`unitedstates/congress-legislators` project, and keeps the last 90 days of filings.
+Paper (scanned) filings are listed but have no trades. Senate filings are not included:
+the Senate disclosure site does not allow scripted access. To refresh by hand:
+
+    pip install requests pdfplumber
+    python congress/fetch_trades.py
+
 ## Files
 
 - `docs/index.html` is the website. GitHub Pages serves it from the `docs` folder.

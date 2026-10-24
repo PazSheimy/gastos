@@ -268,11 +268,64 @@ section + section{border-top:1px solid var(--rule)}
 .note-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
 .note-table td:last-child{font-variant-numeric:tabular-nums}
 .note .body .bottom{background:var(--paper);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-top:14px}
+
+/* congress */
+.cg-tools{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.cg-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.cg-filters input[type=search]{flex:1 1 180px;min-width:0;border:1px solid var(--rule-2);border-radius:8px;padding:8px 10px;background:var(--surface)}
+.cg-filters select{border:1px solid var(--rule-2);border-radius:8px;padding:7px 8px;background:var(--surface);font-size:14px;max-width:100%}
+.cg-filters .cg-check{margin-top:0;align-items:center;gap:6px;font-size:14px}
+.cg-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media (min-width:640px){.cg-kpis{grid-template-columns:repeat(4,1fr)}}
+.cg-kpis .tile .v{font-variant-numeric:tabular-nums}
+.cg-kpis .tile .v small{font-size:12px;font-weight:400;color:var(--muted)}
+.cg-kpis .tile .v.in,.cg-row .net.in,.watch .net.in{color:var(--good-text)}
+.cg-kpis .tile .v.out,.cg-row .net.out,.watch .net.out{color:var(--bad-text)}
+.cg-views{display:flex;max-width:100%;overflow-x:auto}
+.cg-views button{white-space:nowrap}
+.cg-sort{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0 4px;font-size:13px;color:var(--muted)}
+.cg-sort label{display:inline-flex;gap:6px;align-items:center}
+.cg-sort select{border:1px solid var(--rule-2);border-radius:6px;padding:4px 6px;background:var(--surface);font-size:13px}
+.cg-rows{list-style:none;margin:0;padding:0}
+.cg-row{border-bottom:1px solid var(--rule)}
+.cg-row summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;align-items:center}
+.cg-row summary::-webkit-details-marker{display:none}
+.cg-row summary:hover{background:var(--surface)}
+.cg-row .t,.watch .t{display:flex;gap:8px;align-items:baseline;min-width:0}
+.cg-row .tk,.watch .tk,.cg-trades .tk{font-family:var(--display);font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.cg-row .nm,.watch .nm{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;min-width:0}
+.cg-row .net,.watch .net{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}
+.cg-row .sub,.watch .sub{grid-column:1/-1;font-size:12px;color:var(--muted);display:flex;gap:6px 12px;flex-wrap:wrap;align-items:center}
+.flow{height:6px;border-radius:3px;background:var(--rule);overflow:hidden;display:flex;flex:0 0 96px}
+.flow i{display:block;height:100%}
+.flow .b{background:var(--good)} .flow .s{background:var(--bad)}
+.cg-trades{margin:0 0 10px;padding:0;list-style:none;border-top:1px dashed var(--rule)}
+.cg-trades li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0 8px 12px;border-bottom:1px solid var(--rule);font-size:14px;border-left:2px solid var(--rule)}
+.cg-trades li:last-child{border-bottom:0}
+.cg-trades .who{font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cg-trades .amt{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.cg-trades .meta{grid-column:1/-1;font-size:12px;color:var(--muted);display:flex;gap:4px 10px;flex-wrap:wrap;align-items:center}
+.cg-trades .meta a{color:var(--accent)}
+.side{display:inline-flex;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.side.P{background:var(--good-soft);color:var(--good-text)}
+.side.S,.side.SP{background:var(--bad-soft);color:var(--bad-text)}
+.side.E{background:var(--accent-soft);color:var(--accent)}
+.party{font-size:11px;font-weight:700;padding:0 5px;border-radius:4px;border:1px solid var(--rule-2);color:var(--ink-2);white-space:nowrap;vertical-align:middle}
+.cg-day{margin:18px 0 4px;display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;align-items:baseline}
+.cg-day h3{font-size:16px;font-weight:700}
+.cg-day span{font-size:13px;color:var(--muted)}
+.watch{display:grid;gap:10px}
+.watch .card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.watch .card .t{align-items:center}
+.watch .net{margin-left:auto}
+.watch .why{font-size:14px;color:var(--ink-2);margin-top:6px;line-height:1.4}
+.watch .why b{color:var(--ink)}
+.cg-more{margin-top:10px}
 </style>
 
 <header class="top"><div class="wrap">
   <div class="brand">Gastos</div>
-  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button><button type="button" data-page="notes" aria-pressed="false">Notes</button></nav>
+  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button><button type="button" data-page="notes" aria-pressed="false">Notes</button><button type="button" data-page="congress" aria-pressed="false">Congress</button></nav>
   <span class="privacy" title="Your statement is read by your browser and never uploaded"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>Stays on your phone</span>
 </div></header>
 
@@ -419,6 +472,36 @@ section + section{border-top:1px solid var(--rule)}
   <div class="disclaimer" role="note"><b>This is not financial advice.</b> These are personal notes that summarize what I read. Rules, limits and tax brackets change, and your situation is your own. Check with a licensed professional before acting on anything here.</div>
   <div class="notes-tools"><input type="search" id="notes-search" placeholder="Search notes" aria-label="Search notes"><span class="muted" id="notes-count"></span></div>
   <div id="notes-list"></div>
+</section>
+
+<section id="congress-sec" hidden>
+  <div class="sec-head"><h2>What Congress is trading</h2><span class="muted" id="cg-updated" style="font-size:13px"></span></div>
+  <p class="help" style="margin-top:0;margin-bottom:14px">Members of the US House must report every stock trade within 45 days under the STOCK Act. This tab reads those public filings from the House Clerk once a day and lines them up so you can see what was bought, what was sold, and where the money moved. It is a watch list, not a signal: a filing can arrive weeks after the trade.</p>
+  <div class="disclaimer" role="note"><b>Public filings, not advice.</b> Members report a range, not an exact amount, so every total here uses the middle of each range. Filings are self-reported, often late and sometimes amended. Senate filings are not included yet; they are at <a href="https://efdsearch.senate.gov/search/" target="_blank" rel="noopener">efdsearch.senate.gov</a>.</div>
+  <div class="cg-tools">
+    <div class="chips" id="cg-period" role="group" aria-label="Filed within">
+      <button type="button" class="chip-btn" data-days="1" aria-pressed="false">Newest day</button>
+      <button type="button" class="chip-btn" data-days="7" aria-pressed="true">7 days</button>
+      <button type="button" class="chip-btn" data-days="14" aria-pressed="false">14 days</button>
+      <button type="button" class="chip-btn" data-days="30" aria-pressed="false">30 days</button>
+      <button type="button" class="chip-btn" data-days="90" aria-pressed="false">90 days</button>
+    </div>
+    <div class="cg-filters">
+      <input type="search" id="cg-search" placeholder="Ticker, company or member" aria-label="Search trades">
+      <select id="cg-side" aria-label="Buys or sells"><option value="">Buys and sells</option><option value="P">Buys only</option><option value="S">Sells only</option></select>
+      <select id="cg-party" aria-label="Party"><option value="">Both parties</option><option value="D">Democrats</option><option value="R">Republicans</option></select>
+      <select id="cg-min" aria-label="Minimum trade size"><option value="0">Any size</option><option value="15001">Over $15,000</option><option value="50001">Over $50,000</option><option value="100001">Over $100,000</option><option value="250001">Over $250,000</option><option value="1000001">Over $1 million</option></select>
+      <label class="check cg-check"><input type="checkbox" id="cg-tickers" checked> Only assets with a ticker</label>
+    </div>
+  </div>
+  <div id="cg-status" class="empty">Loading the latest filings&hellip;</div>
+  <div id="cg-body" hidden>
+    <div class="cg-kpis" id="cg-kpis"></div>
+    <div class="seg small cg-views" id="cg-view" role="group" aria-label="View"><button type="button" data-view="tickers" aria-pressed="true">By stock</button><button type="button" data-view="days" aria-pressed="false">By day</button><button type="button" data-view="members" aria-pressed="false">By member</button><button type="button" data-view="watch" aria-pressed="false">Worth a look</button></div>
+    <div id="cg-list"></div>
+    <div class="dl" style="margin-top:14px"><button type="button" class="btn ghost small" id="cg-csv">Download these trades (CSV)</button></div>
+    <p class="muted" style="font-size:12px;margin-top:10px">Source: <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Clerk of the House, Financial Disclosure Reports</a>, parsed from each Periodic Transaction Report. Party and district from the <a href="https://github.com/unitedstates/congress-legislators" target="_blank" rel="noopener">congress-legislators</a> project. Paper filings and filings the parser could not read are counted but have no trades. Refreshed once a day.</p>
+  </div>
 </section>
 
 </main>
@@ -1111,10 +1194,110 @@ function renderNotes(){ const list=$('#notes-list'); if(!list) return; const q=(
   $('#notes-count').textContent=rows.length?`${rows.length} of ${NOTES.length}`:'No notes match';
   list.innerHTML=rows.map((n,i)=>`<details class="note" id="note-${esc(n.id)}"${(i===0&&!q)||state.openNote===n.id?' open':''}><summary><h3>${esc(n.title)}</h3><div class="meta"><span>Added ${esc(n.added)}</span><span>&middot;</span><span>${esc(n.asOf)}</span>${n.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="tk">${esc(n.takeaway)}</div></summary><div class="body">${n.body}${n.source?`<p class="src">${esc(n.source)}</p>`:''}</div></details>`).join('')||'<p class="empty">Nothing here yet.</p>'; }
 $('#notes-search').addEventListener('input',e=>{ state.notesQ=e.target.value; renderNotes(); });
-function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; return 'sort'; }
-function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#notes-sec').hidden=p!=='notes'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
-  try{ const want=p==='plan'?'#plan':p==='notes'?(location.hash.startsWith('#note-')?location.hash:'#notes'):''; if(want&&location.hash!==want) history.replaceState(null,'',want); else if(!want&&location.hash) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+/* ---------- congress: public STOCK Act filings from the House ---------- */
+/* Data file: docs/data/congress-trades.json, rebuilt daily by congress/fetch_trades.py (GitHub Actions). */
+const CG_URLS=['data/congress-trades.json','https://pazsheimy.github.io/gastos/data/congress-trades.json'];
+const cg={data:null,loading:false,days:7,view:'tickers',sort:'in',q:'',side:'',party:'',min:0,tickerOnly:true,open:new Set(),shown:40};
+const SIDE_LABEL={P:'Buy',S:'Sell',SP:'Partial sell',E:'Exchange'};
+const OWNER_LABEL={SP:'spouse',DC:'child',JT:'joint'};
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const kfmt=x=>{ const a=Math.abs(x), s=x<0?'−':''; const r=(v,d)=>v.toFixed(d).replace(/\.0$/,''); if(a>=1e9) return s+'$'+r(a/1e9,1)+'B'; if(a>=1e6) return s+'$'+r(a/1e6,a>=1e7?0:1)+'M'; if(a>=1e3) return s+'$'+r(a/1e3,a>=1e5?0:1)+'K'; return s+'$'+Math.round(a); };
+const cgMid=t=>t.lo==null?0:(t.hi==null?t.lo:(t.lo+t.hi)/2);
+const isBuy=t=>t.type==='P', isSell=t=>t.type==='S'||t.type==='SP';
+const dUTC=s=>new Date(s+'T00:00:00Z');
+const dLong=s=>{ const d=dUTC(s); return `${WD[d.getUTCDay()]} ${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
+const dShort=s=>{ if(!s) return ''; const d=dUTC(s); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
+const dDiff=(a,b)=>Math.round((dUTC(b)-dUTC(a))/864e5);
+const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
+const cleanName=s=>String(s||'').replace(/\s*[-,]?\s*(Class [A-C] )?(Common Stock|Ordinary Shares|Common Shares|Capital Stock|American Depositary Shares.*|Depositary Shares.*)\s*$/i,'').replace(/\s*-\s*$/,'').trim();
+const localISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+async function openCongress(){ if(cg.data||cg.loading){ renderCongress(); return; } cg.loading=true; renderCongress();
+  for(const u of CG_URLS){ try{ const r=await fetch(u,{cache:'no-cache'}); if(!r.ok) throw new Error('http '+r.status); const j=await r.json(); if(!j||!Array.isArray(j.trades)||!Array.isArray(j.filings)) throw new Error('shape'); cg.data=j; break; }catch(e){ console.warn('congress data',u,e); } }
+  cg.loading=false;
+  if(cg.data){ const F={}; cg.data.filings.forEach(f=>F[f.id]=f); cg.data.trades=cg.data.trades.filter(t=>F[t.id]); cg.data.trades.forEach(t=>{ t.f=F[t.id]; t.mid=cgMid(t); t.key=t.ticker||t.asset; }); cg.data.maxFiled=cg.data.filings.reduce((m,f)=>f.filed>m?f.filed:m,''); }
+  renderCongress(); }
+
+function cgSince(){ if(cg.days===1) return cg.data.maxFiled; const s=new Date(); s.setDate(s.getDate()-(cg.days-1)); const iso=localISO(s); return iso>cg.data.maxFiled?cg.data.maxFiled:iso; }
+function cgFiltered(){ const d=cg.data; if(!d) return []; const since=cgSince(); const q=cg.q.trim().toLowerCase();
+  return d.trades.filter(t=>{ const f=t.f; if(f.filed<since) return false; if(cg.tickerOnly&&!t.ticker) return false; if(cg.side==='P'&&!isBuy(t)) return false; if(cg.side==='S'&&!isSell(t)) return false; if(cg.party&&f.party!==cg.party) return false; if(cg.min&&(t.lo==null||t.lo<cg.min)) return false;
+    if(q){ const hay=`${t.ticker||''} ${t.asset} ${f.name} ${f.state}`.toLowerCase(); if(!hay.includes(q)) return false; } return true; }); }
+
+function cgByTicker(rows){ const m=new Map();
+  rows.forEach(t=>{ let a=m.get(t.key); if(!a){ a={key:t.key,ticker:t.ticker,name:t.asset,buy:0,sell:0,n:0,members:new Set(),buyers:new Set(),sellers:new Set(),last:'',trades:[]}; m.set(t.key,a); }
+    a.n++; a.trades.push(t); a.members.add(t.f.name); if(isBuy(t)){ a.buy+=t.mid; a.buyers.add(t.f.name); } else if(isSell(t)){ a.sell+=t.mid; a.sellers.add(t.f.name); } if(t.f.filed>a.last) a.last=t.f.filed; if(t.asset.length<a.name.length) a.name=t.asset; });
+  return [...m.values()].map(a=>Object.assign(a,{net:a.buy-a.sell})); }
+
+function tradesList(ts,opts={}){ const sorted=[...ts].sort(opts.byMember?((a,b)=>a.f.name.localeCompare(b.f.name)||b.mid-a.mid):((a,b)=>b.f.filed.localeCompare(a.f.filed)||b.date.localeCompare(a.date)));
+  return `<ul class="cg-trades">${sorted.map(t=>{ const lag=dDiff(t.date,t.f.filed); return `<li><div class="who">${opts.showAsset?`<span class="tk">${esc(t.ticker||'')}</span> ${esc(cleanName(t.asset))} <span class="muted">·</span> `:''}${esc(t.f.name)}${t.f.party?` <span class="party">${esc(t.f.party)}-${esc(t.f.state)}</span>`:''}</div><div class="amt">${esc(t.amount)}</div><div class="meta"><span class="side ${esc(t.type)}">${SIDE_LABEL[t.type]||esc(t.type)}</span>${t.owner?`<span>${OWNER_LABEL[t.owner]||esc(t.owner)}</span>`:''}<span>traded ${dShort(t.date)}</span><span>filed ${dShort(t.f.filed)}${lag>0?`, ${plural(lag,'day')} later`:''}</span>${t.desc?`<span title="${esc(t.desc)}">${esc(t.desc.length>60?t.desc.slice(0,58)+'…':t.desc)}</span>`:''}<a href="${esc(t.f.url)}" target="_blank" rel="noopener">filing</a></div></li>`; }).join('')}</ul>`; }
+
+function renderTickers(rows){ const agg=cgByTicker(rows); const sorts={in:(a,b)=>b.net-a.net||b.n-a.n,out:(a,b)=>a.net-b.net||b.n-a.n,active:(a,b)=>b.n-a.n||(b.buy+b.sell)-(a.buy+a.sell),members:(a,b)=>b.members.size-a.members.size||b.n-a.n}; agg.sort(sorts[cg.sort]||sorts.in);
+  const opt=(v,l)=>`<option value="${v}"${cg.sort===v?' selected':''}>${l}</option>`;
+  const shown=agg.slice(0,cg.shown);
+  return `<div class="cg-sort"><span>${plural(agg.length,'asset')}, midpoint of each reported range</span><label>Order by <select id="cg-sortsel">${opt('in','Most money in')}${opt('out','Most money out')}${opt('active','Most trades')}${opt('members','Most members')}</select></label></div>
+<ul class="cg-rows">${shown.map(a=>`<details class="cg-row"${cg.open.has(a.key)?' open':''} data-key="${esc(a.key)}"><summary><div class="t"><span class="tk">${esc(a.ticker||'—')}</span><span class="nm">${esc(cleanName(a.name))}</span></div><div class="net ${a.net>0?'in':a.net<0?'out':''}">${a.net>0?'+':''}${kfmt(a.net)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${pct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${pct(a.sell,a.buy+a.sell)}%"></i></span><span>${a.buyers.size?`${a.buyers.size} bought ~${kfmt(a.buy)}`:''}${a.buyers.size&&a.sellers.size?' · ':''}${a.sellers.size?`${a.sellers.size} sold ~${kfmt(a.sell)}`:''}</span><span>${plural(a.n,'trade')}</span><span>last filed ${dShort(a.last)}</span></div></summary>${cg.open.has(a.key)?tradesList(a.trades):''}</details>`).join('')}</ul>${agg.length>shown.length?`<div class="cg-more"><button type="button" class="btn ghost small" id="cg-more">Show all ${agg.length}</button></div>`:''}`; }
+
+function renderDays(rows){ const byDay=new Map(); rows.forEach(t=>{ if(!byDay.has(t.f.filed)) byDay.set(t.f.filed,[]); byDay.get(t.f.filed).push(t); });
+  return [...byDay.keys()].sort().reverse().map(d=>{ const ts=byDay.get(d); const buy=ts.filter(isBuy).reduce((s,t)=>s+t.mid,0), sell=ts.filter(isSell).reduce((s,t)=>s+t.mid,0); const fil=new Set(ts.map(t=>t.id)).size, mem=new Set(ts.map(t=>t.f.name)).size;
+    return `<div class="cg-day"><h3>${dLong(d)}</h3><span>${plural(fil,'filing')} from ${plural(mem,'member')} · ${plural(ts.length,'trade')} · bought ~${kfmt(buy)} · sold ~${kfmt(sell)}</span></div>${tradesList(ts,{showAsset:true,byMember:true})}`; }).join(''); }
+
+function renderMembers(rows){ const m=new Map();
+  rows.forEach(t=>{ const k=t.f.name; let a=m.get(k); if(!a){ a={name:k,party:t.f.party,state:t.f.state,dist:t.f.dist,buy:0,sell:0,n:0,trades:[],tickers:new Map()}; m.set(k,a); } a.n++; a.trades.push(t); if(isBuy(t)) a.buy+=t.mid; else if(isSell(t)) a.sell+=t.mid; a.tickers.set(t.ticker||cleanName(t.asset),(a.tickers.get(t.ticker||cleanName(t.asset))||0)+1); });
+  const arr=[...m.values()].sort((a,b)=>(b.buy+b.sell)-(a.buy+a.sell)||b.n-a.n);
+  return `<div class="cg-sort"><span>${plural(arr.length,'member')}, biggest movers first</span></div><ul class="cg-rows">${arr.map(a=>{ const key='m:'+a.name; const top=[...a.tickers.entries()].sort((x,y)=>y[1]-x[1]).slice(0,4).map(e=>esc(e[0])).join(', ');
+    return `<details class="cg-row"${cg.open.has(key)?' open':''} data-key="${esc(key)}"><summary><div class="t"><span class="tk">${esc(a.name)}</span>${a.party?`<span class="party">${esc(a.party)}-${esc(a.state)}${a.dist?'-'+esc(a.dist.replace(/^0/,'')):''}</span>`:''}</div><div class="net">~${kfmt(a.buy+a.sell)}</div><div class="sub"><span class="flow" aria-hidden="true"><i class="b" style="width:${pct(a.buy,a.buy+a.sell)}%"></i><i class="s" style="width:${pct(a.sell,a.buy+a.sell)}%"></i></span><span>bought ~${kfmt(a.buy)} · sold ~${kfmt(a.sell)}</span><span>${plural(a.n,'trade')}</span><span>${top}</span></div></summary>${cg.open.has(key)?tradesList(a.trades,{showAsset:true}):''}</details>`; }).join('')}</ul>`; }
+
+function renderWatch(rows){ const agg=cgByTicker(rows); const items=[];
+  agg.forEach(a=>{ const nb=a.buyers.size, ns=a.sellers.size;
+    if(nb>=2&&ns===0) items.push({a,score:nb*3+Math.log10(1+a.buy),kind:'Crowd buying',why:`${nb} members bought and none sold, about ${kfmt(a.buy)} in.`});
+    else if(ns>=2&&nb===0) items.push({a,score:ns*3+Math.log10(1+a.sell),kind:'Crowd selling',why:`${ns} members sold and none bought, about ${kfmt(a.sell)} out.`});
+    else if(nb>=1&&ns>=1&&a.members.size>=2) items.push({a,score:(nb+ns)*1.5,kind:'Split',why:`${plural(nb,'member')} bought while ${ns} sold. They disagree on this one.`});
+    const big=a.trades.filter(t=>t.lo>=250001).sort((x,y)=>y.lo-x.lo); if(big.length) items.push({a,score:2+big.length+Math.log10(big[0].lo),kind:'Large trade',why:big.slice(0,2).map(t=>`${t.f.name} ${isBuy(t)?'bought':isSell(t)?'sold':'exchanged'} ${t.amount}${t.owner?` (${OWNER_LABEL[t.owner]||t.owner})`:''}`).join('. ')+'.'});
+    const per=new Map(); a.trades.forEach(t=>{ const k=t.f.name+'|'+(isBuy(t)?'b':isSell(t)?'s':'e'); per.set(k,(per.get(k)||0)+1); });
+    per.forEach((n,k)=>{ if(n>=3){ const [nm,s]=k.split('|'); if(s==='e') return; items.push({a,score:1+n*.7,kind:s==='b'?'Kept adding':'Kept trimming',why:`${nm} ${s==='b'?'bought':'sold'} it ${n} times in this period.`}); } }); });
+  const byKey=new Map(); items.forEach(it=>{ const c=byKey.get(it.a.key)||{a:it.a,score:0,reasons:[]}; c.score+=it.score; c.reasons.push(it); byKey.set(it.a.key,c); });
+  const cards=[...byKey.values()].sort((x,y)=>y.score-x.score);
+  const intro=`<p class="help" style="margin:0 0 12px">Simple rules, not a recommendation: several members on the same side, members on opposite sides, one trade over $250,000, or one member trading the same name three times or more. Check the filing before you believe any row.</p>`;
+  if(!cards.length) return intro+'<p class="empty">Nothing stands out in this period. Try a longer one or clear a filter.</p>';
+  return intro+`<div class="watch">${cards.map(c=>`<div class="card"><div class="t"><span class="tk">${esc(c.a.ticker||'—')}</span><span class="nm">${esc(cleanName(c.a.name))}</span><span class="net ${c.a.net>0?'in':c.a.net<0?'out':''}">${c.a.net>0?'+':''}${kfmt(c.a.net)}</span></div>${c.reasons.map(r=>`<div class="why"><b>${r.kind}.</b> ${esc(r.why)}</div>`).join('')}<div class="sub" style="margin-top:8px"><button type="button" class="btn ghost small" data-open="${esc(c.a.key)}">See the ${plural(c.a.n,'trade')}</button></div></div>`).join('')}</div>`; }
+
+function renderCongress(){ const st=$('#cg-status'), body=$('#cg-body'); if(!st) return;
+  $('#cg-period').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.days===cg.days));
+  $('#cg-view').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===cg.view));
+  if(cg.loading){ st.hidden=false; st.textContent='Loading the latest filings…'; body.hidden=true; return; }
+  if(!cg.data){ st.hidden=false; st.innerHTML='Could not load the filings right now. <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Open the House Clerk site</a> instead, or try again in a minute.'; body.hidden=true; return; }
+  st.hidden=true; body.hidden=false; const d=cg.data;
+  $('#cg-updated').textContent=`Updated ${dShort(d.generated.slice(0,10))} · newest filing ${dShort(d.maxFiled)}`;
+  const rows=cgFiltered(); const buy=rows.filter(isBuy).reduce((s,t)=>s+t.mid,0), sell=rows.filter(isSell).reduce((s,t)=>s+t.mid,0), net=buy-sell; const members=new Set(rows.map(t=>t.f.name)).size, filings=new Set(rows.map(t=>t.id)).size;
+  const since=cgSince(); const when=cg.days===1?`filed ${dLong(d.maxFiled)}`:`filed ${dShort(since)} to ${dShort(d.maxFiled)}`;
+  $('#cg-kpis').innerHTML=`<div class="tile"><div class="l">Bought</div><div class="v in">~${kfmt(buy)}</div></div><div class="tile"><div class="l">Sold</div><div class="v out">~${kfmt(sell)}</div></div><div class="tile"><div class="l">Net flow</div><div class="v ${net>0?'in':net<0?'out':''}">${net>0?'+':''}${kfmt(net)}</div></div><div class="tile"><div class="l">${esc(when)}</div><div class="v">${rows.length} <small>trades, ${plural(filings,'filing')}, ${plural(members,'member')}</small></div></div>`;
+  const list=$('#cg-list');
+  if(!rows.length){ list.innerHTML=`<p class="empty">No trades match ${cg.days===1?'on the newest filing day':'in this period'}. Try a longer period or clear a filter.</p>`; return; }
+  list.innerHTML=cg.view==='days'?renderDays(rows):cg.view==='members'?renderMembers(rows):cg.view==='watch'?renderWatch(rows):renderTickers(rows); }
+
+function cgCsv(){ const rows=cgFiltered(); if(!rows.length){ toast('Nothing to download for this selection.'); return; }
+  const cols=['Filed','Trade date','Member','Party','State','District','Owner','Side','Ticker','Asset','Amount','Low','High','Filing'];
+  const q=v=>{ v=v==null?'':String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  const lines=[cols.join(',')].concat(rows.map(t=>[t.f.filed,t.date,t.f.name,t.f.party,t.f.state,t.f.dist,OWNER_LABEL[t.owner]||t.owner,SIDE_LABEL[t.type]||t.type,t.ticker||'',t.asset,t.amount,t.lo,t.hi,t.f.url].map(q).join(',')));
+  const save=state.downloads?saveFile:nativeDownload; save(`congress-trades-${cg.days}d-${localISO(new Date())}.csv`,'﻿'+lines.join('\r\n')); }
+
+$('#cg-period').addEventListener('click',e=>{ const b=e.target.closest('[data-days]'); if(!b) return; cg.days=+b.dataset.days; cg.shown=40; renderCongress(); });
+$('#cg-view').addEventListener('click',e=>{ const b=e.target.closest('[data-view]'); if(!b) return; cg.view=b.dataset.view; cg.shown=40; renderCongress(); });
+$('#cg-search').addEventListener('input',e=>{ cg.q=e.target.value; renderCongress(); });
+$('#cg-side').addEventListener('change',e=>{ cg.side=e.target.value; renderCongress(); });
+$('#cg-party').addEventListener('change',e=>{ cg.party=e.target.value; renderCongress(); });
+$('#cg-min').addEventListener('change',e=>{ cg.min=+e.target.value; renderCongress(); });
+$('#cg-tickers').addEventListener('change',e=>{ cg.tickerOnly=e.target.checked; renderCongress(); });
+$('#cg-list').addEventListener('change',e=>{ if(e.target.id==='cg-sortsel'){ cg.sort=e.target.value; renderCongress(); } });
+$('#cg-list').addEventListener('toggle',e=>{ const d=e.target; if(!d.classList||!d.classList.contains('cg-row')) return; const k=d.dataset.key; if(d.open){ cg.open.add(k); if(!d.querySelector('.cg-trades')) renderCongress(); } else cg.open.delete(k); },true);
+$('#cg-list').addEventListener('click',e=>{ const o=e.target.closest('[data-open]'); if(o){ cg.view='tickers'; cg.open.add(o.dataset.open); cg.shown=1e9; renderCongress(); const el=$('#cg-list').querySelector(`[data-key="${CSS.escape(o.dataset.open)}"]`); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); return; } if(e.target.closest('#cg-more')){ cg.shown=1e9; renderCongress(); } });
+$('#cg-csv').addEventListener('click',cgCsv);
+function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; if(h==='#congress') return 'congress'; return 'sort'; }
+function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#notes-sec').hidden=p!=='notes'; $('#congress-sec').hidden=p!=='congress'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
+  try{ const want=p==='plan'?'#plan':p==='congress'?'#congress':p==='notes'?(location.hash.startsWith('#note-')?location.hash:'#notes'):''; if(want&&location.hash!==want) history.replaceState(null,'',want); else if(!want&&location.hash) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
   if(p==='plan') renderPlan();
+  if(p==='congress') openCongress();
   if(p==='notes'){ const h=location.hash||''; if(h.startsWith('#note-')) state.openNote=h.slice(6); renderNotes(); if(state.openNote){ const el=document.getElementById('note-'+state.openNote); if(el) setTimeout(()=>el.scrollIntoView({block:'start',behavior:'smooth'}),50); } } }
 $('#nav').addEventListener('click',e=>{ const b=e.target.closest('[data-page]'); if(!b) return; state.openNote=null; if(b.dataset.page==='notes'){ try{ history.replaceState(null,'','#notes'); }catch(err){} } setPage(b.dataset.page); window.scrollTo({top:0,behavior:'smooth'}); });
 window.addEventListener('hashchange',()=>setPage(pageFromHash()));

@@ -1,0 +1,45 @@
+name: Congress trades
+
+# Refreshes docs/data/congress-trades.json from the House Clerk's public
+# financial disclosure filings, then commits it so GitHub Pages serves it.
+
+on:
+  schedule:
+    - cron: "15 11 * * 1-6"   # 11:15 UTC, Monday to Saturday (7:15 am Eastern)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: congress-trades
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install parser dependencies
+        run: pip install --quiet requests pdfplumber
+
+      - name: Fetch and parse new filings
+        run: python congress/fetch_trades.py --days 90
+
+      - name: Commit the data file if it changed
+        run: |
+          git config user.name "Sheimy Paz"
+          git config user.email "85569927+PazSheimy@users.noreply.github.com"
+          git add docs/data/congress-trades.json
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git commit -m "Congress trades: refresh $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
