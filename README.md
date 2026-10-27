@@ -71,7 +71,7 @@ The data is two public files in `docs/data/`, rebuilt once a day by a GitHub Act
 
 Senate filings are not included: the Senate disclosure site does not allow scripted access.
 SEC EDGAR (company facts, Form 4 insider trades) is the planned next source; its site
-currently refuses scripted requests from this machine and from GitHub's runners even with
+currently refuses scripted requests from this machine, from GitHub's runners and from a Cloudflare Worker, even with
 the declared user agent the SEC asks for, so that is parked (see `congress/edgar_probe.py`).
 To refresh by hand:
 
