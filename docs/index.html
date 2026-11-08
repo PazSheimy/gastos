@@ -1452,9 +1452,10 @@ function cgGroups(rows){ const m=new Map();
     if(!g){ g={k,f:t.f,ticker:t.ticker,asset:t.asset,key:t.key,side,type:t.type,date:t.date,filed:t.f.filed,lo:0,hi:0,openEnd:false,mid:0,pieces:[],owners:new Set(),ids:new Set(),desc:''}; m.set(k,g); }
     g.pieces.push(t); g.lo+=t.lo||0; if(t.hi==null) g.openEnd=true; else g.hi+=t.hi; g.mid+=t.mid; g.owners.add(t.owner||'self'); g.ids.add(t.id); if(t.f.filed>g.filed) g.filed=t.f.filed; if(t.type==='S') g.type='S'; if(t.desc&&!g.desc) g.desc=t.desc; if(t.asset.length<g.asset.length) g.asset=t.asset; });
   return [...m.values()].map(g=>{ g.n=g.pieces.length; g.amount=g.n===1?g.pieces[0].amount:(g.openEnd?`over ${cgFmt0(g.lo)}`:`${cgFmt0(g.lo)} to ${cgFmt0(g.hi)}`); return g; }); }
+const CG_ALIAS={google:'alphabet',googl:'alphabet',goog:'alphabet',facebook:'meta platforms',fb:'meta platforms'};
 function cgFiltered(){ const d=cg.data; if(!d) return []; const q=cg.q.trim().toLowerCase();
   const rows=cgPeriodRows().filter(t=>{ const f=t.f; if(cg.tickerOnly&&!t.ticker) return false; if(cg.hideBig&&t.ticker&&BIG50.has(t.ticker)) return false; if(cg.side==='P'&&!isBuy(t)) return false; if(cg.side==='S'&&!isSell(t)) return false; if(cg.party&&f.party!==cg.party) return false;
-    if(q){ const hay=`${t.ticker||''} ${t.asset} ${f.name} ${f.state}`.toLowerCase(); if(!hay.includes(q)) return false; } return true; });
+    if(q){ const hay=`${t.ticker||''} ${t.asset} ${f.name} ${f.state}`.toLowerCase(); const alt=CG_ALIAS[q]; if(!hay.includes(q)&&!(alt&&hay.includes(alt))) return false; } return true; });
   let groups=cgGroups(rows);
   if(cg.size==='small') groups=groups.filter(g=>!g.openEnd&&g.hi<=15000); else if(cg.size) groups=groups.filter(g=>g.lo>=+cg.size);
   if(cg.piecesOnly) groups=groups.filter(g=>g.n>1);
