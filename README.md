@@ -79,6 +79,20 @@ To refresh by hand:
     python congress/fetch_trades.py
     python congress/fetch_prices.py
 
+## Investor knowledge tab
+
+A fifth tab, Investor knowledge (`#knowledge`), is a guide to what a correct path into a
+trade looks like: one paragraph to write before every trade, with blanks for the direction,
+the ticker, what the company sells, the chart pattern, the breakout date and level, the
+market direction, the pattern's break-even failure rate and average move, the measure-rule
+target, the stop and the expected days to the ultimate high or low. Fill the blanks on the
+page and it writes the paragraph, counts the blanks still empty (any empty blank means a
+paper trade only), works out with or against the market and the distance to the stop, and
+adds a few checks: reward to risk, a stop or target on the wrong side, and the date the
+days-to-ultimate figure points to. Copy the paragraph or save it as a text file. The draft
+stays in the browser only. A glossary explains each blank; the statistics come from
+Bulkowski's Encyclopedia of Chart Patterns.
+
 ## Files
 
 - `docs/index.html` is the website. GitHub Pages serves it from the `docs` folder.

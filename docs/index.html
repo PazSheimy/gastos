@@ -193,8 +193,9 @@ section + section{border-top:1px solid var(--rule)}
 .tx select.trip{max-width:150px}
 /* header nav + money plan */
 .top .wrap{flex-wrap:wrap}
-.nav{order:3;flex:1 0 100%;display:flex}
-.nav button{flex:1;text-align:center}
+.nav{order:3;flex:1 0 100%;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{flex:1 0 auto;text-align:center;white-space:nowrap}
 @media (min-width:640px){.nav{order:0;flex:0 0 auto}.nav button{flex:none}}
 .plan-grid{display:grid;grid-template-columns:1fr;gap:14px}
 @media (min-width:720px){.plan-grid{grid-template-columns:5fr 7fr;align-items:start}}
@@ -357,13 +358,44 @@ section + section{border-top:1px solid var(--rule)}
 .watch .why{font-size:14px;color:var(--ink-2);margin-top:6px;line-height:1.4}
 .watch .why b{color:var(--ink)}
 .cg-more{margin-top:10px}
+/* knowledge */
+.kn-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.kn-tpl{margin:8px 0 10px;font-size:15px;line-height:1.65;color:var(--ink);max-width:70ch}
+.kn-tpl mark,.kn-para mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:0 5px;font-weight:600}
+.kn-para mark.kn-blank{background:var(--warn-soft);color:var(--warn-text);outline:1px dashed var(--warn-line);outline-offset:-1px}
+.kn-rule{margin:0;font-size:14px;font-weight:600;color:var(--ink-2)}
+.kn-grid{display:grid;gap:14px;margin-bottom:14px}
+@media (min-width:760px){.kn-grid{grid-template-columns:1fr 1fr;align-items:start}}
+.kn-form,.kn-out{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px}
+.kn-field{display:block;margin-top:12px;min-width:0}
+.kn-lbl{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.kn-form input{display:block;width:100%;border:1px solid var(--rule-2);border-radius:8px;padding:9px 10px;font-size:15px;background:var(--surface);box-sizing:border-box;min-width:0}
+.kn-form .seg{display:flex;width:100%;box-sizing:border-box}
+.kn-form .seg button{flex:1;padding:9px 8px}
+.kn-row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:440px){.kn-row2{grid-template-columns:1fr}}
+.kn-note{font-size:12px;color:var(--muted);margin:12px 0 0}
+.kn-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.kn-status{border-radius:8px;padding:9px 12px;font-size:14px;font-weight:600;margin:8px 0 12px;line-height:1.4}
+.kn-status.warn{background:var(--warn-soft);color:var(--warn-text);border:1px solid var(--warn-line)}
+.kn-status.good{background:var(--good-soft);color:var(--good-text);border:1px solid var(--good-line)}
+.kn-para{font-size:16px;line-height:1.7;margin:0 0 12px;max-width:70ch}
+.kn-checks{display:grid;gap:7px;font-size:14px;color:var(--ink-2);line-height:1.45}
+.kn-checks div{padding-left:18px;position:relative}
+.kn-checks div::before{content:"";position:absolute;left:3px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--rule-2)}
+.kn-checks div.good::before{background:var(--good)} .kn-checks div.warn::before{background:var(--warn)} .kn-checks div.bad::before{background:var(--bad)}
+.kn-gloss{margin:0}
+.kn-gloss dt{font-family:var(--display);font-weight:700;font-size:15px;margin-top:14px}
+.kn-gloss dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2);max-width:68ch}
+.kn-src{font-size:12px;color:var(--muted);margin:16px 0 0;line-height:1.45}
+/* /knowledge */
 </style>
 </head>
 <body>
 
 <header class="top"><div class="wrap">
   <div class="brand">Gastos</div>
-  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button><button type="button" data-page="notes" aria-pressed="false">Notes</button><button type="button" data-page="congress" aria-pressed="false">Congress</button></nav>
+  <nav class="seg nav" id="nav" aria-label="Tool"><button type="button" data-page="sort" aria-pressed="true">Sort a statement</button><button type="button" data-page="plan" aria-pressed="false">Money plan</button><button type="button" data-page="notes" aria-pressed="false">Notes</button><button type="button" data-page="congress" aria-pressed="false">Congress</button><button type="button" data-page="know" aria-pressed="false">Investor knowledge</button></nav>
   <span class="privacy" title="Your statement is read by your browser and never uploaded"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>Stays on your phone</span>
 </div></header>
 
@@ -544,6 +576,85 @@ section + section{border-top:1px solid var(--rule)}
     <p class="muted" style="font-size:12px;margin-top:10px">Source: <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Clerk of the House, Financial Disclosure Reports</a>, parsed from each Periodic Transaction Report. Party and district from the <a href="https://github.com/unitedstates/congress-legislators" target="_blank" rel="noopener">congress-legislators</a> project. Daily closing prices from Yahoo Finance, adjusted for splits and dividends. Paper filings and filings the parser could not read are counted but have no trades. Refreshed once a day.</p>
   </div>
 </section>
+
+<section id="know-sec" hidden>
+  <div class="sec-head"><h2>Investor knowledge</h2></div>
+  <p class="help" style="margin-top:0;margin-bottom:14px">A guide for me, and for anyone who lands here, on what a correct path into a trade looks like. One rule: before any trade, write the paragraph below with every blank filled. If a blank stays empty, it is a paper trade only.</p>
+  <div class="disclaimer" role="note"><b>This is not financial advice.</b> I am not a licensed advisor. This is the checklist I hold myself to, written down so I cannot skip a step. Trading can lose money, sometimes more than you put in. Do your own work and talk to a licensed professional about your own situation.</div>
+
+  <div class="kn-card">
+    <div class="eyebrow">The paragraph, before every trade</div>
+    <blockquote class="kn-tpl">I am going <mark>long/short</mark> <mark>TICKER</mark> because the company <mark>what it sells, in one plain sentence</mark>. The chart shows a <mark>pattern name</mark> that broke out <mark>up/down</mark> on <mark>date</mark> with a close beyond <mark>level</mark>, in a <mark>bull/bear</mark> market, so the trade is <mark>with/against</mark> the market. The book says this setup has a <mark>X</mark>% break-even failure rate and an average move of <mark>Y</mark>%, and the measure rule gives a target of <mark>price</mark>. I am wrong if price closes beyond <mark>stop</mark>, which risks <mark>Z</mark>%. I expect it to take about <mark>N</mark> days based on the days-to-ultimate table.</blockquote>
+    <p class="kn-rule">If any blank stays empty, it is a paper trade only.</p>
+  </div>
+
+  <div class="kn-grid">
+    <div class="kn-form" id="kn-form">
+      <div class="eyebrow">Fill it in</div>
+      <div class="kn-row2">
+        <div class="kn-field"><span class="kn-lbl">Direction</span><div class="seg kn-seg" data-k="dir" role="group" aria-label="Direction"><button type="button" data-v="long" aria-pressed="false">Long</button><button type="button" data-v="short" aria-pressed="false">Short</button></div></div>
+        <label class="kn-field"><span class="kn-lbl">Ticker</span><input data-k="ticker" type="text" maxlength="10" placeholder="e.g. NVDA" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+      </div>
+      <label class="kn-field"><span class="kn-lbl">What the company sells, in one plain sentence</span><input data-k="sells" type="text" maxlength="160" placeholder="e.g. designs the chips that run AI models" autocomplete="off"></label>
+      <label class="kn-field"><span class="kn-lbl">Chart pattern</span><input data-k="pattern" type="text" list="kn-patterns" maxlength="60" placeholder="e.g. ascending triangle" autocomplete="off"></label>
+      <datalist id="kn-patterns">
+        <option value="ascending triangle"><option value="descending triangle"><option value="symmetrical triangle">
+        <option value="head-and-shoulders top"><option value="head-and-shoulders bottom">
+        <option value="double top"><option value="double bottom"><option value="triple top"><option value="triple bottom">
+        <option value="rectangle top"><option value="rectangle bottom"><option value="flag"><option value="pennant"><option value="high and tight flag">
+        <option value="cup with handle"><option value="rounding bottom"><option value="rounding top">
+        <option value="falling wedge"><option value="rising wedge"><option value="broadening top"><option value="broadening bottom">
+        <option value="diamond top"><option value="diamond bottom"><option value="bump-and-run reversal top"><option value="bump-and-run reversal bottom">
+        <option value="ascending scallop"><option value="descending scallop"><option value="three rising valleys"><option value="three falling peaks"><option value="island reversal">
+      </datalist>
+      <div class="kn-row2">
+        <div class="kn-field"><span class="kn-lbl">Breakout</span><div class="seg kn-seg" data-k="brk" role="group" aria-label="Breakout direction"><button type="button" data-v="up" aria-pressed="false">Up</button><button type="button" data-v="down" aria-pressed="false">Down</button></div></div>
+        <label class="kn-field"><span class="kn-lbl">Breakout date</span><input data-k="date" type="date"></label>
+      </div>
+      <div class="kn-row2">
+        <label class="kn-field"><span class="kn-lbl">Close beyond, the level</span><input data-k="level" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00"></label>
+        <div class="kn-field"><span class="kn-lbl">Market</span><div class="seg kn-seg" data-k="mkt" role="group" aria-label="Market"><button type="button" data-v="bull" aria-pressed="false">Bull</button><button type="button" data-v="bear" aria-pressed="false">Bear</button></div></div>
+      </div>
+      <div class="kn-row2">
+        <label class="kn-field"><span class="kn-lbl">Break-even failure rate, %</span><input data-k="fail" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="from the book"></label>
+        <label class="kn-field"><span class="kn-lbl">Average move, %</span><input data-k="avg" type="number" inputmode="decimal" step="any" min="0" placeholder="from the book"></label>
+      </div>
+      <div class="kn-row2">
+        <label class="kn-field"><span class="kn-lbl">Measure-rule target, price</span><input data-k="target" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00"></label>
+        <label class="kn-field"><span class="kn-lbl">Stop, a close beyond</span><input data-k="stop" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00"></label>
+      </div>
+      <label class="kn-field"><span class="kn-lbl">Days to the ultimate high or low</span><input data-k="days" type="number" inputmode="numeric" step="1" min="0" placeholder="from the book"></label>
+      <p class="kn-note">Your draft stays in this browser only. Nothing is sent anywhere.</p>
+      <div class="kn-actions"><button type="button" class="btn ghost small" id="kn-clear">Clear</button></div>
+    </div>
+    <div class="kn-out">
+      <div class="eyebrow">Your paragraph</div>
+      <div id="kn-status" class="kn-status warn"></div>
+      <p id="kn-para" class="kn-para"></p>
+      <div id="kn-checks" class="kn-checks"></div>
+      <div class="kn-actions"><button type="button" class="btn small" id="kn-copy">Copy paragraph</button><button type="button" class="btn ghost small" id="kn-save">Save as text</button></div>
+    </div>
+  </div>
+
+  <div class="kn-card">
+    <div class="eyebrow">What each blank means</div>
+    <dl class="kn-gloss">
+      <dt>Long or short</dt><dd>Long means you buy expecting the price to rise. Short means you sell borrowed shares expecting it to fall, and buy them back later. A short can lose more than you put in.</dd>
+      <dt>What the company sells</dt><dd>One plain sentence. If you cannot write it, you do not know what you are buying, and a chart alone is not a reason.</dd>
+      <dt>Pattern name</dt><dd>The chart pattern as your pattern book names it, so you can look up its statistics instead of guessing them. The box suggests the common names.</dd>
+      <dt>Breakout, date and level</dt><dd>The day the price closed beyond the pattern's boundary, and that boundary price. Until a close breaks out there is no trade, only a watch.</dd>
+      <dt>Bull or bear market</dt><dd>The general market trend at the breakout, usually read from the S&amp;P 500. The book reports its statistics separately for bull and bear markets because the results differ.</dd>
+      <dt>With or against the market</dt><dd>Filled in for you from the two choices above. Long in a bull market and short in a bear market are with the market; the other two are against it. Against is allowed, but the odds are usually worse.</dd>
+      <dt>Break-even failure rate</dt><dd>The share of this pattern's breakouts that failed to move even 5% in the breakout direction. Lower is better. It is the first number to check, before any target.</dd>
+      <dt>Average move</dt><dd>The average rise or decline after the breakout, measured to the ultimate high or low. Few trades capture all of it, so treat it as a ceiling, not a promise.</dd>
+      <dt>Measure rule</dt><dd>Take the height of the pattern, top to bottom, and add it to the breakout price for an upward breakout, or subtract it for a downward one. That is the target. The book also says how often the target was reached.</dd>
+      <dt>Stop</dt><dd>The close that proves the idea wrong. Decide it before you enter, never after. The distance from the level to the stop is the risk per share; the page computes it and shows the reward-to-risk ratio.</dd>
+      <dt>Days to the ultimate high or low</dt><dd>How long the average pattern took to reach its best price after the breakout. It says how patient to be, and when a trade that has gone nowhere has gone stale.</dd>
+    </dl>
+    <p class="kn-src">The failure rates, average moves, measure rule and days-to-ultimate tables are the statistics in Thomas Bulkowski's <i>Encyclopedia of Chart Patterns</i>. Look the numbers up for the exact pattern and market direction; do not reuse them from a different pattern.</p>
+  </div>
+</section>
+<!-- /know-sec -->
 
 </main>
 <div class="toast" id="toast" hidden><div><span id="toast-msg"></span><button type="button" id="toast-act" hidden></button></div></div>
@@ -1139,7 +1250,7 @@ async function buildWorkbook(opts){ opts=opts||{}; const E=window.ExcelJS; const
   wb.views=[{activeTab:trips.length?1:0}];
   return await wb.xlsx.writeBuffer(); }
 function downloadCpa(){ if(!window.ExcelJS){ toast('Excel is not available here. Use the transactions CSV instead.'); return; } const stamp=new Date().toISOString().slice(0,10); const save=state.downloads?saveFile:nativeDownload; buildWorkbook({cpaOnly:true}).then(d=>save(`for-my-cpa-${stamp}.xlsx`,d)).catch(()=>toast('Could not build the file.')); }
-function nativeDownload(name,data){ try{ const blob=new Blob([data],{type:/\.xlsx$/i.test(name)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); toast('Saved '+name); }catch(e){ toast('Could not save the file. Use Copy instead.'); } }
+function nativeDownload(name,data){ try{ const blob=new Blob([data],{type:/\.xlsx$/i.test(name)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':/\.txt$/i.test(name)?'text/plain;charset=utf-8':'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); toast('Saved '+name); }catch(e){ toast('Could not save the file. Use Copy instead.'); } }
 function renderDownloads(){ const has=state.tx.length>0; const scopeName=state.scope==='all'?'all':state.scope; const dl=$('#dl');
   const xl=!!window.ExcelJS;
   if(state.downloads||state.native){ dl.innerHTML=`${xl?`<button type="button" class="btn" id="dl-xlsx" ${has?'':'disabled'}>Download Excel workbook</button>`:''}${xl&&cpaRows().length?`<button type="button" class="btn ghost" id="dl-cpa">List for my CPA (${cpaRows().length})</button>`:''}<button type="button" class="btn${xl?' ghost':''}" id="dl-tx" ${has?'':'disabled'}>Transactions CSV</button><button type="button" class="btn ghost" id="dl-sum" ${has?'':'disabled'}>Monthly summary CSV (${scopeName})</button>`; $('#dl-note').textContent=(xl?'The Excel file opens on your trips: a summary of every trip, then one sheet per trip with what it cost by category and day by day. After those come a spending summary, every transaction with your notes, personal and business by month, and recurring charges. ':'')+'The transactions CSV keeps your categories and notes, so you can open it here again next month and continue.'; }
@@ -1407,11 +1518,74 @@ $('#cg-list').addEventListener('change',e=>{ if(e.target.id==='cg-sortsel'){ cg.
 $('#cg-list').addEventListener('toggle',e=>{ const d=e.target; if(!d.classList||!d.classList.contains('cg-row')) return; const k=d.dataset.key; if(d.open){ cg.open.add(k); if(!d.querySelector('.cg-trades')) renderCongress(); } else cg.open.delete(k); },true);
 $('#cg-list').addEventListener('click',e=>{ const o=e.target.closest('[data-open]'); if(o){ cg.view='tickers'; cg.open.add(o.dataset.open); cg.shown=1e9; renderCongress(); const el=$('#cg-list').querySelector(`[data-key="${CSS.escape(o.dataset.open)}"]`); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); return; } if(e.target.closest('#cg-more')){ cg.shown=1e9; renderCongress(); } });
 $('#cg-csv').addEventListener('click',cgCsv);
-function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; if(h==='#congress') return 'congress'; return 'sort'; }
-function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#notes-sec').hidden=p!=='notes'; $('#congress-sec').hidden=p!=='congress'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p));
-  try{ const want=p==='plan'?'#plan':p==='congress'?'#congress':p==='notes'?(location.hash.startsWith('#note-')?location.hash:'#notes'):''; if(want&&location.hash!==want) history.replaceState(null,'',want); else if(!want&&location.hash) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+/* ---------- knowledge: the trade paragraph ---------- */
+const KN_KEYS=['dir','ticker','sells','pattern','brk','date','level','mkt','fail','avg','target','stop','days'];
+let knVals={}, knReady=false, knLastText='';
+function knLoad(){ try{ const s=localStorage.getItem('gastos.trade'); const o=s?JSON.parse(s):null; knVals=(o&&typeof o==='object')?o:{}; }catch(e){ knVals={}; } }
+function knSave(){ try{ localStorage.setItem('gastos.trade',JSON.stringify(knVals)); }catch(e){} }
+function knNum(k){ const v=parseFloat(knVals[k]); return isFinite(v)?v:null; }
+function knHas(k){ return String(knVals[k]==null?'':knVals[k]).trim()!==''; }
+function knDay(s,plus){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); if(!m) return null; return new Date(+m[1],+m[2]-1,+m[3]+(plus||0)); }
+function knDateS(d){ return d?d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''; }
+function knPctS(x){ return (Math.round(x*10)/10).toLocaleString('en-US')+'%'; }
+function knParts(){
+  const v=knVals, dir=v.dir||'', mkt=v.mkt||'';
+  const level=knNum('level'), stop=knNum('stop'), target=knNum('target'), fail=knNum('fail'), avg=knNum('avg'), days=knNum('days');
+  const side=(dir&&mkt)?(((dir==='long')===(mkt==='bull'))?'with':'against'):'';
+  const risk=(level!=null&&stop!=null&&level>0)?Math.abs(level-stop)/level*100:null;
+  const pattern=(v.pattern||'').trim(), art=/^[aeiou]/i.test(pattern)?'an':'a';
+  const P=(val,blank)=>({val:val||'',blank});
+  return ['I am going ',P(dir,'long/short'),' ',P((v.ticker||'').trim().toUpperCase(),'TICKER'),' because the company ',P((v.sells||'').trim().replace(/[.\s]+$/,''),'what it sells, in one plain sentence'),'. The chart shows '+art+' ',P(pattern,'pattern name'),' that broke out ',P(v.brk||'','up/down'),' on ',P(knDateS(knDay(v.date)),'date'),' with a close beyond ',P(level!=null?fmt(level):'','level'),', in a ',P(mkt,'bull/bear'),' market, so the trade is ',P(side,'with/against'),' the market. The book says this setup has a ',P(fail!=null?knPctS(fail):'','X%'),' break-even failure rate and an average move of ',P(avg!=null?knPctS(avg):'','Y%'),', and the measure rule gives a target of ',P(target!=null?fmt(target):'','price'),'. I am wrong if price closes beyond ',P(stop!=null?fmt(stop):'','stop'),', which risks ',P(risk!=null?knPctS(risk):'','Z%'),'. I expect it to take about ',P(days!=null?Math.round(days)+' days':'','N days'),' based on the days-to-ultimate table.'];
+}
+function knChecks(){
+  const v=knVals, dir=v.dir||'', mkt=v.mkt||'', out=[];
+  const level=knNum('level'), stop=knNum('stop'), target=knNum('target'), avg=knNum('avg'), fail=knNum('fail'), days=knNum('days');
+  if(dir&&mkt){ const withMkt=(dir==='long')===(mkt==='bull'); out.push(withMkt?{c:'good',t:'With the market: the trade direction and the market trend agree.'}:{c:'warn',t:'Against the market. The book shows weaker results for most patterns against the trend, so expect less and do not loosen the stop.'}); }
+  if(level!=null&&level>0&&stop!=null){
+    const risk=Math.abs(level-stop)/level*100;
+    const wrong=dir==='long'?stop>=level:dir==='short'?stop<=level:false;
+    if(wrong) out.push({c:'bad',t:`For a ${dir} trade the stop belongs ${dir==='long'?'below':'above'} the breakout level.`});
+    else out.push({c:'',t:`The stop sits ${knPctS(risk)} from the level. That is the risk per share; size the position so that loss is one you can take.`});
+    if(target!=null&&risk>0){
+      const rew=Math.abs(target-level)/level*100, rr=rew/risk;
+      const wrongT=dir==='long'?target<=level:dir==='short'?target>=level:false;
+      if(wrongT) out.push({c:'bad',t:`For a ${dir} trade the target belongs ${dir==='long'?'above':'below'} the breakout level.`});
+      else out.push({c:rr>=2?'good':rr<1?'bad':'warn',t:`Reward to risk ${rr.toFixed(1)} to 1: the target is ${knPctS(rew)} away, the stop ${knPctS(risk)}.`+(avg!=null?` The book's average move for this pattern is ${knPctS(avg)}.`:'')});
+    }
+  }
+  if(fail!=null) out.push({c:'',t:`A ${knPctS(fail)} break-even failure rate means about ${Math.round(fail)} of every 100 breakouts like this one never moved 5% in the right direction.`});
+  if(v.date&&days!=null){ const d=knDay(v.date,Math.round(days)); if(d) out.push({c:'',t:`About ${Math.round(days)} days from the breakout lands near ${knDateS(d)}. If nothing has happened by then, the idea has gone stale.`}); }
+  return out;
+}
+function knRender(){
+  const parts=knParts(); let html='', text='';
+  for(const p of parts){ if(typeof p==='string'){ html+=esc(p); text+=p; } else if(p.val){ html+='<b>'+esc(p.val)+'</b>'; text+=p.val; } else { html+='<mark class="kn-blank">['+esc(p.blank)+']</mark>'; text+='['+p.blank+']'; } }
+  $('#kn-para').innerHTML=html; knLastText=text;
+  const empty=KN_KEYS.filter(k=>!knHas(k)).length, st=$('#kn-status');
+  if(empty===KN_KEYS.length){ st.className='kn-status warn'; st.textContent='Nothing filled in yet. Until every blank is filled, this is a paper trade only.'; }
+  else if(empty){ st.className='kn-status warn'; st.textContent=`Paper trade only: ${empty} blank${empty>1?'s':''} still empty.`; }
+  else { st.className='kn-status good'; st.textContent='Every blank is filled. This one can be a real trade, sized from the stop.'; }
+  $('#kn-checks').innerHTML=knChecks().map(c=>`<div class="${c.c}">${esc(c.t)}</div>`).join('');
+  KN_KEYS.forEach(k=>{ const el=document.querySelector('#kn-form [data-k="'+k+'"]'); if(!el) return;
+    if(el.classList.contains('seg')){ el.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===(knVals[k]||'')))); }
+    else { const want=knVals[k]==null?'':String(knVals[k]); if(el.value!==want&&document.activeElement!==el) el.value=want; } });
+}
+function knNavScroll(p){ const nav=$('#nav'); const nb=nav&&nav.querySelector('[data-page="'+p+'"]'); if(!nb||nav.scrollWidth<=nav.clientWidth+1) return; nav.scrollLeft=Math.max(0,nb.offsetLeft-(nav.clientWidth-nb.offsetWidth)/2); }
+function knInit(){ if(knReady){ knRender(); return; } knReady=true; knLoad();
+  const form=$('#kn-form');
+  form.addEventListener('input',e=>{ const el=e.target.closest('[data-k]'); if(!el||el.classList.contains('seg')) return; let val=el.value; if(el.dataset.k==='ticker'){ val=val.toUpperCase(); if(el.value!==val) el.value=val; } knVals[el.dataset.k]=val; knSave(); knRender(); });
+  form.addEventListener('click',e=>{ const b=e.target.closest('.kn-seg button'); if(!b) return; const k=b.parentElement.dataset.k; knVals[k]=knVals[k]===b.dataset.v?'':b.dataset.v; knSave(); knRender(); });
+  $('#kn-clear').addEventListener('click',()=>{ knVals={}; try{ localStorage.removeItem('gastos.trade'); }catch(e){} knRender(); toast('Cleared'); });
+  $('#kn-copy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(knLastText); toast('Paragraph copied'); }catch(e){ const ta=document.createElement('textarea'); ta.value=knLastText; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(err){} ta.remove(); toast(ok?'Paragraph copied':'Could not copy; select the text and copy it by hand'); } });
+  $('#kn-save').addEventListener('click',()=>{ const tk=(knVals.ticker||'').toUpperCase().replace(/[^A-Z0-9.-]/g,'')||'draft'; const day=/^\d{4}-\d{2}-\d{2}$/.test(knVals.date||'')?knVals.date:new Date().toISOString().slice(0,10); const save=state.downloads?saveFile:nativeDownload; save(`trade-${tk}-${day}.txt`, knLastText+'\n'); });
+  knRender();
+}
+/* ---------- /knowledge ---------- */
+function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; if(h==='#congress') return 'congress'; if(h==='#knowledge'||h==='#investor') return 'know'; return 'sort'; }
+function setPage(p){ state.page=p; document.querySelectorAll('.sort-only').forEach(s=>s.hidden=p!=='sort'); $('#plan-sec').hidden=p!=='plan'; $('#notes-sec').hidden=p!=='notes'; $('#congress-sec').hidden=p!=='congress'; $('#know-sec').hidden=p!=='know'; $('#nav').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.page===p)); knNavScroll(p);
+  try{ const want=p==='plan'?'#plan':p==='congress'?'#congress':p==='know'?'#knowledge':p==='notes'?(location.hash.startsWith('#note-')?location.hash:'#notes'):''; if(want&&location.hash!==want) history.replaceState(null,'',want); else if(!want&&location.hash) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
   if(p==='plan') renderPlan();
-  if(p==='congress') openCongress();
+  if(p==='congress') openCongress(); if(p==='know') knInit();
   if(p==='notes'){ const h=location.hash||''; if(h.startsWith('#note-')) state.openNote=h.slice(6); renderNotes(); if(state.openNote){ const el=document.getElementById('note-'+state.openNote); if(el) setTimeout(()=>el.scrollIntoView({block:'start',behavior:'smooth'}),50); } } }
 $('#nav').addEventListener('click',e=>{ const b=e.target.closest('[data-page]'); if(!b) return; state.openNote=null; if(b.dataset.page==='notes'){ try{ history.replaceState(null,'','#notes'); }catch(err){} } setPage(b.dataset.page); window.scrollTo({top:0,behavior:'smooth'}); });
 window.addEventListener('hashchange',()=>setPage(pageFromHash()));
