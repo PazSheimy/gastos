@@ -346,6 +346,7 @@ section + section{border-top:1px solid var(--rule)}
 .watch .why{font-size:14px;color:var(--ink-2);margin-top:6px;line-height:1.4}
 .watch .why b{color:var(--ink)}
 .cg-more{margin-top:10px}
+.cg-widened{margin:0 0 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 /* knowledge */
 .kn-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
 .kn-tpl{margin:8px 0 10px;font-size:15px;line-height:1.65;color:var(--ink);max-width:70ch}
@@ -1393,7 +1394,7 @@ $('#notes-search').addEventListener('input',e=>{ state.notesQ=e.target.value; re
    congress-trades.json (congress/fetch_trades.py) and prices.json (congress/fetch_prices.py:
    daily closes for every traded ticker plus SPY, NANC and KRUZ). The page works without prices.json. */
 const CG_BASE=['data/','https://pazsheimy.github.io/gastos/data/'];
-const cg={data:null,prices:null,loading:false,days:7,view:'tickers',sort:'in',msort:'size',q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false,open:new Set(),shown:40};
+const cg={data:null,prices:null,loading:false,days:7,userDays:7,autoDays:null,view:'tickers',sort:'in',msort:'size',q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false,open:new Set(),shown:40};
 /* The 50 largest US-listed companies by market value, in the SEC's own order (company_tickers.json, Oct 2026). */
 const BIG50=new Set('NVDA AAPL GOOGL GOOG MSFT AMZN META AVGO TSLA BRK-B BRK.B LLY MU WMT AMD JPM V XOM ASML JNJ MA ABBV INTC PLTR CVX COST CSCO KO ORCL UNH MRK PG BAC CAT LRCX AMAT HSBC HD DELL PM GE SHEL NVS MS PANW RY NFLX SAP GS AZN TXN'.split(' '));
 const SIDE_LABEL={P:'Buy',S:'Sell',SP:'Partial sell',E:'Exchange'};
@@ -1444,6 +1445,12 @@ function cgFiltered(){ const d=cg.data; if(!d) return []; const q=cg.q.trim().to
   if(cg.size==='small') groups=groups.filter(g=>!g.openEnd&&g.hi<=15000); else if(cg.size) groups=groups.filter(g=>g.lo>=+cg.size);
   if(cg.piecesOnly) groups=groups.filter(g=>g.n>1);
   return groups; }
+
+/* ---- a search that finds nothing in the chosen period looks in the longer ones ---- */
+const CG_PERIODS=[1,7,14,30,90];
+function cgAutoWiden(){ cg.autoDays=null; cg.days=cg.userDays; if(!cg.q.trim()||!cg.data) return; if(cgFiltered().length) return;
+  for(const d of CG_PERIODS){ if(d<=cg.userDays) continue; cg.days=d; if(cgFiltered().length){ cg.autoDays=d; return; } }
+  cg.days=cg.userDays; }
 
 /* ---- the stats table: what is in this period, before filters ---- */
 function cgStats(){ const all=cgPeriodRows(); const tk=all.filter(t=>t.ticker); const tickers=new Set(tk.map(t=>t.ticker)); const outside=[...tickers].filter(x=>!BIG50.has(x)).length; const small=tk.filter(t=>t.hi!=null&&t.hi<=15000).length; const big=tk.filter(t=>t.lo>=250001).length; const multi=cgGroups(tk).filter(g=>g.n>1); const members=new Set(all.map(t=>t.f.name)).size;
@@ -1528,7 +1535,7 @@ function renderCongress(){ const st=$('#cg-status'), body=$('#cg-body'); if(!st)
   $('#cg-view').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===cg.view));
   if(cg.loading){ st.hidden=false; st.textContent='Loading the latest filings…'; body.hidden=true; return; }
   if(!cg.data){ st.hidden=false; st.innerHTML='Could not load the filings right now. <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener">Open the House Clerk site</a> instead, or try again in a minute.'; body.hidden=true; return; }
-  st.hidden=true; body.hidden=false; const d=cg.data;
+  st.hidden=true; body.hidden=false; const d=cg.data; cgAutoWiden(); $('#cg-period').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.days===cg.days));
   $('#cg-updated').textContent=`Updated ${dShort(d.generated.slice(0,10))} · newest filing ${dShort(d.maxFiled)}${cg.prices?` · prices to ${dShort(cg.prices.asof)}`:''}`;
   const since=cgSince(); const when=cg.days===1?`filed ${dLong(d.maxFiled)}`:`filed ${dShort(since)} to ${dShort(d.maxFiled)}`;
   $('#cg-stats').innerHTML=`<div class="eyebrow" style="margin-bottom:6px">In this period, ${esc(when)}</div><table class="cg-stats-t"><tbody>${cgStats().map(s=>`<tr><td><button type="button" class="cg-stat" data-act="${s.act}" title="${esc(s.hint)}">${esc(s.l)}</button></td><td class="num">${esc(String(s.v))}</td></tr>`).join('')}</tbody></table><p class="muted" style="font-size:12px;margin-top:6px">Tap a row to open that slice below.</p>`;
@@ -1537,8 +1544,9 @@ function renderCongress(){ const st=$('#cg-status'), body=$('#cg-body'); if(!st)
   const active=[]; if(cg.hideBig) active.push(['hideBig','Hiding the 50 largest companies']); if(cg.size==='small') active.push(['size','$1,001 to $15,000 only']); else if(cg.size) active.push(['size',`Over ${cgFmt0(+cg.size-1)}`]); if(cg.piecesOnly) active.push(['piecesOnly','Only orders made in pieces']); if(!cg.tickerOnly) active.push(['tickerOnly','Including assets without a ticker']); if(cg.side) active.push(['side',cg.side==='P'?'Buys only':'Sells only']); if(cg.party) active.push(['party',cg.party==='D'?'Democrats':'Republicans']); if(cg.q.trim()) active.push(['q',`Search: ${cg.q.trim()}`]);
   $('#cg-active').innerHTML=active.length?`<div class="chips">${active.map(([k,l])=>`<button type="button" class="chip-btn on" data-clear="${k}">${esc(l)} ×</button>`).join('')}<button type="button" class="chip-btn" data-clear="all">Clear all</button></div>`:'';
   const list=$('#cg-list');
-  if(!gs.length){ list.innerHTML=`<p class="empty">No trades match ${cg.days===1?'on the newest filing day':'in this period'}. Try a longer period or clear a filter.</p>`; return; }
-  list.innerHTML=cg.view==='days'?renderDays(gs):cg.view==='members'?renderMembers(gs):cg.view==='watch'?renderWatch(gs):renderTickers(gs); }
+  if(!gs.length){ const q=cg.q.trim(); list.innerHTML=`<p class="empty">${q?`Nothing for “${esc(q)}” in the last ${plural(d.days||90,'day')} of filings. Check the spelling, try the company or member name, or clear a filter.`:`No trades match ${cg.days===1?'on the newest filing day':'in this period'}. Try a longer period or clear a filter.`}</p>`; return; }
+  const widened=cg.autoDays?`<p class="help cg-widened">Nothing for “${esc(cg.q.trim())}” was filed in the last ${plural(cg.userDays,'day')}, so this shows the last ${cg.autoDays} days. Clear the search to go back. <button type="button" class="chip-btn" data-widen="${cg.autoDays}">Keep ${cg.autoDays} days</button></p>`:'';
+  list.innerHTML=widened+(cg.view==='days'?renderDays(gs):cg.view==='members'?renderMembers(gs):cg.view==='watch'?renderWatch(gs):renderTickers(gs)); }
 
 function cgCsv(){ const gs=cgFiltered(); if(!gs.length){ toast('Nothing to download for this selection.'); return; }
   const cols=['Filed','Trade date','Member','Party','State','District','Owner','Side','Ticker','Asset','Amount','Low','High','Pieces in order','Order low','Order high','Price change since','SPY since','Filing'];
@@ -1546,7 +1554,7 @@ function cgCsv(){ const gs=cgFiltered(); if(!gs.length){ toast('Nothing to downl
   const lines=[cols.join(',')]; gs.forEach(g=>{ const r=retSince(g.ticker,g.date), s=r!=null?retSince('SPY',g.date):null; g.pieces.forEach(t=>lines.push([t.f.filed,t.date,t.f.name,t.f.party,t.f.state,t.f.dist,OWNER_LABEL[t.owner||'self'],SIDE_LABEL[t.type]||t.type,t.ticker||'',t.asset,t.amount,t.lo,t.hi,g.n,g.lo,g.openEnd?'':g.hi,r==null?'':(r*100).toFixed(2)+'%',s==null?'':(s*100).toFixed(2)+'%',t.f.url].map(q).join(','))); });
   const save=state.downloads?saveFile:nativeDownload; save(`congress-trades-${cg.days}d-${localISO(new Date())}.csv`,'﻿'+lines.join('\r\n')); }
 
-$('#cg-period').addEventListener('click',e=>{ const b=e.target.closest('[data-days]'); if(!b) return; cg.days=+b.dataset.days; cg.shown=40; renderCongress(); });
+$('#cg-period').addEventListener('click',e=>{ const b=e.target.closest('[data-days]'); if(!b) return; cg.userDays=cg.days=+b.dataset.days; cg.autoDays=null; cg.shown=40; renderCongress(); });
 $('#cg-view').addEventListener('click',e=>{ const b=e.target.closest('[data-view]'); if(!b) return; cg.view=b.dataset.view; cg.shown=40; renderCongress(); });
 $('#cg-search').addEventListener('input',e=>{ cg.q=e.target.value; renderCongress(); });
 $('#cg-side').addEventListener('change',e=>{ cg.side=e.target.value; renderCongress(); });
@@ -1558,7 +1566,7 @@ $('#cg-stats').addEventListener('click',e=>{ const b=e.target.closest('[data-act
 $('#cg-active').addEventListener('click',e=>{ const b=e.target.closest('[data-clear]'); if(!b) return; const k=b.dataset.clear; if(k==='all') Object.assign(cg,{q:'',side:'',party:'',size:'',tickerOnly:true,hideBig:false,piecesOnly:false}); else if(k==='tickerOnly') cg.tickerOnly=true; else if(k==='hideBig'||k==='piecesOnly') cg[k]=false; else cg[k]=''; cgSyncControls(); renderCongress(); });
 $('#cg-list').addEventListener('change',e=>{ if(e.target.id==='cg-sortsel'){ cg.sort=e.target.value; renderCongress(); } else if(e.target.id==='cg-msortsel'){ cg.msort=e.target.value; renderCongress(); } });
 $('#cg-list').addEventListener('toggle',e=>{ const d=e.target; if(!d.classList||!d.classList.contains('cg-row')) return; const k=d.dataset.key; if(d.open){ cg.open.add(k); if(!d.querySelector('.cg-trades')) renderCongress(); } else cg.open.delete(k); },true);
-$('#cg-list').addEventListener('click',e=>{ const o=e.target.closest('[data-open]'); if(o){ cg.view='tickers'; cg.open.add(o.dataset.open); cg.shown=1e9; renderCongress(); const el=$('#cg-list').querySelector(`[data-key="${CSS.escape(o.dataset.open)}"]`); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); return; } if(e.target.closest('#cg-more')){ cg.shown=1e9; renderCongress(); } });
+$('#cg-list').addEventListener('click',e=>{ const w=e.target.closest('[data-widen]'); if(w){ cg.userDays=cg.days=+w.dataset.widen; cg.autoDays=null; renderCongress(); return; } const o=e.target.closest('[data-open]'); if(o){ cg.view='tickers'; cg.open.add(o.dataset.open); cg.shown=1e9; renderCongress(); const el=$('#cg-list').querySelector(`[data-key="${CSS.escape(o.dataset.open)}"]`); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); return; } if(e.target.closest('#cg-more')){ cg.shown=1e9; renderCongress(); } });
 $('#cg-csv').addEventListener('click',cgCsv);
 /* ---------- knowledge: the trade paragraph ---------- */
 const KN_KEYS=['dir','ticker','sells','pattern','brk','date','level','mkt','fail','avg','target','stop','days'];

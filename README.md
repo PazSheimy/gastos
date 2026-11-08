@@ -40,7 +40,9 @@ the STOCK Act. Pick a period (newest filing day, 7, 14, 30 or 90 days). A stats 
 describes the period (trades with a ticker, different tickers, tickers outside the 50
 largest companies, smallest-bucket trades, trades over $250,000, orders made in pieces,
 members who filed); tap a row to open that slice. Filter by side, party, trade size, a
-search, assets with a ticker only, or hide the 50 largest companies. Read it four ways:
+search, assets with a ticker only, or hide the 50 largest companies. A search that finds
+nothing in the chosen period widens to the shortest period that has a match and says so;
+clearing the search goes back. Read it four ways:
 by stock (money in and out per ticker, using the midpoint of each reported range), by day
 (every filing as it was posted), members (with a scorecard), and a "worth a look" list
 built from simple rules (several members on the same side, members on opposite sides,
