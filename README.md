@@ -93,6 +93,18 @@ days-to-ultimate figure points to. Copy the paragraph or save it as a text file.
 stays in the browser only. A glossary explains each blank; the statistics come from
 Bulkowski's Encyclopedia of Chart Patterns.
 
+The same tab has a trade journal. "Record a trade" asks one question at a time (date and
+time, ticker, timeframe, pattern, market regime, breakout direction and level, long or
+short, measure-rule target, stop, the book's failure rate and average move, exit price and
+date, one line learned), shows a review and saves the trade. Open trades are closed later
+from the list. Every save writes the whole journal as a CSV on the user's own computer: in
+Chrome and Edge the page asks once where to keep `trade-journal.csv` (File System Access
+API, the handle is remembered in IndexedDB) and rewrites that file on each change; elsewhere
+each save downloads a copy. The journal is also kept in the browser (localStorage) and can
+be re-imported from the CSV. Once trades have exits, a per-pattern table compares the
+user's failure rate (moved less than 5% in the breakout direction by the exit) and average
+move with the book's numbers; rows under 20 closed trades are greyed as too few.
+
 ## Files
 
 - `docs/index.html` is the website. GitHub Pages serves it from the `docs` folder.

@@ -363,7 +363,7 @@ section + section{border-top:1px solid var(--rule)}
 .kn-tpl{margin:8px 0 10px;font-size:15px;line-height:1.65;color:var(--ink);max-width:70ch}
 .kn-tpl mark,.kn-para mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:0 5px;font-weight:600}
 .kn-para mark.kn-blank{background:var(--warn-soft);color:var(--warn-text);outline:1px dashed var(--warn-line);outline-offset:-1px}
-.kn-rule{margin:0;font-size:14px;font-weight:600;color:var(--ink-2)}
+.kn-rule{margin:0;font-size:14px;font-weight:600;color:var(--ink-2);line-height:1.45}
 .kn-grid{display:grid;gap:14px;margin-bottom:14px}
 @media (min-width:760px){.kn-grid{grid-template-columns:1fr 1fr;align-items:start}}
 .kn-form,.kn-out{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px}
@@ -375,7 +375,7 @@ section + section{border-top:1px solid var(--rule)}
 .kn-row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
 @media (max-width:440px){.kn-row2{grid-template-columns:1fr}}
 .kn-note{font-size:12px;color:var(--muted);margin:12px 0 0}
-.kn-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.kn-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .kn-status{border-radius:8px;padding:9px 12px;font-size:14px;font-weight:600;margin:8px 0 12px;line-height:1.4}
 .kn-status.warn{background:var(--warn-soft);color:var(--warn-text);border:1px solid var(--warn-line)}
 .kn-status.good{background:var(--good-soft);color:var(--good-text);border:1px solid var(--good-line)}
@@ -388,6 +388,41 @@ section + section{border-top:1px solid var(--rule)}
 .kn-gloss dt{font-family:var(--display);font-weight:700;font-size:15px;margin-top:14px}
 .kn-gloss dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2);max-width:68ch}
 .kn-src{font-size:12px;color:var(--muted);margin:16px 0 0;line-height:1.45}
+.kj-file{font-size:14px;color:var(--ink-2);display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;margin:10px 0 0;line-height:1.4}
+.kj-file b{color:var(--ink)}
+.kj-import{cursor:pointer}
+.kj-import input{display:none}
+.kj-wizard{margin-top:14px;border:1px solid var(--rule);border-radius:var(--radius);padding:14px 16px;background:var(--paper)}
+.kj-prog{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.kj-prog span{text-transform:none;letter-spacing:0;font-weight:500}
+.kj-q{font-family:var(--display);font-size:18px;font-weight:700;margin:6px 0 4px;line-height:1.3}
+.kj-hint{font-size:13px;color:var(--muted);margin-bottom:4px;line-height:1.4}
+.kj-wizard input{display:block;width:100%;border:1px solid var(--rule-2);border-radius:8px;padding:10px 12px;font-size:16px;background:var(--surface);box-sizing:border-box;margin-top:8px}
+.kj-wizard .seg{display:flex;width:100%;margin-top:8px;box-sizing:border-box}
+.kj-wizard .seg button{flex:1;padding:10px 8px;font-size:15px}
+.kj-err{color:var(--bad-text);font-size:13px;margin-top:6px}
+.kj-review{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.kj-review dt{color:var(--muted)} .kj-review dd{margin:0;font-weight:500;min-width:0;overflow-wrap:anywhere}
+.kj-stats{margin-top:14px}
+.kj-stats .note-table{margin:6px 0 0}
+.kj-stats tr.thin td{color:var(--muted)}
+.kj-rows{margin-top:14px;border-top:1px solid var(--rule)}
+.kj-row{padding:10px 0;border-bottom:1px solid var(--rule)}
+.kj-main{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.kj-main .tk{font-family:var(--display);font-weight:700}
+.kj-main .nm{color:var(--ink-2);font-size:13px;flex:1 1 auto;min-width:0}
+.kj-side{font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.kj-side.long{background:var(--good-soft);color:var(--good-text)} .kj-side.short{background:var(--bad-soft);color:var(--bad-text)}
+.kj-pnl{font-variant-numeric:tabular-nums;font-weight:600;margin-left:auto;white-space:nowrap}
+.kj-pnl.good{color:var(--good-text)} .kj-pnl.bad{color:var(--bad-text)} .kj-pnl.open{color:var(--muted);font-weight:500}
+.kj-sub{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.45}
+.kj-row .kn-actions{margin-top:6px}
+.kj-closeform{margin-top:8px;display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.kj-closeform label{font-size:12px;color:var(--muted);font-weight:600;display:block}
+.kj-closeform label.wide{grid-column:1/-1}
+.kj-closeform input{display:block;width:100%;border:1px solid var(--rule-2);border-radius:8px;padding:8px 10px;font-size:14px;background:var(--surface);box-sizing:border-box;margin-top:4px}
+.kj-closeform .kn-actions{grid-column:1/-1;margin-top:0}
+.kj-empty{font-size:14px;color:var(--muted);margin-top:12px}
 /* /knowledge */
 </style>
 </head>
@@ -579,7 +614,7 @@ section + section{border-top:1px solid var(--rule)}
 
 <section id="know-sec" hidden>
   <div class="sec-head"><h2>Investor knowledge</h2></div>
-  <p class="help" style="margin-top:0;margin-bottom:14px">A guide for me, and for anyone who lands here, on what a correct path into a trade looks like. One rule: before any trade, write the paragraph below with every blank filled. If a blank stays empty, it is a paper trade only.</p>
+  <p class="help" style="margin-top:0;margin-bottom:14px">A guide for me, and for anyone who lands here, on what a correct path into a trade looks like. One rule: before any trade, write the paragraph below with every blank filled. If a blank stays empty, it is a paper trade only. Then record the trade in the journal and, after 20 to 30 trades on a pattern, compare your numbers with the book's.</p>
   <div class="disclaimer" role="note"><b>This is not financial advice.</b> I am not a licensed advisor. This is the checklist I hold myself to, written down so I cannot skip a step. Trading can lose money, sometimes more than you put in. Do your own work and talk to a licensed professional about your own situation.</div>
 
   <div class="kn-card">
@@ -606,6 +641,9 @@ section + section{border-top:1px solid var(--rule)}
         <option value="falling wedge"><option value="rising wedge"><option value="broadening top"><option value="broadening bottom">
         <option value="diamond top"><option value="diamond bottom"><option value="bump-and-run reversal top"><option value="bump-and-run reversal bottom">
         <option value="ascending scallop"><option value="descending scallop"><option value="three rising valleys"><option value="three falling peaks"><option value="island reversal">
+      </datalist>
+      <datalist id="kj-tf">
+        <option value="daily"><option value="weekly"><option value="monthly"><option value="4-hour"><option value="1-hour"><option value="30-minute"><option value="15-minute"><option value="5-minute">
       </datalist>
       <div class="kn-row2">
         <div class="kn-field"><span class="kn-lbl">Breakout</span><div class="seg kn-seg" data-k="brk" role="group" aria-label="Breakout direction"><button type="button" data-v="up" aria-pressed="false">Up</button><button type="button" data-v="down" aria-pressed="false">Down</button></div></div>
@@ -636,6 +674,16 @@ section + section{border-top:1px solid var(--rule)}
     </div>
   </div>
 
+  <div class="kn-card" id="kj">
+    <div class="eyebrow">Trade journal</div>
+    <p class="kn-rule">Record every paper trade here, one question at a time. The answers go into a CSV file on this laptop: date and time, ticker, timeframe, pattern, market regime and whether the trade is with or against it, breakout level and direction, measure-rule target, stop, exit price and date, and one line on what you learned.</p>
+    <div class="kj-file" id="kj-file"></div>
+    <div class="kn-actions" id="kj-top"><button type="button" class="btn small" id="kj-start">Record a trade</button><button type="button" class="btn ghost small" id="kj-download">Download CSV</button><label class="btn ghost small kj-import">Import CSV<input type="file" id="kj-import" accept=".csv,text/csv"></label></div>
+    <div id="kj-wizard" class="kj-wizard" hidden></div>
+    <div id="kj-stats" class="kj-stats"></div>
+    <div id="kj-list"></div>
+  </div>
+
   <div class="kn-card">
     <div class="eyebrow">What each blank means</div>
     <dl class="kn-gloss">
@@ -650,6 +698,7 @@ section + section{border-top:1px solid var(--rule)}
       <dt>Measure rule</dt><dd>Take the height of the pattern, top to bottom, and add it to the breakout price for an upward breakout, or subtract it for a downward one. That is the target. The book also says how often the target was reached.</dd>
       <dt>Stop</dt><dd>The close that proves the idea wrong. Decide it before you enter, never after. The distance from the level to the stop is the risk per share; the page computes it and shows the reward-to-risk ratio.</dd>
       <dt>Days to the ultimate high or low</dt><dd>How long the average pattern took to reach its best price after the breakout. It says how patient to be, and when a trade that has gone nowhere has gone stale.</dd>
+      <dt>Your failure rate and average move</dt><dd>In the journal, a closed trade counts as a failure when the price moved less than 5% in the breakout direction by the exit, and the average move is the mean of those moves. That is a rough copy of how the book measures its patterns, using your exits instead of the ultimate high or low, so compare the two only after 20 to 30 trades on the same pattern.</dd>
     </dl>
     <p class="kn-src">The failure rates, average moves, measure rule and days-to-ultimate tables are the statistics in Thomas Bulkowski's <i>Encyclopedia of Chart Patterns</i>. Look the numbers up for the exact pattern and market direction; do not reuse them from a different pattern.</p>
   </div>
@@ -1525,7 +1574,7 @@ function knLoad(){ try{ const s=localStorage.getItem('gastos.trade'); const o=s?
 function knSave(){ try{ localStorage.setItem('gastos.trade',JSON.stringify(knVals)); }catch(e){} }
 function knNum(k){ const v=parseFloat(knVals[k]); return isFinite(v)?v:null; }
 function knHas(k){ return String(knVals[k]==null?'':knVals[k]).trim()!==''; }
-function knDay(s,plus){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); if(!m) return null; return new Date(+m[1],+m[2]-1,+m[3]+(plus||0)); }
+function knDay(s,plus){ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||''); if(!m) return null; return new Date(+m[1],+m[2]-1,+m[3]+(plus||0)); }
 function knDateS(d){ return d?d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''; }
 function knPctS(x){ return (Math.round(x*10)/10).toLocaleString('en-US')+'%'; }
 function knParts(){
@@ -1579,6 +1628,111 @@ function knInit(){ if(knReady){ knRender(); return; } knReady=true; knLoad();
   $('#kn-copy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(knLastText); toast('Paragraph copied'); }catch(e){ const ta=document.createElement('textarea'); ta.value=knLastText; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(err){} ta.remove(); toast(ok?'Paragraph copied':'Could not copy; select the text and copy it by hand'); } });
   $('#kn-save').addEventListener('click',()=>{ const tk=(knVals.ticker||'').toUpperCase().replace(/[^A-Z0-9.-]/g,'')||'draft'; const day=/^\d{4}-\d{2}-\d{2}$/.test(knVals.date||'')?knVals.date:new Date().toISOString().slice(0,10); const save=state.downloads?saveFile:nativeDownload; save(`trade-${tk}-${day}.txt`, knLastText+'\n'); });
   knRender();
+  kjInit();
+}
+
+/* trade journal: one question at a time, saved as a CSV on this device */
+const KJ_Q=[
+  {k:'when',q:'When was the trade?',t:'datetime-local',hint:'The date and time you took it, or would have taken it.',short:'When'},
+  {k:'ticker',q:'Which ticker?',t:'text',ph:'e.g. NVDA',upper:true,short:'Ticker'},
+  {k:'tf',q:'Which timeframe?',t:'text',list:'kj-tf',ph:'e.g. daily',hint:'The chart you read the pattern on.',short:'Timeframe'},
+  {k:'pattern',q:'Which chart pattern?',t:'text',list:'kn-patterns',ph:'e.g. ascending triangle',short:'Pattern'},
+  {k:'mkt',q:'Market regime at the time?',t:'seg',opts:[['bull','Bull'],['bear','Bear']],short:'Market'},
+  {k:'brk',q:'Breakout direction?',t:'seg',opts:[['up','Up'],['down','Down']],short:'Breakout'},
+  {k:'level',q:'Breakout level?',t:'number',hint:'The price the close went beyond.',short:'Level'},
+  {k:'dir',q:'Long or short?',t:'seg',opts:[['long','Long'],['short','Short']],hint:'Filled in from the breakout direction. Change it if you traded the other way.',short:'Side'},
+  {k:'target',q:'Measure-rule target?',t:'number',short:'Target'},
+  {k:'stop',q:'Stop, the close that proves you wrong?',t:'number',short:'Stop'},
+  {k:'fail',q:'Break-even failure rate from the book, %',t:'number',opt:true,hint:'Optional. Used later to compare your results with the book.',short:'Book failure rate'},
+  {k:'avg',q:'Average move from the book, %',t:'number',opt:true,hint:'Optional.',short:'Book average move'},
+  {k:'exit',q:'Exit price?',t:'number',opt:true,hint:'Leave it empty if the trade is still open. You can close it later from the list.',short:'Exit'},
+  {k:'exitDate',q:'Exit date?',t:'date',opt:true,short:'Exit date'},
+  {k:'learned',q:'One line on what you learned',t:'text',ph:'e.g. waited for the close, not the intraday poke',opt:true,short:'Learned'}
+];
+const KJ_COLS=[['id','id'],['recorded','recorded_at'],['when','trade_time'],['ticker','ticker'],['tf','timeframe'],['pattern','pattern'],['mkt','market_regime'],['brk','breakout'],['dir','side'],['side','with_market'],['level','level'],['target','target'],['stop','stop'],['fail','book_failure_rate_pct'],['avg','book_avg_move_pct'],['exit','exit_price'],['exitDate','exit_date'],['move','move_pct'],['pnl','pnl_pct'],['learned','learned']];
+const kj={rows:[],step:0,vals:{},err:'',handle:null,fileName:'',perm:'',ready:false};
+function kjId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function kjNowLocal(){ const d=new Date(), p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+function kjNum(x){ const v=parseFloat(x); return isFinite(v)?v:null; }
+function kjSide(r){ if(!r.dir||!r.mkt) return ''; return ((r.dir==='long')===(r.mkt==='bull'))?'with':'against'; }
+function kjMove(r){ const ex=kjNum(r.exit), lv=kjNum(r.level); if(ex==null||lv==null||lv<=0) return null; return (ex-lv)/lv*100*(r.brk==='down'?-1:1); }
+function kjPnl(r){ const ex=kjNum(r.exit), lv=kjNum(r.level); if(ex==null||lv==null||lv<=0) return null; return (ex-lv)/lv*100*(r.dir==='short'?-1:1); }
+function kjWhenS(s){ const m=/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(s||''); if(!m) return s||''; const d=new Date(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0)); return knDateS(d)+(m[4]?' '+m[4]+':'+m[5]:''); }
+function kjLoad(){ try{ const s=localStorage.getItem('gastos.journal'); const a=s?JSON.parse(s):null; kj.rows=Array.isArray(a)?a:[]; }catch(e){ kj.rows=[]; } }
+function kjPersist(){ try{ localStorage.setItem('gastos.journal',JSON.stringify(kj.rows)); }catch(e){} }
+function kjCsv(){ const lines=[csvLine(KJ_COLS.map(c=>c[1]))]; kj.rows.slice().sort((a,b)=>(a.when||'').localeCompare(b.when||'')).forEach(r=>{ const o={...r,side:kjSide(r)}; const mv=kjMove(r), pl=kjPnl(r); o.move=mv==null?'':mv.toFixed(2); o.pnl=pl==null?'':pl.toFixed(2); lines.push(csvLine(KJ_COLS.map(c=>o[c[0]]==null?'':o[c[0]]))); }); return lines.join('\r\n')+'\r\n'; }
+function kjIdb(){ return new Promise((res,rej)=>{ const r=indexedDB.open('gastos-kn',1); r.onupgradeneeded=()=>r.result.createObjectStore('kv'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function kjIdbGet(k){ try{ const db=await kjIdb(); return await new Promise((res,rej)=>{ const t=db.transaction('kv','readonly').objectStore('kv').get(k); t.onsuccess=()=>res(t.result); t.onerror=()=>rej(t.error); }); }catch(e){ return null; } }
+async function kjIdbSet(k,v){ try{ const db=await kjIdb(); await new Promise((res,rej)=>{ const t=db.transaction('kv','readwrite').objectStore('kv').put(v,k); t.onsuccess=()=>res(); t.onerror=()=>rej(t.error); }); }catch(e){} }
+function kjFsOk(){ return typeof window.showSaveFilePicker==='function'; }
+async function kjLoadHandle(){ if(!kjFsOk()) return; const h=await kjIdbGet('journal'); if(!h) return; kj.handle=h; kj.fileName=h.name||'trade-journal.csv'; try{ kj.perm=await h.queryPermission({mode:'readwrite'}); }catch(e){ kj.perm='prompt'; } kjRenderFile(); }
+async function kjPickFile(){ try{ const h=await window.showSaveFilePicker({suggestedName:'trade-journal.csv',types:[{description:'CSV file',accept:{'text/csv':['.csv']}}]}); kj.handle=h; kj.fileName=h.name; kj.perm='granted'; await kjIdbSet('journal',h); const ok=await kjWriteFile(); kjRenderFile(); toast(ok?'Journal saved to '+kj.fileName:'Could not write '+kj.fileName); }catch(e){ if(e&&e.name==='AbortError') return; toast('Could not connect a file'); } }
+async function kjWriteFile(){ if(!kj.handle) return false; try{ let p=await kj.handle.queryPermission({mode:'readwrite'}); if(p!=='granted') p=await kj.handle.requestPermission({mode:'readwrite'}); kj.perm=p; if(p!=='granted'){ kjRenderFile(); return false; } const w=await kj.handle.createWritable(); await w.write(kjCsv()); await w.close(); kjRenderFile(); return true; }catch(e){ kj.perm='error'; kjRenderFile(); return false; } }
+async function kjFlush(what){ if(kj.handle){ const ok=await kjWriteFile(); if(ok){ toast((what||'Journal')+' saved to '+kj.fileName); return; } toast('Could not write '+kj.fileName+'. Downloading a copy instead.'); } const save=state.downloads?saveFile:nativeDownload; save('trade-journal.csv',kjCsv()); if(!state.downloads) toast((what||'Journal')+' downloaded as trade-journal.csv'); }
+function kjRenderFile(){ const el=$('#kj-file'); if(!el) return;
+  if(!kjFsOk()){ el.innerHTML='Each save downloads <b>trade-journal.csv</b> to this device. Keep the newest copy; Import CSV brings it back here.'; return; }
+  if(kj.handle&&kj.perm==='granted') el.innerHTML=`Saving to <b>${esc(kj.fileName)}</b> on this device. <button type="button" class="btn ghost small" id="kj-pick">Change file</button>`;
+  else if(kj.handle) el.innerHTML=`Journal file <b>${esc(kj.fileName)}</b> needs your OK again. <button type="button" class="btn ghost small" id="kj-reconnect">Reconnect</button> <button type="button" class="btn ghost small" id="kj-pick">Change file</button>`;
+  else el.innerHTML='Choose where to keep the journal on this laptop; every record is written there. <button type="button" class="btn ghost small" id="kj-pick">Choose file</button> Without a file, each save downloads a copy.';
+}
+function kjStart(){ const v={when:kjNowLocal()}; ['ticker','pattern','mkt','brk','level','dir','target','stop','fail','avg'].forEach(k=>{ if(knHas(k)) v[k]=String(knVals[k]).trim(); }); if(v.ticker) v.ticker=v.ticker.toUpperCase(); kj.vals=v; kj.step=0; kj.err=''; kjRenderWizard(); }
+function kjShow(q,val){ if(val==null||val==='') return ''; if(q.t==='seg'){ const o=q.opts.find(x=>x[0]===val); return o?o[1]:val; } if(q.t==='datetime-local') return kjWhenS(val); if(q.t==='date') return knDateS(knDay(val)); if(q.t==='number'&&(q.k==='fail'||q.k==='avg')) return val+'%'; return val; }
+function kjRenderWizard(){ const w=$('#kj-wizard'); w.hidden=false; $('#kj-top').hidden=true;
+  if(kj.step>=KJ_Q.length){ const v=kj.vals; const lines=KJ_Q.map(q=>[q.short,kjShow(q,v[q.k])]).filter(x=>x[1]); const side=kjSide(v);
+    w.innerHTML=`<div class="kj-prog">Review</div><div class="kj-q">Save this trade?</div><dl class="kj-review">${lines.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}<dt>With the market</dt><dd>${esc(side?side+' the market':'not known')}</dd></dl><div class="kn-actions"><button type="button" class="btn small" id="kj-save">Save to journal</button><button type="button" class="btn ghost small" id="kj-back">Back</button><button type="button" class="btn ghost small" id="kj-cancel">Cancel</button></div>`; return; }
+  const q=KJ_Q[kj.step]; const v=kj.vals[q.k]==null?'':String(kj.vals[q.k]); let ctl='';
+  if(q.t==='seg') ctl=`<div class="seg kj-seg" data-k="${q.k}">${q.opts.map(([val,lab])=>`<button type="button" data-v="${val}" aria-pressed="${String(v===val)}">${lab}</button>`).join('')}</div>`;
+  else ctl=`<input id="kj-in" type="${q.t}"${q.t==='number'?' inputmode="decimal" step="any" min="0"':''}${q.list?` list="${q.list}"`:''} value="${esc(v)}" placeholder="${esc(q.ph||'')}" autocomplete="off"${q.upper?' autocapitalize="characters" spellcheck="false"':''}>`;
+  w.innerHTML=`<div class="kj-prog">Question ${kj.step+1} of ${KJ_Q.length}${q.opt?' <span>(optional)</span>':''}</div><div class="kj-q">${esc(q.q)}</div>${q.hint?`<div class="kj-hint">${esc(q.hint)}</div>`:''}${ctl}${kj.err?`<div class="kj-err">${esc(kj.err)}</div>`:''}<div class="kn-actions"><button type="button" class="btn small" id="kj-next">${kj.step===KJ_Q.length-1?'Review':'Next'}</button>${kj.step>0?'<button type="button" class="btn ghost small" id="kj-back">Back</button>':''}<button type="button" class="btn ghost small" id="kj-cancel">Cancel</button></div>`;
+  const inp=$('#kj-in'); if(inp){ inp.focus(); if(q.t==='text'&&inp.value) inp.select(); }
+}
+function kjNext(){ const q=KJ_Q[kj.step]; const inp=$('#kj-in'); let val=inp?inp.value.trim():(kj.vals[q.k]||'');
+  if(q.upper) val=val.toUpperCase();
+  if(!val&&!q.opt){ kj.err='Needed to continue.'; kjRenderWizard(); return; }
+  if(val&&q.t==='number'){ const n=parseFloat(val); if(!isFinite(n)||n<0||(['level','target','stop','exit'].includes(q.k)&&n<=0)){ kj.err='Enter a number.'; kjRenderWizard(); return; } }
+  kj.vals[q.k]=val; kj.err='';
+  if(q.k==='brk'&&!kj.vals.dir) kj.vals.dir=val==='up'?'long':'short';
+  if(q.k==='pattern'){ const key=val.toLowerCase(); const prev=kj.rows.slice().reverse().find(r=>(r.pattern||'').trim().toLowerCase()===key); if(prev){ if(!kj.vals.fail&&prev.fail) kj.vals.fail=prev.fail; if(!kj.vals.avg&&prev.avg) kj.vals.avg=prev.avg; if(!kj.vals.tf&&prev.tf&&!kj.vals.tf) kj.vals.tf=kj.vals.tf; } }
+  kj.step++; kjRenderWizard();
+}
+function kjCloseWizard(){ $('#kj-wizard').hidden=true; $('#kj-wizard').innerHTML=''; $('#kj-top').hidden=false; }
+async function kjSaveTrade(){ const v=kj.vals; const row={id:kjId(),recorded:new Date().toISOString()}; KJ_Q.forEach(q=>{ row[q.k]=v[q.k]==null?'':String(v[q.k]); }); kj.rows.push(row); kjPersist(); kjCloseWizard(); kjRenderList(); await kjFlush('Trade'); }
+function kjStats(){ const by={}; kj.rows.slice().sort((a,b)=>(a.when||'').localeCompare(b.when||'')).forEach(r=>{ const key=(r.pattern||'').trim().toLowerCase(); if(!key) return; const g=by[key]||(by[key]={name:(r.pattern||'').trim(),n:0,fails:0,sum:0,fail:null,avg:null,open:0}); const f=kjNum(r.fail), a=kjNum(r.avg); if(f!=null) g.fail=f; if(a!=null) g.avg=a; const mv=kjMove(r); if(mv==null){ g.open++; return; } g.n++; if(mv<5) g.fails++; g.sum+=mv; }); return Object.values(by).filter(g=>g.n>0).sort((a,b)=>b.n-a.n); }
+function kjRenderList(){ const list=$('#kj-list'), st=$('#kj-stats'); if(!list) return;
+  const groups=kjStats();
+  if(!groups.length) st.innerHTML=kj.rows.length?'<p class="kj-empty">The comparison with the book appears here once trades have an exit price.</p>':'';
+  else st.innerHTML=`<div class="eyebrow">You against the book, per pattern</div><table class="note-table"><tr><th>Pattern</th><th>Closed trades</th><th>Your failure rate</th><th>Book</th><th>Your average move</th><th>Book</th></tr>${groups.map(g=>`<tr class="${g.n<20?'thin':''}"><td>${esc(g.name)}</td><td>${g.n}${g.open?` <span class="muted">(+${g.open} open)</span>`:''}</td><td>${knPctS(g.fails/g.n*100)}</td><td>${g.fail!=null?knPctS(g.fail):'—'}</td><td>${(g.sum/g.n>=0?'+':'')+knPctS(g.sum/g.n)}</td><td>${g.avg!=null?knPctS(g.avg):'—'}</td></tr>`).join('')}</table><p class="kn-note">A failure is a closed trade that moved less than 5% in the breakout direction by the exit. Rows with fewer than 20 closed trades are greyed: too few to compare yet.</p>`;
+  if(!kj.rows.length){ list.innerHTML='<p class="kj-empty">No trades recorded yet.</p>'; return; }
+  const rows=kj.rows.slice().sort((a,b)=>(b.when||'').localeCompare(a.when||''));
+  list.innerHTML=`<div class="eyebrow" style="margin-top:14px">${rows.length} trade${rows.length>1?'s':''}</div><div class="kj-rows">${rows.map(r=>{ const pl=kjPnl(r); const side=kjSide(r); const open=pl==null;
+    return `<div class="kj-row" data-id="${esc(r.id)}"><div class="kj-main"><span class="tk">${esc(r.ticker||'?')}</span>${r.dir?`<span class="kj-side ${esc(r.dir)}">${esc(r.dir)}</span>`:''}<span class="nm">${esc([r.pattern,r.tf,side?side+' the market':''].filter(Boolean).join(' · '))}</span><span class="kj-pnl ${open?'open':pl>=0?'good':'bad'}">${open?'open':(pl>=0?'+':'')+knPctS(pl)}</span></div><div class="kj-sub">${esc(kjWhenS(r.when))} · ${esc(r.mkt||'?')} market, breakout ${esc(r.brk||'?')} at ${kjNum(r.level)!=null?esc(fmt(kjNum(r.level))):'?'}${kjNum(r.target)!=null?' · target '+esc(fmt(kjNum(r.target))):''}${kjNum(r.stop)!=null?' · stop '+esc(fmt(kjNum(r.stop))):''}${!open?' · exit '+esc(fmt(kjNum(r.exit)))+(r.exitDate?' on '+esc(knDateS(knDay(r.exitDate))):''):''}${r.learned?`<br>“${esc(r.learned)}”`:''}</div><div class="kn-actions kj-act">${open?`<button type="button" class="btn ghost small" data-kj-close="${esc(r.id)}">Close trade</button>`:''}<button type="button" class="btn ghost small" data-kj-del="${esc(r.id)}">Remove</button></div></div>`; }).join('')}</div>`;
+}
+function kjImport(text){ let rows; try{ rows=parseCSV(text); }catch(e){ toast('Could not read that CSV'); return; } if(!rows||rows.length<2){ toast('That CSV has no trades'); return; }
+  const head=rows[0].map(h=>String(h||'').trim().toLowerCase()); const idx={}; KJ_COLS.forEach(([k,name])=>{ let i=head.indexOf(name); if(i<0) i=head.indexOf(k); if(i>=0) idx[k]=i; }); if(idx.ticker==null||idx.pattern==null){ toast('That CSV is not a trade journal'); return; }
+  const have=new Set(kj.rows.map(r=>r.id)); let added=0;
+  rows.slice(1).forEach(cells=>{ if(!cells.some(c=>String(c||'').trim())) return; const r={}; KJ_Q.forEach(q=>{ r[q.k]=idx[q.k]!=null?String(cells[idx[q.k]]||'').trim():''; }); r.id=idx.id!=null&&String(cells[idx.id]||'').trim()||kjId(); r.recorded=idx.recorded!=null?String(cells[idx.recorded]||''):new Date().toISOString(); if(have.has(r.id)) return; have.add(r.id); kj.rows.push(r); added++; });
+  kjPersist(); kjRenderList(); toast(added?`${added} trade${added>1?'s':''} imported`:'Nothing new in that CSV'); if(added&&kj.handle) kjWriteFile();
+}
+function kjInit(){ if(kj.ready) return; kj.ready=true; kjLoad(); kjRenderFile(); kjRenderList(); kjLoadHandle();
+  const card=$('#kj');
+  card.addEventListener('click',async e=>{ const t=e.target;
+    if(t.closest('#kj-start')){ kjStart(); return; }
+    if(t.closest('#kj-download')){ const save=state.downloads?saveFile:nativeDownload; save('trade-journal.csv',kjCsv()); return; }
+    if(t.closest('#kj-pick')){ kjPickFile(); return; }
+    if(t.closest('#kj-reconnect')){ const ok=await kjWriteFile(); toast(ok?'Journal file reconnected':'Still no access to the file'); return; }
+    if(t.closest('#kj-next')){ kjNext(); return; }
+    if(t.closest('#kj-back')){ kj.step=Math.max(0,kj.step-1); kj.err=''; kjRenderWizard(); return; }
+    if(t.closest('#kj-cancel')){ kjCloseWizard(); return; }
+    if(t.closest('#kj-save')){ kjSaveTrade(); return; }
+    const sb=t.closest('.kj-seg button'); if(sb){ const k=sb.parentElement.dataset.k; kj.vals[k]=sb.dataset.v; kj.err=''; if(k==='brk'&&!kj.vals.dir) kj.vals.dir=sb.dataset.v==='up'?'long':'short'; kj.step++; kjRenderWizard(); return; }
+    const cb=t.closest('[data-kj-close]'); if(cb){ const row=cb.closest('.kj-row'); row.querySelector('.kj-act').outerHTML=`<div class="kj-closeform"><label>Exit price<input type="number" inputmode="decimal" step="any" min="0" data-cf="exit"></label><label>Exit date<input type="date" data-cf="exitDate" value="${new Date().toISOString().slice(0,10)}"></label><label class="wide">One line on what you learned<input type="text" data-cf="learned" maxlength="200"></label><div class="kn-actions"><button type="button" class="btn small" data-kj-closesave="${esc(cb.dataset.kjClose)}">Save</button><button type="button" class="btn ghost small" data-kj-closecancel="1">Cancel</button></div></div>`; row.querySelector('[data-cf="exit"]').focus(); return; }
+    const cs=t.closest('[data-kj-closesave]'); if(cs){ const row=cs.closest('.kj-row'); const r=kj.rows.find(x=>x.id===cs.dataset.kjClosesave); if(!r) return; const ex=parseFloat(row.querySelector('[data-cf="exit"]').value); if(!isFinite(ex)||ex<=0){ toast('Enter the exit price'); return; } r.exit=String(ex); r.exitDate=row.querySelector('[data-cf="exitDate"]').value||''; const ln=row.querySelector('[data-cf="learned"]').value.trim(); if(ln) r.learned=ln; kjPersist(); kjRenderList(); await kjFlush('Trade'); return; }
+    if(t.closest('[data-kj-closecancel]')){ kjRenderList(); return; }
+    const db=t.closest('[data-kj-del]'); if(db){ if(db.dataset.armed!=='1'){ db.dataset.armed='1'; db.textContent='Tap again to remove'; return; } kj.rows=kj.rows.filter(x=>x.id!==db.dataset.kjDel); kjPersist(); kjRenderList(); await kjFlush('Journal'); return; }
+  });
+  card.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.id==='kj-in'){ e.preventDefault(); kjNext(); } if(e.key==='Enter'&&e.target.closest('.kj-closeform')){ e.preventDefault(); const b=e.target.closest('.kj-closeform').querySelector('[data-kj-closesave]'); if(b) b.click(); } });
+  card.addEventListener('input',e=>{ if(e.target.id==='kj-in'){ const q=KJ_Q[kj.step]; if(q){ let v=e.target.value; if(q.upper){ v=v.toUpperCase(); if(e.target.value!==v) e.target.value=v; } kj.vals[q.k]=v; } } });
+  $('#kj-import').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>kjImport(String(rd.result||'')); rd.readAsText(f); e.target.value=''; });
 }
 /* ---------- /knowledge ---------- */
 function pageFromHash(){ const h=location.hash||''; if(h==='#plan') return 'plan'; if(h==='#notes'||h.startsWith('#note-')) return 'notes'; if(h==='#congress') return 'congress'; if(h==='#knowledge'||h==='#investor') return 'know'; return 'sort'; }
