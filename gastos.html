@@ -688,6 +688,13 @@ section + section{border-top:1px solid var(--rule)}
     </dl>
     <p class="kn-src">The failure rates, average moves, measure rule and days-to-ultimate tables are the statistics in Thomas Bulkowski's <i>Encyclopedia of Chart Patterns</i>. Look the numbers up for the exact pattern and market direction; do not reuse them from a different pattern.</p>
   </div>
+
+  <div class="kn-card">
+    <div class="eyebrow">After the breakout: what the book's tables measure</div>
+    <p class="kn-rule">Every pattern chapter reports the same set of numbers. These are the terms, so the tables read without guessing.</p>
+    <dl class="kn-gloss" id="kn-after"></dl>
+    <p class="kn-src">The same list is in the <a href="#note-after-the-breakout">Notes tab</a>, where it can be searched with the other lessons.</p>
+  </div>
 </section>
 <!-- /know-sec -->
 
@@ -1556,6 +1563,22 @@ $('#cg-csv').addEventListener('click',cgCsv);
 /* ---------- knowledge: the trade paragraph ---------- */
 const KN_KEYS=['dir','ticker','sells','pattern','brk','date','level','mkt','fail','avg','target','stop','days'];
 let knVals={}, knReady=false, knLastText='';
+const KN_AFTER=[
+  ['Throwback and pullback','After an up breakout, a throwback is price coming back to, or near, the breakout price or trend line within 30 days, with white space between the hook and the breakout price. A pullback is the same thing after a down breakout. The recurring finding in the book: both hurt performance.'],
+  ['Failure rate','The share of patterns, in that breakout direction and market type, that failed to move at least X% (5, 10, 15 and so on). The tables are cumulative. The break-even failure rate is the 5% row, because 5% is assumed to cover trading costs.'],
+  ['Busted pattern','Price moves less than 5% after the breakout, then reverses through the other side of the pattern. Busted-pattern performance is how far price then goes in the new direction, which is often a lot.'],
+  ['Change after trend ends','The move from the ultimate high to the next ultimate low, or the other way around.'],
+  ['S&P 500 change','How much the index moved from the breakout date to the date of the ultimate high or low. It says how much the market helped.'],
+  ['Days to ultimate high or low','The average time from the breakout to the extreme. The frequency-distribution table bins it in 7-day buckets.'],
+  ['Measure rule','Usually the pattern height added to the breakout price for an up breakout, or subtracted for a down one, gives the price target. “Percentage meeting price target” says how often it is hit; the book treats 80% or more as reliable.'],
+  ['Yearly position','Where the breakout price sits in the prior 12-month high-low range, split into thirds: low, center, high.'],
+  ['Performance rank','The sum of the ranks for average rise or decline, break-even failure rate and change after trend ends. 1 is best, and ties are allowed.']
+];
+function knAfterHtml(dl){ return dl?KN_AFTER.map(([t,d])=>`<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join(''):'<ul>'+KN_AFTER.map(([t,d])=>`<li><b>${esc(t)}.</b> ${esc(d)}</li>`).join('')+'</ul>'; }
+NOTES.push({id:'after-the-breakout',title:'After the breakout: what the pattern tables measure',added:'2026-11-07',asOf:'Book terms, 2026',tags:['Trading','Chart patterns'],
+  takeaway:'Nine terms that come up in every pattern chapter: throwbacks and pullbacks, failure rates, busted patterns, change after the trend ends, the S&P 500 change, days to the ultimate high or low, the measure rule, yearly position and performance rank.',
+  source:'From Thomas Bulkowski, Encyclopedia of Chart Patterns, November 2026. The fill-in trade paragraph and the journal are in the Investor knowledge tab.',
+  body:knAfterHtml(false)+'<div class="bottom"><b>Short version:</b> the 5% row is the failure rate that matters, a target met 80% of the time or more counts as reliable, and throwbacks and pullbacks cost performance.</div>'});
 function knLoad(){ try{ const s=localStorage.getItem('gastos.trade'); const o=s?JSON.parse(s):null; knVals=(o&&typeof o==='object')?o:{}; }catch(e){ knVals={}; } }
 function knSave(){ try{ localStorage.setItem('gastos.trade',JSON.stringify(knVals)); }catch(e){} }
 function knNum(k){ const v=parseFloat(knVals[k]); return isFinite(v)?v:null; }
@@ -1607,6 +1630,7 @@ function knRender(){
 }
 function knNavScroll(p){ const nav=$('#nav'); const nb=nav&&nav.querySelector('[data-page="'+p+'"]'); if(!nb||nav.scrollWidth<=nav.clientWidth+1) return; nav.scrollLeft=Math.max(0,nb.offsetLeft-(nav.clientWidth-nb.offsetWidth)/2); }
 function knInit(){ if(knReady){ knRender(); return; } knReady=true; knLoad();
+  $('#kn-after').innerHTML=knAfterHtml(true);
   const form=$('#kn-form');
   form.addEventListener('input',e=>{ const el=e.target.closest('[data-k]'); if(!el||el.classList.contains('seg')) return; let val=el.value; if(el.dataset.k==='ticker'){ val=val.toUpperCase(); if(el.value!==val) el.value=val; } knVals[el.dataset.k]=val; knSave(); knRender(); });
   form.addEventListener('click',e=>{ const b=e.target.closest('.kn-seg button'); if(!b) return; const k=b.parentElement.dataset.k; knVals[k]=knVals[k]===b.dataset.v?'':b.dataset.v; knSave(); knRender(); });

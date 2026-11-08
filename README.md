@@ -104,6 +104,10 @@ each save downloads a copy. The journal is also kept in the browser (localStorag
 be re-imported from the CSV. Once trades have exits, a per-pattern table compares the
 user's failure rate (moved less than 5% in the breakout direction by the exit) and average
 move with the book's numbers; rows under 20 closed trades are greyed as too few.
+A last card, "After the breakout", defines the terms in the book's pattern tables
+(throwback and pullback, failure rate, busted pattern, change after trend ends, S&P 500
+change, days to ultimate, measure rule, yearly position, performance rank); the same list
+is pushed into the Notes tab as the note `after-the-breakout`.
 
 ## Files
 
